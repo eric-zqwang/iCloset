@@ -3,67 +3,11 @@
     <head>
         <meta charset="utf-8">
         <script src="signUp.js" defer></script>
+        <link rel="stylesheet" href="./stylesheets/icloset.css">
     </head>
-    <style>
-        body{
-            font-family: 'Times New Roman', Times, serif;
-            display: table-cell;
-            vertical-align: middle;
-            height: 100%;
-            
-            background-color: rgb(190, 190, 240);
-        }
-        html {
-            display: table;
-            margin: auto;
-            height: 80%;
-        }
-        #container {
-            margin-left: 50px;
-            margin-right: 50px;
-            margin-bottom: 100px;
-            position: relative; top: 40px;
-        }
-        form{
-            height: 600px;
-            width: 500px;
-            background-color: aliceblue;
-        }
-        input[type=text], input[type=password] {
-            width: 90%;
-            padding: 15px;
-            margin: 5px 0 22px 0;
-            display: inline-block;
-            border: none;
-            background: #f1f1f1;
-        }
-
-        input[type=text]:focus, input[type=password]:focus {
-            background-color: #ddd;
-            outline: none;
-        }
-        h1{
-            margin-left: 120px;
-        }
-        button {
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            opacity: 0.9;
-        }
-        #submitButton{
-            background-color: #bd421d;
-        }
-        #cancelButton{
-            background-color: #ec8b6e;
-        }
-    </style>
     <body>
         <form action="/signUp" method="post">
-            <div id="container">
+            <div class="container">
                 <h1>Sign Up</h1>
                 <p>Please fill in this form to create an account.</p>
                 <hr>
@@ -78,9 +22,10 @@
                 <input id="repeatPswd" type="password" placeholder="Repeat Password" name="repeatPswd" onkeyup="check_password()" required>
                 <span id="message"></span> <br>
 
-    
-                <button type="submit" id="submitButton" disabled>Sign Up</button> <br>
-                <button type="button" id="cancelButton" onclick="cancel()">Cancel</button>
+                <div class="clearfix">
+                    <button type="submit" class="button" onclick="validatePassword()" href="userlogin.html">Sign Up</button> <br>
+                    <button type="button" id="cancelButton" onclick="cancel()">Cancel</button>
+                </div>
             </div>
         </form>
     </body>

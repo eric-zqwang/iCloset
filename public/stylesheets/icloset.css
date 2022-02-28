@@ -1,0 +1,55 @@
+body{
+  font-family: 'Times New Roman', Times, serif;
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+  
+  background-color: rgb(190, 190, 240);
+}
+html {
+  display: table;
+  margin: auto;
+  height: 80%;
+}
+.container {
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 100px;
+  position: relative; top: 40px;
+}
+form{
+  height: 600px;
+  width: 500px;
+  background-color: aliceblue;
+}
+input[type=text], input[type=password] {
+  width: 90%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+h1{
+  margin-left: 120px;
+}
+button {
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+.button{
+  background-color: #bd421d;
+}
+#cancelButton{
+  background-color: #ec8b6e;
+}
