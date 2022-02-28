@@ -11,6 +11,30 @@ var app = express()
   app.get('/', (req, res) => res.render('pages/index'))
   app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
+const { Pool } = require("pg");
+var pool;
+pool = new Pool({
+  // for the local host
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+})
+
+
+
+app.post('/signUp', async (req, res) => {
+  var inputEmail = req.body.email;
+  var inputPswd = req.body.pswd;
+  var inputRepeatPswd = req.body.repeatPswd;
+
+  try {
+    await pool.query(`INSERT INTO usrs (umail, upswd)
+    VALUES ('${inputEmail}', '${inputPswd}')`);
+    res.redirect('/userlogin.html');
+  }
+  catch (error) {
+    res.end(error);
+  }
+})
+
 /** change database name "users"; column name "uname", "psw"; "homepage" ...*/
 app.post('/userlogin', async(req,res) => {
   var uname = req.body.uname;
