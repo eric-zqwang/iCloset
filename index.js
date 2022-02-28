@@ -39,7 +39,7 @@ app.post('/adminlogin', async(req,res) => {
   var uname = req.body.uname;
   var password = req.body.psw;
   const data = result.rows;
-
+  
   //search database using uname
   const result = await SecurityPolicyViolationEvent.query("SELECT * FROM users WHERE uname='" + uname + "';");
 
