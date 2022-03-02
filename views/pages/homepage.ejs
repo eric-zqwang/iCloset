@@ -11,27 +11,27 @@
 
 <body>
 
-  <ul>
-    <% results.forEach(function(r) { %>
-        <li><%= r.id %> - <%= r.images %></li>
-    <% }); %>
-</ul>
+  <div>
 
+    <% results.forEach(function(r) { %>
+    <li>  <%= r.id %> - <br><img src="<% r.images %>" width="200" height="200" alt="<%=r.images %>"></li> 
+        <% }); %>
+
+  </div>
   <form class="" action="/uploadImage" method="post">
     <div>
 
     </div>
     <div>
-      <!-- show existed images -->
     </div>
     <div>
       <form class="" action="/uploadImage" method="post">
         <div><img id="outputImage" width="200" height="200" /></div>
-      
-      <input type="file" accept="image/*" onchange="showimg(event)" name = "upImg">
-      <br>
-      <input type="submit"  value="upload">
-      
+
+        <input type="file" accept="image/*" onchange="showimg(event)" name="upImg">
+        <br>
+        <input type="submit" value="upload">
+
     </div>
   </form>
 

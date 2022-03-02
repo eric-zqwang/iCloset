@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const fileUpload = require('express-fileupload');
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
@@ -87,11 +88,13 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
+//upload image
 app.post('/uploadImage', async (req, res) => {
-  const img = req.body.upImg;
-  await pool.query(`insert into userobj1 (images) values ('${img}')`);
+
+  const data = req.body.upImg;
+  await pool.query(`insert into userobj1 (images) values ('${data}')`);
   const result = await pool.query(`SELECT * FROM userobj1 order by id`);
-  const data = { results: result.rows };
-  res.render('pages/homepage', data);
+  const rdata = { results: result.rows };
+  res.render('pages/homepage', rdata);
 
 })

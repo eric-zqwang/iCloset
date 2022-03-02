@@ -11,22 +11,21 @@
 
 <body>
 
-  
-    <div>
 
-    </div>
-    <div>
-      <!-- show existed images -->
-    </div>
-    <div>
-      <form class="" action="/uploadImage" method="post">
-        <div><img id="outputImage" width="200" height="200" /></div>
-      
-      <input type="file" accept="image/*" onchange="showimg(event)" name = "upImg">
+  <div>
+
+  </div>
+  <div>
+    <!-- show existed images -->
+  </div>
+  <div>
+    <form class="" action="/uploadImage" method="post" enctype="multipart/form-data">
+      <div><img id="outputImage" width="200" height="200" /></div>
+      <input type="file" accept="image/*" onchange="showimg(event)" name="upImg">
       <br>
-      <input type="submit"  value="upload">
-      
-    </div>
+      <input type="submit" value="upload">
+
+  </div>
   </form>
 
 
