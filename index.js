@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const session = require("express-session")
 const PORT = process.env.PORT || 5000
 
 var app = express()
@@ -70,6 +71,15 @@ app.post('/userlogin', async(req,res) => {
   } 
 })
 
+app.post('/userlogout', async(req,res) => {
+  if(req.body.session.user) {
+    res.session.destory;
+  }
+  res.redirect('/userlogin.html');
+})
+
+
+
 app.post('/adminlogin', async(req,res) => {
   var uname = req.body.uname;
   var password = req.body.psw;
@@ -92,4 +102,3 @@ app.post('/adminlogin', async(req,res) => {
     window.alert("incorrect username or password");
   } 
 })
-
