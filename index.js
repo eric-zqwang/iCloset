@@ -43,7 +43,6 @@ app.post('/signUp', async (req, res) => {
     catch (error) {
       res.send("User NAME ALREADY EXISTS");
     }
-    
   }
 })
 
