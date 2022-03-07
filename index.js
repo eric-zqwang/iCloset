@@ -14,12 +14,14 @@ var app = express()
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:{
-    rejectUnauthorized: false
-  }
+  // connectionString: process.env.DATABASE_URL,
+  // ssl:{
+  //   rejectUnauthorized: false
+  // }
+
   // for the local host
   // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 
@@ -27,15 +29,20 @@ pool = new Pool({
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
-  var inputRepeatPswd = req.body.repeatPswd;
 
-  try {
-    await pool.query(`INSERT INTO usrs (umail, upswd)
-    VALUES ('${inputEmail}', '${inputPswd}')`);
-    res.redirect('/userlogin.html');
+  var result = pool.query(`SELECT * from usrs where umail = '${inputEmail}'`)
+  if (!result){
+    res.send("The register email already exist")
   }
-  catch (error) {
-    res.end(error);
+  else{
+    try {
+      await pool.query(`INSERT INTO usrs (umail, upswd)
+      VALUES ('${inputEmail}', '${inputPswd}')`);
+      res.redirect('/userlogin.html');
+    }
+    catch (error) {
+      res.end(error);
+    }
   }
 })
 
@@ -85,3 +92,4 @@ app.post('/adminlogin', async(req,res) => {
     window.alert("incorrect username or password");
   } 
 })
+
