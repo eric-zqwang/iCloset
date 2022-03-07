@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="homepage.js" defer></script>
-  <title>Home page</title>
+  <script src="uploadimg.js" defer></script>
+  <title>upload page</title>
 </head>
 
 <body>
@@ -20,14 +20,16 @@
   </div>
   <div>
     <form class="" action="/uploadImage" method="post" enctype="multipart/form-data">
-      <div><img id="outputImage" width="200" height="200" /></div>
-      <input type="file" accept="image/*" onchange="showimg(event)" name="upImg">
+      <div>
+        <img id="outputImage" width="200" height="200" />
+      </div>
+      <input type="file" accept="image/*" onchange="showimg(event)" name="upImg" required/>
+     
       <br>
-      <input type="submit" value="upload">
-
+      <input type="submit" value="upload!">
   </div>
   </form>
-
+ 
 
 </body>
 

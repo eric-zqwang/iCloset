@@ -1,5 +1,4 @@
 const express = require('express');
-const fileUpload = require('express-fileupload');
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
@@ -88,13 +87,30 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
+
 //upload image
-app.post('/uploadImage', async (req, res) => {
-
-  const data = req.body.upImg;
-  await pool.query(`insert into userobj1 (images) values ('${data}')`);
-  const result = await pool.query(`SELECT * FROM userobj1 order by id`);
-  const rdata = { results: result.rows };
-  res.render('pages/homepage', rdata);
-
+const multer = require('multer');
+const { redirect } = require('express/lib/response');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+var upload = multer({ storage: storage })
+app.use('/uploads', express.static('uploads'));
+app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
+  // debug use
+  // console.log(JSON.stringify(req.file))
+  // var response = '<a href="pages/homepage">back to home page</a><br>'
+  // response += "Files uploaded successfully.<br>"
+  // response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
+  // response += `${req.file.path}`;
+  await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}\\${req.file.path}'))`);
+  const result = await pool.query(`select * from userobj1`);
+  const data = { results: result.rows };
+  res.render('pages/homepage', data);
+  //res.redirect('uploadimg.html');
 })
