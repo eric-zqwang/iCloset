@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path')
+const session = require("express-session")
 const PORT = process.env.PORT || 5000
 
 var app = express()
@@ -18,8 +19,10 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
+
+
   // for the local host
-  connectionString: 'postgres://postgres:root@localhost/icloset'
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 
@@ -27,15 +30,22 @@ pool = new Pool({
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
-  var inputRepeatPswd = req.body.repeatPswd;
 
-  try {
-    await pool.query(`INSERT INTO userInfo (umail, upswd)
-    VALUES ('${inputEmail}', '${inputPswd}')`);
-    res.redirect('/userlogin.html');
+
+  var result = pool.query(`SELECT * from usrs where umail = '${inputEmail}'`)
+  if (!result){
+    res.send("The register email already exist")
+
   }
-  catch (error) {
-    res.end(error);
+  else{
+    try {
+      await pool.query(`INSERT INTO usrs (umail, upswd)
+      VALUES ('${inputEmail}', '${inputPswd}')`);
+      res.redirect('/userlogin.html');
+    }
+    catch (error) {
+      res.send("User NAME ALREADY EXISTS");
+    }
   }
 })
 
@@ -64,14 +74,23 @@ app.post('/userlogin', async (req, res) => {
   }
 })
 
-app.post('/adminlogin', async (req, res) => {
+app.post('/userlogout', async(req,res) => {
+  if(req.body.session.user) {
+    res.session.destory;
+  }
+  res.redirect('/userlogin.html');
+})
+
+
+
+app.post('/adminlogin', async(req,res) => {
   var uname = req.body.uname;
   var password = req.body.psw;
-
-
+  const data = result.rows;
+  
   //search database using uname
   const result = await SecurityPolicyViolationEvent.query("SELECT * FROM userInfo WHERE umail='" + uname + "';");
-  const data = result.rows;
+  
   //If username is not unique
   if (data.length > 1) {
     console.log("DUPLICATE USERS!!!");
