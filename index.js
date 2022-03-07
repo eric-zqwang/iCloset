@@ -14,12 +14,13 @@ var app = express()
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:{
-    rejectUnauthorized: false
-  }
+  // connectionString: process.env.DATABASE_URL,
+  // ssl:{
+  //   rejectUnauthorized: false
+  // }
+
   // for the local host
-  // connectionString: 'postgres://postgres:123wzqshuai@localhost/rectangle' 
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 
@@ -27,61 +28,19 @@ pool = new Pool({
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
-  var inputRepeatPswd = req.body.repeatPswd;
 
-  try {
-    await pool.query(`INSERT INTO usrs (umail, upswd)
-    VALUES ('${inputEmail}', '${inputPswd}')`);
-    res.redirect('/userlogin.html');
+  var result = pool.query(`SELECT * from usrs where umail = '${inputEmail}'`)
+  if (!result){
+    res.send("The register email already exist")
   }
-  catch (error) {
-    res.end(error);
+  else{
+    try {
+      await pool.query(`INSERT INTO usrs (umail, upswd)
+      VALUES ('${inputEmail}', '${inputPswd}')`);
+      res.redirect('/userlogin.html');
+    }
+    catch (error) {
+      res.end(error);
+    }
   }
-})
-
-/** change database name "users"; column name "uname", "psw"; "homepage" ...*/
-app.post('/userlogin', async(req,res) => {
-  var uname = req.body.uname;
-  var password = req.body.psw;
-  const data = result.rows;
-
-  //search database using uname
-  const result = await SecurityPolicyViolationEvent.query("SELECT * FROM users WHERE uname='" + uname + "';");
-
-  //If username is not unique
-  if (data.length > 1) {
-    console.log("DUPLICATE USERS!!!");
-  } 
-  //If usename and password are correct, direct to homepage
-  else if (data.length == 1 && password == data[0].psw) {
-    res.render('pages/homepage', data[0])
-  } 
-  
-  //If user does not exist or password is incorrect, alert user
-  else if (data.length == 0 || password != data[0].psw) {
-    window.alert("incorrect username or password");
-  } 
-})
-
-app.post('/adminlogin', async(req,res) => {
-  var uname = req.body.uname;
-  var password = req.body.psw;
-  const data = result.rows;
-
-  //search database using uname
-  const result = await SecurityPolicyViolationEvent.query("SELECT * FROM users WHERE uname='" + uname + "';");
-
-  //If username is not unique
-  if (data.length > 1) {
-    console.log("DUPLICATE USERS!!!");
-  } 
-  //If usename and password are correct, direct to homepage
-  else if (data.length == 1 && password == data[0].psw && data[0].authority == true) {
-    res.render('pages/homepage', data[0])
-  } 
-  
-  //If user does not exist or password is incorrect, alert user
-  else if (data.length == 0 || password != data[0].psw || data[0].authority != true) {
-    window.alert("incorrect username or password");
-  } 
 })
