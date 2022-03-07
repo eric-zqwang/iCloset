@@ -79,7 +79,6 @@ app.post('/userlogout', async(req,res) => {
 })
 
 
-
 app.post('/adminlogin', async(req,res) => {
   var uname = req.body.uname;
   var password = req.body.psw;
