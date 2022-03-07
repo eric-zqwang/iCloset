@@ -14,6 +14,7 @@ function check_password(){
     }
 }
 
+<<<<<<< HEAD
 function check_email(){
     var mail = document.getElementById("email").value;
     var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -29,6 +30,8 @@ function check_email(){
     }
 }
 
+=======
+>>>>>>> 5954796a0397a1f1944416082542344d06853177
 function validate_password(){
     var password = document.getElementById("pswd").value;
     var passw=  /^[A-Za-z]\w{6,14}$/;

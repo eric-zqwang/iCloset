@@ -21,7 +21,10 @@ pool = new Pool({
   // }
 
   // for the local host
+<<<<<<< HEAD
   // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+=======
+>>>>>>> 5954796a0397a1f1944416082542344d06853177
   connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
@@ -42,6 +45,7 @@ app.post('/signUp', async (req, res) => {
       res.redirect('/userlogin.html');
     }
     catch (error) {
+<<<<<<< HEAD
       res.send("User NAME ALREADY EXISTS");
     }
   }
@@ -101,3 +105,9 @@ app.post('/adminlogin', async(req,res) => {
     window.alert("incorrect username or password");
   } 
 })
+=======
+      res.end(error);
+    }
+  }
+})
+>>>>>>> 5954796a0397a1f1944416082542344d06853177
