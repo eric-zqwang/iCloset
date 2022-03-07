@@ -41,8 +41,9 @@ app.post('/signUp', async (req, res) => {
       res.redirect('/userlogin.html');
     }
     catch (error) {
-      res.end(error);
+      res.send("User NAME ALREADY EXISTS");
     }
+    
   }
 })
 

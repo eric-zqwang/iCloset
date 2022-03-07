@@ -14,6 +14,21 @@ function check_password(){
     }
 }
 
+function check_email(){
+    var mail = document.getElementById("email").value;
+    var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!mail.match(mailFormat))
+    {
+        document.getElementById("message2").style.color = 'red';
+        document.getElementById("message2").innerHTML = 'invalid format of email';
+        document.getElementById("submitButton").disabled = true;
+    }
+    else{
+        document.getElementById("message2").innerHTML = '';
+        document.getElementById("submitButton").disabled = false;
+    }
+}
+
 function validate_password(){
     var password = document.getElementById("pswd").value;
     var passw=  /^[A-Za-z]\w{6,14}$/;

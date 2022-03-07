@@ -68,8 +68,9 @@
                 <p>Please fill in this form to create an account.</p>
                 <hr>
                 <label><b>Email</b></label> <br>
-                <input type="text" placeholder="Enter Email" name="email" required> <br>
-    
+                <input id="email" type="text" placeholder="Enter Email" name="email" onkeyup="check_email()" required> <br>
+                <span id="message2"></span> <br>
+
                 <label><b>Password</b></label> <br>
                 <input id="pswd" type="password" placeholder="Enter Password" name="pswd" onkeyup="validate_password()" required> <br>
                 <span id="message1"></span> <br>
