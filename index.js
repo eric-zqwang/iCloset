@@ -20,7 +20,7 @@ pool = new Pool({
     rejectUnauthorized: false
   }
   // for the local host
-  // connectionString: 'postgres://postgres:123wzqshuai@localhost/rectangle' 
+  // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 
@@ -77,7 +77,7 @@ app.post('/adminlogin', async(req,res) => {
   var uname = req.body.uname;
   var password = req.body.psw;
   const data = result.rows;
-
+  
   //search database using uname
   const result = await SecurityPolicyViolationEvent.query("SELECT * FROM users WHERE uname='" + uname + "';");
 
