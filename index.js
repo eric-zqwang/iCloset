@@ -31,7 +31,7 @@ pool = new Pool({
 
 
   // for the local host
-  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
 
@@ -41,7 +41,7 @@ app.post('/signUp', async (req, res) => {
   var inputPswd = req.body.pswd;
 
 
-  var result = pool.query(`SELECT * from usrs where umail = '${inputEmail}'`)
+  var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result){
     res.send("The register email already exist")
 
@@ -60,27 +60,35 @@ app.post('/signUp', async (req, res) => {
 
 /** change database name "users"; column name "uname", "psw"; "homepage" ...*/
 app.post('/userlogin', async (req, res) => {
-  var uname = req.body.uname;
-  var password = req.body.psw;
+  var inputEmail = req.body.email;
+  var inputPswd = req.body.pswd;
 
-  //search database using uname
-  const result = await SecurityPolicyViolationEvent.query("SELECT * FROM userInfo WHERE umail='" + uname + "';");
+  // search database using umail
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
 
   const data = { results: result.rows };
+  
+  /* For testing
+  console.log(inputEmail);
+  console.log(inputPswd);
+  console.log(data.results.length);
+  console.log(data.results[0]);
+  */
 
   //If username is not unique
-  if (data.length > 1) {
+  if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
   //If usename and password are correct, direct to homepage
-  else if (data.length == 1 && password == data[0].psw) {
-    res.render('pages/db', data[0])
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
+    res.render('pages/homepage', data)
   }
 
   //If user does not exist or password is incorrect, alert user
-  else if (data.length == 0 || password != data[0].psw) {
-    window.alert("incorrect username or password");
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
+    window.alert("incorrect login email or password");
   }
+  
 })
 
 app.post('/userlogout', async(req,res) => {
