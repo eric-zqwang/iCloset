@@ -28,9 +28,7 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-
-
-  // for the local host
+  // for local host
   connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
@@ -40,11 +38,9 @@ app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
 
-
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result){
     res.send("The register email already exist")
-
   }
   else{
     try {
@@ -58,7 +54,7 @@ app.post('/signUp', async (req, res) => {
   }
 })
 
-/** change database name "users"; column name "uname", "psw"; "homepage" ...*/
+// regular user login, direct to homepage
 app.post('/userlogin', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
@@ -75,20 +71,43 @@ app.post('/userlogin', async (req, res) => {
   console.log(data.results[0]);
   */
 
-  //If username is not unique
+  //If umail is not unique
   if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
-  //If usename and password are correct, direct to homepage
+  //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
     res.render('pages/homepage', data)
   }
 
-  //If user does not exist or password is incorrect, alert user
+  //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
     window.alert("incorrect login email or password");
   }
-  
+})
+
+// admin login, direct to user-list
+app.post('/adminlogin', async (req, res) => {
+  var inputEmail = req.body.email;
+  var inputPswd = req.body.pswd;
+
+  // search database using umail
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+  const data = { results: result.rows };
+
+  //If umail is not unique
+  if (data.results.length > 1) {
+    console.log("DUPLICATE USERS!!!");
+  }
+  //If umail and password are correct and the account is authorized, direct to user-list
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].authority == true) {
+    res.render('pages/user-list', data)
+  }
+
+  //If umail does not exist or password is incorrect, alert user
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
+    window.alert("incorrect login email or password");
+  }
 })
 
 app.post('/userlogout', async(req,res) => {
@@ -97,32 +116,6 @@ app.post('/userlogout', async(req,res) => {
   }
   res.redirect('/userlogin.html');
 })
-
-
-
-app.post('/adminlogin', async(req,res) => {
-  var uname = req.body.uname;
-  var password = req.body.psw;
-  const data = result.rows;
-  
-  //search database using uname
-  const result = await SecurityPolicyViolationEvent.query("SELECT * FROM userInfo WHERE umail='" + uname + "';");
-  
-  //If username is not unique
-  if (data.length > 1) {
-    console.log("DUPLICATE USERS!!!");
-  }
-  //If usename and password are correct, direct to homepage
-  else if (data.length == 1 && password == data[0].psw && data[0].authority == true) {
-    res.render('pages/homepage', data[0])
-  }
-
-  //If user does not exist or password is incorrect, alert user
-  else if (data.length == 0 || password != data[0].psw || data[0].authority != true) {
-    window.alert("incorrect username or password");
-  }
-})
-
 
 //upload image
 const multer = require('multer');
