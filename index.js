@@ -141,4 +141,40 @@ app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   const data = { results: result.rows };
   res.render('pages/homepage', data);
   //res.redirect('uploadimg.html');
-})
+});
+//
+// user list
+app.get('/user-list', (request, response) => {
+    var page = request.query['page'] ? request.query['page'] : 1;
+    var size = request.query['size'] ? request.query['size'] : 15;
+    pool.connect(function(error, client, releaseFn) {
+        if(error) {// if error then release the connection
+            releaseFn();
+            return console.log('Connection failed: ' + error);
+        }
+        var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
+        client.query(countSql, (error, results) => {
+            if(error) {
+                releaseFn();
+                return console.log('Query failed: ' + error);
+            }
+            // total number of users
+            var total = results.rows[0].total;
+            var offset= (page - 1) * size;
+            // query the target page of users
+            var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
+            client.query(listSql, (error, results) => {
+                releaseFn();
+                if(error) {
+                    return console.log('Query userInfo failed: ' + error);
+                }
+                var data = results.rows;
+                // OK, now we render the users
+                response.render('pages/user-list', {
+                    users: data,
+                    total: total
+                });
+            });
+        });
+    });
+});
