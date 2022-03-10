@@ -7,7 +7,7 @@
     </head>
     <body>
         <form action="/signUp" method="post">
-            <div class="container">
+            <div class="container" id="container">
                 <h1>Sign Up</h1>
                 <p>Please fill in this form to create an account.</p>
                 <hr>
@@ -23,7 +23,7 @@
                 <span id="message"></span> <br>
 
                 <div class="clearfix">
-                    <button type="submit" class="button" onclick="validatePassword()" href="userlogin.html">Sign Up</button> <br>
+                    <button type="submit" id="submitButton" class="button" onclick="validatePassword()">Sign Up</button> <br>
                     <button type="button" id="cancelButton" onclick="cancel()">Cancel</button>
                 </div>
             </div>
