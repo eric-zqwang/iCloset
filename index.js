@@ -12,6 +12,15 @@ app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
+// add session 
+app.use(session({
+  name: "session",
+  secret: 'top secret',
+  resave: false, //Forces the session to be saved back to the session store
+  saveUninitialized: false, //Forces a session that is "uninitialized" to be saved to the store
+  maxAge: 60 * 60 * 1000, // 60 minutes
+}))
+
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
@@ -22,7 +31,7 @@ pool = new Pool({
 
 
   // for the local host
-  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
 
@@ -32,7 +41,7 @@ app.post('/signUp', async (req, res) => {
   var inputPswd = req.body.pswd;
 
 
-  var result = pool.query(`SELECT * from usrs where umail = '${inputEmail}'`)
+  var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result){
     res.send("The register email already exist")
 
@@ -51,27 +60,35 @@ app.post('/signUp', async (req, res) => {
 
 /** change database name "users"; column name "uname", "psw"; "homepage" ...*/
 app.post('/userlogin', async (req, res) => {
-  var uname = req.body.uname;
-  var password = req.body.psw;
+  var inputEmail = req.body.email;
+  var inputPswd = req.body.pswd;
 
-  //search database using uname
-  const result = await SecurityPolicyViolationEvent.query("SELECT * FROM userInfo WHERE umail='" + uname + "';");
+  // search database using umail
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
 
   const data = { results: result.rows };
+  
+  /* For testing
+  console.log(inputEmail);
+  console.log(inputPswd);
+  console.log(data.results.length);
+  console.log(data.results[0]);
+  */
 
   //If username is not unique
-  if (data.length > 1) {
+  if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
   //If usename and password are correct, direct to homepage
-  else if (data.length == 1 && password == data[0].psw) {
-    res.render('pages/db', data[0])
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
+    res.render('pages/homepage', data)
   }
 
   //If user does not exist or password is incorrect, alert user
-  else if (data.length == 0 || password != data[0].psw) {
-    window.alert("incorrect username or password");
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
+    window.alert("incorrect login email or password");
   }
+  
 })
 
 app.post('/userlogout', async(req,res) => {
@@ -133,4 +150,40 @@ app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   const data = { results: result.rows };
   res.render('pages/homepage', data);
   //res.redirect('uploadimg.html');
-})
+});
+//
+// user list
+app.get('/user-list', (request, response) => {
+    var page = request.query['page'] ? request.query['page'] : 1;
+    var size = request.query['size'] ? request.query['size'] : 15;
+    pool.connect(function(error, client, releaseFn) {
+        if(error) {// if error then release the connection
+            releaseFn();
+            return console.log('Connection failed: ' + error);
+        }
+        var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
+        client.query(countSql, (error, results) => {
+            if(error) {
+                releaseFn();
+                return console.log('Query failed: ' + error);
+            }
+            // total number of users
+            var total = results.rows[0].total;
+            var offset= (page - 1) * size;
+            // query the target page of users
+            var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
+            client.query(listSql, (error, results) => {
+                releaseFn();
+                if(error) {
+                    return console.log('Query userInfo failed: ' + error);
+                }
+                var data = results.rows;
+                // OK, now we render the users
+                response.render('pages/user-list', {
+                    users: data,
+                    total: total
+                });
+            });
+        });
+    });
+});
