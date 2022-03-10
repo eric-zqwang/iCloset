@@ -12,6 +12,15 @@ app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
+// add session 
+app.use(session({
+  name: "session",
+  secret: 'top secret',
+  resave: false, //Forces the session to be saved back to the session store
+  saveUninitialized: false, //Forces a session that is "uninitialized" to be saved to the store
+  maxAge: 60 * 60 * 1000, // 60 minutes
+}))
+
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
