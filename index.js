@@ -14,7 +14,7 @@ app.set('view engine', 'ejs')
 // redirect user to login page if they dont have a session
 app.use(function(req, res, next) {
   console.log("DEBUGG " + req.path);
-  if (curSession == null && req.path != "/userlogin") {
+  if (curSession == null && !req.path.endsWith("login")) {
     // if user is not logged-in redirect back to login page //
     res.redirect('/userlogin.html');
   } else {
@@ -117,6 +117,9 @@ app.post('/adminlogin', async (req, res) => {
   }
   //If umail and password are correct and is admin, direct to user-list
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
+    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+    req.session.user = user;
+    curSession = req.session;
     res.render('pages/user-list', data)
   }
 
@@ -126,10 +129,11 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
-app.post('/userlogout', async(req,res) => {
-  if(req.body.session.user) {
-    res.session.destory;
+app.get('/userlogout', async(req,res) => {
+  if(curSession) {
+    curSession.destroy();
   }
+  req.session.destroy();
   res.redirect('/userlogin.html');
 })
 
