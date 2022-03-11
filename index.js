@@ -13,9 +13,8 @@ app.set('view engine', 'ejs')
 
 // redirect user to login page if they dont have a session
 app.use(function(req, res, next) {
-  console.log("DEBUGG " + req.path);
-  if (curSession == null && !req.path.endsWith("login")) {
-    // if user is not logged-in redirect back to login page //
+  if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
+    // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
   } else {
     next();
@@ -44,12 +43,12 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  // connectionString: process.env.DATABASE_URL,
-  // ssl:{
-  //   rejectUnauthorized: false
-  // }
+  connectionString: process.env.DATABASE_URL,
+  ssl:{
+    rejectUnauthorized: false
+  }
   // for local host
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
+  // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
 app.post('/signUp', async (req, res) => {
@@ -77,7 +76,7 @@ var curSession;
 app.post('/userlogin', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
-
+  
   // search database using umail
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
 
@@ -97,8 +96,8 @@ app.post('/userlogin', async (req, res) => {
   }
 
   //If umail does not exist or password is incorrect, alert user
-  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
-    window.alert("incorrect login email or password");
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd)  {
+    console.log("incorrect login email or password");
   }
 })
 
@@ -125,7 +124,7 @@ app.post('/adminlogin', async (req, res) => {
 
   //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
-    window.alert("incorrect login email or password");
+    console.log("incorrect login email or password");
   }
 })
 
