@@ -12,14 +12,14 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // redirect user to login page if they dont have a session
-// app.use(function(req, res, next) {
-//   if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
-//     // if user is not logged-in redirect back to login page
-//     res.redirect('/userlogin.html');
-//   } else {
-//     next();
-//   }
-// });
+app.use(function(req, res, next) {
+  if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
+    // if user is not logged-in redirect back to login page
+    res.redirect('/userlogin.html');
+  } else {
+    next();
+  }
+});
 
 app.get('/', (req, res) => {
   if (curSession){
@@ -48,7 +48,7 @@ pool = new Pool({
    rejectUnauthorized: false
  }
   // for local host
-  //  connectionString:"postgres://postgres:root@localhost/icloset",
+   // connectionString:"postgres://postgres:root@localhost/icloset",
 })
 
 app.post('/signUp', async (req, res) => {
@@ -157,7 +157,7 @@ app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   //  response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
   //  response += `${req.file.path}`;
   //  return res.send(response);
- await pool.query(`insert into userobj1 (images) values ('${__dirname}//${req.file.path}')`);
+ await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
 const result = await pool.query(`select * from userobj1`);
  const data = { results: result.rows };
  res.render('pages/homepage', data);
