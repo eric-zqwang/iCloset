@@ -14,7 +14,7 @@
 
     <% results.forEach(function(r) { %>
       <li>
-        <%= r.id %> - <br><img src="data:image/gif;base64,<% r.images %>" width="200" height="200" alt="<%=r.imagename %>">
+        <%= r.umail %> - <br><img src="data:image/gif;base64,<% r.images %>" width="200" height="200" alt="<%=r.imagename %>">
       </li>
       <% }); %>
       <a href="./uploadimg.html">upload image</a>

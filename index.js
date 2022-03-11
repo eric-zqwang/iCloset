@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path')
 const session = require("express-session")
+const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 5000
 
 var app = express()
@@ -9,8 +10,27 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
-app.get('/', (req, res) => res.render('pages/index'))
-app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+
+// redirect user to login page if they dont have a session
+app.use(function(req, res, next) {
+  console.log("DEBUGG " + req.path);
+  if (curSession == null && req.path != "/userlogin") {
+    // if user is not logged-in redirect back to login page //
+    res.redirect('/userlogin.html');
+  } else {
+    next();
+  }
+});
+
+app.get('/', (req, res) => {
+  if (curSession){
+      res.render('pages/index');
+    } else {
+      res.redirect('/userlogin.html');
+    }
+});
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.use(cookieParser());
 
 // add session 
 app.use(session({
@@ -32,8 +52,6 @@ pool = new Pool({
   connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
-
-
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
@@ -54,6 +72,7 @@ app.post('/signUp', async (req, res) => {
   }
 })
 
+var curSession;
 // regular user login, direct to homepage
 app.post('/userlogin', async (req, res) => {
   var inputEmail = req.body.email;
@@ -63,13 +82,6 @@ app.post('/userlogin', async (req, res) => {
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
 
   const data = { results: result.rows };
-  
-  /* For testing
-  console.log(inputEmail);
-  console.log(inputPswd);
-  console.log(data.results.length);
-  console.log(data.results[0]);
-  */
 
   //If umail is not unique
   if (data.results.length > 1) {
@@ -77,7 +89,11 @@ app.post('/userlogin', async (req, res) => {
   }
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
-    res.render('pages/homepage', data)
+    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+    req.session.user = user;
+    curSession = req.session;
+
+    res.render('pages/homepage', data);
   }
 
   //If umail does not exist or password is incorrect, alert user
@@ -99,8 +115,8 @@ app.post('/adminlogin', async (req, res) => {
   if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
-  //If umail and password are correct and the account is authorized, direct to user-list
-  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].authority == true) {
+  //If umail and password are correct and is admin, direct to user-list
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
     res.render('pages/user-list', data)
   }
 
