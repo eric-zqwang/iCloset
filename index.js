@@ -12,14 +12,14 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // redirect user to login page if they dont have a session
-app.use(function(req, res, next) {
-  if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
-    // if user is not logged-in redirect back to login page
-    res.redirect('/userlogin.html');
-  } else {
-    next();
-  }
-});
+// app.use(function(req, res, next) {
+//   if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
+//     // if user is not logged-in redirect back to login page
+//     res.redirect('/userlogin.html');
+//   } else {
+//     next();
+//   }
+// });
 
 app.get('/', (req, res) => {
   if (curSession){
@@ -43,12 +43,12 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
- ssl:{
-   rejectUnauthorized: false
- }
+//   connectionString: process.env.DATABASE_URL,
+//  ssl:{
+//    rejectUnauthorized: false
+//  }
   // for local host
-  // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
+    connectionString:"postgres://postgres:root@localhost/icloset",
 })
 
 app.post('/signUp', async (req, res) => {
@@ -151,17 +151,17 @@ var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   // debug use
-  // console.log(JSON.stringify(req.file))
-  // var response = '<a href="pages/homepage">back to home page</a><br>'
-  // response += "Files uploaded successfully.<br>"
-  // response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
-  // response += `${req.file.path}`;
-  // return res.send(response);
+  //  console.log(JSON.stringify(req.file))
+  //  var response = '<a href="pages/homepage">back to home page</a><br>'
+  //  response += "Files uploaded successfully.<br>"
+  //  response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
+  //  response += `${req.file.path}`;
+  //  return res.send(response);
  await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
- const result = await pool.query(`select * from userobj1`);
+const result = await pool.query(`select * from userobj1`);
  const data = { results: result.rows };
  res.render('pages/homepage', data);
-  // res.redirect('uploadimg.html');
+ //  res.redirect('uploadimg.html');
 });
 //
 // user list
