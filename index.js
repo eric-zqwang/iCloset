@@ -44,9 +44,9 @@ const { Pool } = require("pg");
 var pool;
 pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl:{
-    rejectUnauthorized: false
-  }
+ // ssl:{
+   // rejectUnauthorized: false
+ // }
   // for local host
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
