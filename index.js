@@ -152,16 +152,16 @@ app.use('/uploads', express.static('uploads'));
 app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   // debug use
   // console.log(JSON.stringify(req.file))
- // var response = '<a href="pages/homepage">back to home page</a><br>'
- // response += "Files uploaded successfully.<br>"
- // response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
- // response += `${req.file.path}`;
- // return res.send(response);
+  var response = '<a href="pages/homepage">back to home page</a><br>'
+  response += "Files uploaded successfully.<br>"
+  response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
+  response += `${req.file.path}`;
+  return res.send(response);
  // await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
  // const result = await pool.query(`select * from userobj1`);
  // const data = { results: result.rows };
  // res.render('pages/homepage', data);
-   res.redirect('uploadimg.html');
+  // res.redirect('uploadimg.html');
 });
 //
 // user list
