@@ -43,12 +43,12 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//  ssl:{
-//    rejectUnauthorized: false
-//  }
+  connectionString: process.env.DATABASE_URL,
+ ssl:{
+   rejectUnauthorized: false
+ }
   // for local host
-    connectionString:"postgres://postgres:root@localhost/icloset",
+  //  connectionString:"postgres://postgres:root@localhost/icloset",
 })
 
 app.post('/signUp', async (req, res) => {
