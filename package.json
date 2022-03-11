@@ -18,11 +18,11 @@
     "express-session": "^1.17.2",
     "formidable": "^2.0.1",
     "multer": "^1.4.4",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "nodemon": "^2.0.15"
   },
   "devDependencies": {
     "got": "^11.3.0",
-    "nodemon": "^2.0.15",
     "tape": "^4.7.0"
   },
   "repository": {
