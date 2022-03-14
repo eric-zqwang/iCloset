@@ -44,11 +44,11 @@ const { Pool } = require("pg");
 var pool;
 pool = new Pool({
   connectionString: process.env.DATABASE_URL,
- ssl:{
-   rejectUnauthorized: false
- }
+  ssl:{
+    rejectUnauthorized: false
+  }
   // for local host
-   // connectionString:"postgres://postgres:root@localhost/icloset",
+  // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
 app.post('/signUp', async (req, res) => {
@@ -151,17 +151,17 @@ var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   // debug use
-  //  console.log(JSON.stringify(req.file))
-  //  var response = '<a href="pages/homepage">back to home page</a><br>'
-  //  response += "Files uploaded successfully.<br>"
-  //  response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
-  //  response += `${req.file.path}`;
-  //  return res.send(response);
- await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
-const result = await pool.query(`select * from userobj1`);
- const data = { results: result.rows };
- res.render('pages/homepage', data);
- //  res.redirect('uploadimg.html');
+  // console.log(JSON.stringify(req.file))
+  // var response = '<a href="pages/homepage">back to home page</a><br>'
+  // response += "Files uploaded successfully.<br>"
+  // response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
+  // response += `${req.file.path}`;
+  // return res.send(response);
+  await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
+  const result = await pool.query(`select * from userobj1`);
+  const data = { results: result.rows };
+  res.render('pages/homepage', data);
+  // res.redirect('uploadimg.html');
 });
 //
 // user list
