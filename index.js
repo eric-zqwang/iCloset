@@ -165,6 +165,7 @@ app.post('/adminlogin', async(req,res) => {
 })
 
 //upload image
+const fs = require('fs')
 const multer = require('multer');
 const { redirect } = require('express/lib/response');
 var storage = multer.diskStorage({
@@ -178,20 +179,17 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
-  // debug use
-  // console.log(JSON.stringify(req.file))
-  // var response = '<a href="pages/homepage">back to home page</a><br>'
-  // response += "Files uploaded successfully.<br>"
-  // response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
-  // response += `${req.file.path}`;
-  // return res.send(response);
-  await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
+  function base64Encode(file) {
+    var body = fs.readFileSync(file);
+    return body.toString('base64');
+  }
+  var base64ImgData = base64Encode(req.file.path);
+  await pool.query(`insert into userobj1 (txtimg) values ('${base64ImgData}')`);
   const result = await pool.query(`select * from userobj1`);
   const data = { results: result.rows };
   res.render('pages/homepage', data);
-  // res.redirect('uploadimg.html');
 });
-//
+
 // user list
 app.get('/user-list', (request, response) => {
     var page = request.query['page'] ? request.query['page'] : 1;
