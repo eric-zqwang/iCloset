@@ -31,7 +31,7 @@ pool = new Pool({
 
 
   // for the local host
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 

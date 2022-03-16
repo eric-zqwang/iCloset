@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            ul{
+                padding: 0;
+                margin: 0;
+                list-style-type: none;
+                background-color: rgba(240, 248, 255, 0.671);
+                overflow: hidden;
+            }
+            li{
+                float: left;
+            }
+            li a{
+                font-size: large;
+                font-weight: 600;
+                display: block;
+                color: black;
+                padding: 40px 30px;
+                text-align: center;
+                text-decoration: none;
+                width: 160px;
+            }
+            #navbar-brand{
+                position: relative;
+                top: 20px;
+                left: 30px;
+                height: 40px;
+                width: 100px;
+                margin-right: 60px;
+            }
+            #temp{
+                position: absolute;
+                top: 20px;
+                right: 100px;
+                font-size: larger;
+                font-weight: bolder;
+            }
+            #tempRange{
+                position: absolute;
+                top: 40px;
+                right: 90px;
+                font-size: smaller;
+                font-weight: lighter;
+            }
+            #weatherAPI{
+                position: absolute;
+                right: 300px;
+            } 
+            
+        </style>
+        <script defer>
+            window.onload = function(){
+                x = document.getElementById("message")
+                try{
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                }
+                catch{
+                    x.innerHTML = err;
+                }
+            }
+            function showPosition(position) {
+                fetch('http://api.openweathermap.org/data/2.5/weather?lat='+position.coords.latitude+'&lang=en&&lon='+position.coords.longitude+'&appid=e3845fac91ea09459899128cb71305c1')
+                 .then(response => response.json())
+                 .then(data => {
+                    // Debug: for find json pair value
+                    console.log(data)
+                    var city = data['name'];
+                    var country = data['sys']['country']
+                    var temp = data['main']['temp']
+                    var weather = data['weather'][0]['description']
+                    var icon = data['weather'][0]['icon'];
+                    var temp = data['main']['temp'];
+                    var temp_max = data['main']['temp_max'];
+                    var temp_min = data['main']['temp_min'];
+                    var img = document.createElement("img");
+                    img.src = `http://openweathermap.org/img/wn/${icon}@2x.png`;
+                    var src = document.getElementById("weatherImg");
+                    src.appendChild(img);
+                    x = document.getElementById("city");
+                    x.innerHTML = city + ", " + country;
+                    y = document.getElementById("weather");
+                    y.innerHTML = weather;
+                    z = document.getElementById("temp");
+                    z.innerHTML = temp;
+                    a = document.getElementById("tempRange");
+                    a.innerHTML = temp_min + "/" + temp_max;
+                 })
+            }
+        </script>
+    </head>
+    <body>
+        <ul id="navbar-element">
+            <li>
+                <img id="navbar-brand" src="/iCloset.png">
+            </li>
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#category">CATEGORY</a></li>
+            <li><a href="#OUTFITS">OUTFITS</a></li>
+            <li><a href="#calendar">CALENDAR</a></li>
+            <li><a href="#account">ACCOUNT</a></li>
+            <li><a href="#logout">LOG OUT</a></li>
+            <div id="weatherAPI">
+            <li id="weatherImg"></li>
+            <li>
+                <ul>
+                    <br>
+                    <li id="city"></li> <br>
+                    <li id="weather"></li> <br>
+                    <li id="name">The Weather Chanel</li>
+                </ul>
+            </li>
+            </div>
+            <li id="temp"></li> <br>
+            <li id="tempRange"></li>
+        </ul>
+    </body>
+</html>
