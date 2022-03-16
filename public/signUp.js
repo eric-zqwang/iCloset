@@ -34,7 +34,11 @@ function validate_password(){
     var passw=  /^[A-Za-z]\w{6,14}$/;
     if (!password.match(passw)){
         document.getElementById("message1").style.color = 'red';
+<<<<<<< HEAD
         document.getElementById("message1").innerHTML = 'password is too simple! You should begin with letter and at least 7 bits';
+=======
+        document.getElementById("message1").innerHTML = 'Password is too simple! You should begin with letter and at least 7 bits';
+>>>>>>> 58b97671e16e21c50e20bb499ce55a4a3872cb72
         document.getElementById("submitButton").disabled = true;
     }
     else{

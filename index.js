@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path')
 const session = require("express-session")
+const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 5000
 
 var app = express()
@@ -9,8 +10,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
-app.get('/', (req, res) => res.render('pages/index'))
-app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+
+// redirect user to login page if they dont have a session
+app.use(function(req, res, next) {
+  if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
+    // if user is not logged-in redirect back to login page
+    res.redirect('/userlogin.html');
+  } else {
+    next();
+  }
+});
+
+app.get('/', (req, res) => {
+  if (curSession){
+      res.render('pages/index');
+    } else {
+      res.redirect('/userlogin.html');
+    }
+});
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.use(cookieParser());
 
 // add session 
 app.use(session({
@@ -28,23 +47,21 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-
-
-  // for the local host
-  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  connectionString: process.env.DATABASE_URL,
+  ssl:{
+    rejectUnauthorized: false
+  }
+  // for local host
+  // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
-
-
 
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
 
-
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result){
     res.send("The register email already exist")
-
   }
   else{
     try {
@@ -58,47 +75,70 @@ app.post('/signUp', async (req, res) => {
   }
 })
 
-/** change database name "users"; column name "uname", "psw"; "homepage" ...*/
+var curSession;
+// regular user login, direct to homepage
 app.post('/userlogin', async (req, res) => {
+  var inputEmail = req.body.email;
+  var inputPswd = req.body.pswd;
+  
+  // search database using umail
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+
+  const data = { results: result.rows };
+
+  //If umail is not unique
+  if (data.results.length > 1) {
+    console.log("DUPLICATE USERS!!!");
+  }
+  //If umail and password are correct, direct to homepage
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
+    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+    req.session.user = user;
+    curSession = req.session;
+
+    res.render('pages/homepage', data);
+  }
+
+  //If umail does not exist or password is incorrect, alert user
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd)  {
+    console.log("incorrect login email or password");
+  }
+})
+
+// admin login, direct to user-list
+app.post('/adminlogin', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
 
   // search database using umail
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
-
   const data = { results: result.rows };
-  
-  /* For testing
-  console.log(inputEmail);
-  console.log(inputPswd);
-  console.log(data.results.length);
-  console.log(data.results[0]);
-  */
 
-  //If username is not unique
+  //If umail is not unique
   if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
-  //If usename and password are correct, direct to homepage
-  else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
-    res.render('pages/homepage', data)
+  //If umail and password are correct and is admin, direct to user-list
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
+    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+    req.session.user = user;
+    curSession = req.session;
+    res.render('pages/user-list', data)
   }
 
-  //If user does not exist or password is incorrect, alert user
+  //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
-    window.alert("incorrect login email or password");
+    console.log("incorrect login email or password");
   }
-  
 })
 
-app.post('/userlogout', async(req,res) => {
-  if(req.body.session.user) {
-    res.session.destory;
+app.get('/userlogout', async(req,res) => {
+  if(curSession) {
+    curSession.destroy();
   }
+  req.session.destroy();
   res.redirect('/userlogin.html');
 })
-
-
 
 app.post('/adminlogin', async(req,res) => {
   var uname = req.body.uname;
@@ -124,19 +164,18 @@ app.post('/adminlogin', async(req,res) => {
   }
 })
 
-
 //upload image
 const multer = require('multer');
 const { redirect } = require('express/lib/response');
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads')
+    cb(null, './uploads');
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
+    cb(null, file.originalname);
   }
-})
-var upload = multer({ storage: storage })
+});
+var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   // debug use
@@ -145,11 +184,12 @@ app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
   // response += "Files uploaded successfully.<br>"
   // response += `<img src="${req.file.path}"  width="200" height="200"/><br>`
   // response += `${req.file.path}`;
-  await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}\\${req.file.path}'))`);
+  // return res.send(response);
+  await pool.query(`insert into userobj1 (images) values (lo_import('${__dirname}//${req.file.path}'))`);
   const result = await pool.query(`select * from userobj1`);
   const data = { results: result.rows };
   res.render('pages/homepage', data);
-  //res.redirect('uploadimg.html');
+  // res.redirect('uploadimg.html');
 });
 //
 // user list
@@ -187,3 +227,4 @@ app.get('/user-list', (request, response) => {
         });
     });
 });
+// app.use('/uploads', express.static('uploads'));

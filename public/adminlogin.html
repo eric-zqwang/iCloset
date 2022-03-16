@@ -4,23 +4,25 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./stylesheets/icloset.css">
   <title>Admin Login Form</title>
 </head>
 <body>
-  <form class="" action="/Adminlogin" method="post">
-    <div>
-      <label for="uname"><b>Admin Name</b></label>
-      <input type="text" name="uname" placeholder="Enter Adminname" required> <br>
-    </div>
-    <div>
-      <label for="psw"><b>Password</b></label>
-      <input type="password" name="psw" placeholder="Enter Password" required> <br>
-    </div>
-    <div class="button">
-      <button type="submit">Login</button>
-    </div>
-  </form>
-  <button class="button" type="submit" href="signup.html">Sign Up</button>
-  <a href="userlogin.html">Login as User</a>
+  <div class="container">
+    <form class="" action="/adminlogin" method="post"> 
+      <div>
+        <label for="umail"><b>Admin Email</b></label>
+        <input type="text" name="email" placeholder="Enter Admin Email" required> <br>
+      </div>
+      <div>
+        <label for="pswd"><b>Password</b></label>
+        <input type="password" name="pswd" placeholder="Enter Password" required> <br>
+      </div>
+      <div class="button">
+        <button class="button" type="submit">Login</button>
+      </div>
+      <a href="userlogin.html">Login as User</a>
+    </form>
+  </div>
 </body>
 </html>
