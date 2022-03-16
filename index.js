@@ -43,11 +43,10 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  connectionString: 'postgres://postgres:woaini10@localhost/users' 
-  // connectionString: process.env.DATABASE_URL,
-  // ssl:{
-  //   rejectUnauthorized: false
-  // }
+  connectionString: process.env.DATABASE_URL,
+  ssl:{
+     rejectUnauthorized: false
+  }
   // connectionString: process.env.DATABASE_URL,
   // ssl:{
   //   rejectUnauthorized: false
