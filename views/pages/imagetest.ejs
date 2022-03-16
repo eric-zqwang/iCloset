@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <script>
+        import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageFile } from "remove.bg";
+
+        const localFile = "./image/01.jpg";
+        const outputFile = `${__dirname}/out/img-removed-from-file.png`;
+
+        removeBackgroundFromImageFile({
+            path: localFile,
+            apiKey: "oZ4aG5Km9m7fCuVQxYYZsGSn",
+            size: "regular",
+            type: "auto",
+            scale: "50%",
+            outputFile
+        }).then((result: RemoveBgResult) => {
+            console.log(`File saved to ${outputFile}`);
+            const base64img = result.base64img;
+        }).catch((errors: Array<RemoveBgError>) => {
+            console.log(JSON.stringify(errors));
+        });
+    </script>
+</head>
+<body>
+    <img id="image" src="/cmpt276demo/public/image/01.jpg" function="removeBackgroundFromImageFile">
+
+</body>
+</html>
