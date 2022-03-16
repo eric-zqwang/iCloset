@@ -43,16 +43,18 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:{
-    rejectUnauthorized: false
-  }
+  connectionString: 'postgres://postgres:woaini10@localhost/users' 
+  // connectionString: process.env.DATABASE_URL,
+  // ssl:{
+  //   rejectUnauthorized: false
+  // }
   // connectionString: process.env.DATABASE_URL,
   // ssl:{
   //   rejectUnauthorized: false
   // }
   // for local host
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
+  
 })
 
 app.post('/signUp', async (req, res) => {
@@ -230,3 +232,22 @@ app.get('/user-list', (request, response) => {
 app.get('/outfit', (req, res) => {
   res.render('pages/outfit-collages');
  });
+
+ //remove background
+ const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg")
+ 
+const localFile = "./image/01.jpg";
+const outputFile = `${__dirname}/out/img-removed-from-file.png`
+ 
+removeBackgroundFromImageFile({
+  path: localFile,
+  apiKey: "oZ4aG5Km9m7fCuVQxYYZsGSn",
+  size: "regular",
+  type: "auto",
+  scale: "50%",
+  outputFile 
+}).then((result) => {
+ console.log(`File saved to ${outputFile}`);
+}).catch((errors) => {
+ console.log(JSON.stringify(errors));
+});
