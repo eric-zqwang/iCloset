@@ -47,12 +47,12 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-  connectionString: process.env.DATABASE_URL,
-  ssl:{
-    rejectUnauthorized: false
-  }
+  // connectionString: process.env.DATABASE_URL,
+  // ssl:{
+  //   rejectUnauthorized: false
+  // }
   // for local host
-  // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
 })
 
 app.post('/signUp', async (req, res) => {
@@ -226,3 +226,7 @@ app.get('/user-list', (request, response) => {
     });
 });
 // app.use('/uploads', express.static('uploads'));
+
+app.get('/outfit', (req, res) => {
+  res.render('pages/outfit-collages');
+ });

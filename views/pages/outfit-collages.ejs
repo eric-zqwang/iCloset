@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outfit Collages</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    
+    .sidenav ul {
+      list-style-type: non;
+      margin: 0;
+      padding: 0;
+      width: 25%;
+      background-color: #f1f1f1;
+      position: fixed;
+      height: 100%;
+      overflow: auto;
+    }
+    
+    .sidenav li a {
+      display: block;
+      color: #000;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+    
+    .sidenav li a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+    
+    .sidenav li a:hover:not(.active) {
+      background-color: #555;
+      color: white;
+    }
+    </style>
+    
+</head>
+<body>
+  <%- include ("../partials/pageNav.ejs") %>
+  <div class = "sidenav">
+
+    <!-- Fixed Full-Height Side Bar -->
+    <!-- 
+      <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
+      </canvas>
+    -->
+    <ul>
+      <li><a href="#shirts">Shirts</a></li>
+      <li><a href="#coats">Coats</a></li>
+      <li><a href="#suits">Suits</a></li>
+      <li><a href="#sweaters">Sweaters</a></li>
+      <li><a href="#pans">Pants</a></li>
+      <li><a href="#jeans">Jeans</a></li>
+      <li><a href="#shoes">Shoes</a></li>
+      <li><a href="#bags">Bags</a></li>
+      <li><a href="#accessories">Accessories</a></li>
+      <li><a href="#others">Others</a></li>
+    </ul>
+  
+  
+  
+  <div style="margin-left:25%;padding:1px 16px;height:1000px;">
+    <h2>Hello, User</h2>
+    <h3>Show all the clothes!!!</h3>
+    
+  </div>
+</div>
+</body>
+</html>
