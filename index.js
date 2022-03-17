@@ -43,17 +43,12 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:{
-     rejectUnauthorized: false
-  }
   // connectionString: process.env.DATABASE_URL,
   // ssl:{
   //   rejectUnauthorized: false
   // }
   // for local host
-  // connectionString: 'postgres://nicoleli:12345@localhost/icloset' 
-  
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset'   
 })
 
 app.post('/signUp', async (req, res) => {
@@ -112,26 +107,28 @@ app.post('/adminlogin', async (req, res) => {
   var inputPswd = req.body.pswd;
 
   // search database using umail
-  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
-  const data = { results: result.rows };
+  let result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
 
   //If umail is not unique
-  if (data.results.length > 1) {
+  if (result.rows.length > 1) {
     console.log("user email not correct");
     }
   //If umail and password are correct and is admin, direct to user-list
-  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
-    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+  else if (result.rows.length == 1 && inputPswd == result.rows[0].upswd && result.rows[0].admin == true) {
+    var user = {name:result.rows[0].uname, password:result.rows[0].upswd}
     req.session.user = user;
     curSession = req.session;
-    res.render('pages/user-list', data)
+    result = await pool.query(`SELECT * FROM usrs;`);
+    const data = { results: result.rows };
+    res.render('pages/adminpage', data)
   }
 
   //If umail does not exist or password is incorrect, alert user
-  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
+  else if (result.rows.length == 0 || inputPswd != result.rows[0].upswd) {
     console.log("incorrect login email or password");
   }
 })
+
 
 app.get('/userlogout', async(req,res) => {
   if(curSession) {
@@ -141,29 +138,6 @@ app.get('/userlogout', async(req,res) => {
   res.redirect('/userlogin.html');
 })
 
-app.post('/adminlogin', async(req,res) => {
-  var uname = req.body.uname;
-  var password = req.body.psw;
-  const data = result.rows;
-  
-  //search database using uname
-  const result = await SecurityPolicyViolationEvent.query("SELECT * FROM userInfo WHERE umail='" + uname + "';");
-  
-  //If username is not unique
-  if (data.length > 1) {
-    console.log("DUPLICATE USERS!!!");
-  }
-  //If usename and password are correct, direct to homepage
-  else if (data.length == 1 && password == data[0].psw && data[0].authority == true) {
-    res.render('pages/homepage', data[0])
-  }
-
-  //If user does not exist or password is incorrect, alert user
-  else if (data.length == 0 || password != data[0].psw || data[0].authority != true) {
-    window.alert("incorrect username or password");
-
-  }
-})
 
 //upload image
 const fs = require('fs')
@@ -192,43 +166,93 @@ app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
 });
 
 // user list
-app.get('/user-list', (request, response) => {
-    var page = request.query['page'] ? request.query['page'] : 1;
-    var size = request.query['size'] ? request.query['size'] : 15;
-    pool.connect(function(error, client, releaseFn) {
-        if(error) {// if error then release the connection
-            releaseFn();
-            return console.log('Connection failed: ' + error);
-        }
-        var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
-        client.query(countSql, (error, results) => {
-            if(error) {
-                releaseFn();
-                return console.log('Query failed: ' + error);
-            }
-            // total number of users
-            var total = results.rows[0].total;
-            var offset= (page - 1) * size;
-            // query the target page of users
-            var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
-            client.query(listSql, (error, results) => {
-                releaseFn();
-                if(error) {
-                    return console.log('Query userInfo failed: ' + error);
-                }
-                var data = results.rows;
-                // OK, now we render the users
-                response.render('pages/user-list', {
-                    users: data,
-                    total: total
-                });
-            });
-        });
-    });
-});
+// app.get('/user-list', (request, response) => {
+//     var page = request.query['page'] ? request.query['page'] : 1;
+//     var size = request.query['size'] ? request.query['size'] : 15;
+//     pool.connect(function(error, client, releaseFn) {
+//         if(error) {// if error then release the connection
+//             releaseFn();
+//             return console.log('Connection failed: ' + error);
+//         }
+//         var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
+//         client.query(countSql, (error, results) => {
+//             if(error) {
+//                 releaseFn();
+//                 return console.log('Query failed: ' + error);
+//             }
+//             // total number of users
+//             var total = results.rows[0].total;
+//             var offset= (page - 1) * size;
+//             // query the target page of users
+//             var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
+//             client.query(listSql, (error, results) => {
+//                 releaseFn();
+//                 if(error) {
+//                     return console.log('Query userInfo failed: ' + error);
+//                 }
+//                 var data = results.rows;
+//                 // OK, now we render the users
+//                 response.render('pages/user-list', {
+//                     users: data,
+//                     total: total
+//                 });
+//             });
+//         });
+//     });
+// });
 // app.use('/uploads', express.static('uploads'));
 
 app.get('/outfit', (req, res) => {
   res.render('pages/outfit-collages');
  });
 
+// Get users' information from database
+app.get('/', (req, res) => res.render('pages/index'));
+app.get('/userinfo', async (req,res) => {
+  //invoke a query that selects all row from the users table
+  try {
+    const result = await pool.query('SELECT * FROM usrs');
+    const data = { results : result.rows };
+    res.render('pages/adminpage', data);
+  }
+  catch (error) {
+    res.end(error);
+  }
+})
+
+//Diplay details of the selected user
+app.get('/usrs/:umail', async(req,res) => {
+  var email = req.params.umail;
+  //search the database using id
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
+  const data = { results : result.rows };
+  res.render('pages/userdetail', data);
+})
+
+// Delete rectangles by ID
+app.post('/usrs/:umail', async(req,res) => {
+  var email = req.params.umail; 
+  //search the database using id
+  await pool.query(`DELETE FROM usrs WHERE umail= '${email}';`);
+  //display current database
+  const result = await pool.query("SELECT * FROM usrs");
+  const data = { results : result.rows };
+  res.render('pages/adminpage', data);
+})
+
+
+// Edit details of existing users
+app.post('/edituser/:umail', async(req,res) => {
+  var email = req.params.umail;
+  //define variables that allow for changing
+  var name = req.body.name;
+  //var gender = req.body.gender;
+  var password = req.body.password;
+  var isadmin = req.body.isadmin;
+  //search the database using umail
+  await pool.query(`UPDATE usrs SET uname = '${name}', upswd = '${password}', admin = ${isadmin} WHERE umail = '${email}';`)
+  //display current database
+  const result = await pool.query(`SELECT * FROM usrs;`);
+  const data = { results: result.rows };
+  res.render('pages/adminpage', data);
+})

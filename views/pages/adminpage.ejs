@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<style>
+  table {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  td, th {
+      border: 1px solid  #b8b8b8;
+      font-size: 13px;
+      text-align: left;
+      padding: 4px;
+  }
+
+  th {background-color: #d1d1d1;}
+  [type="text"] {
+      border: 1px solid #9b9a9a;
+      border-radius: 2px;
+      width: 40px;
+      height: 25px;
+  }
+</style>
+<head>
+</head>
+
+<body>
+  <div class="container">
+    <h2>User Information</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Is Admin</th>
+        <th>Delete</th>
+      </tr>
+      
+      <% results.forEach(function(r) { %>
+      <tr>
+        <td><%= r.uid %></td>
+        <td><%= r.uname %></td>
+        <td><a href="/usrs/<%=r.umail%>"><%= r.umail %></td>
+        <td><%= r.upswd %></td>
+        <td><%= r.admin %></td>
+        <td class="button">
+          <form action="/usrs/<%=r.umail%>" method="post">
+            <button type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+
+      <% }); %>
+      
+    </table> <br>
+  </div>
+</body>
+
+</html>

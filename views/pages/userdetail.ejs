@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+  <div class="container">
+    <h2>User Detail</h2>
+
+      <% results.forEach(function(r) { %>
+        
+        <form action="/edituser/<%=r.umail%>" method = "POST">
+          <table>
+          <tr><td>ID</td>           <td><input type="text" name="id" disabled value=<%= r.uid %>></td></tr>
+          <tr><td>Name</td>         <td><input type="text" name="name" value=<%= r.uname %>></td></tr>
+          <tr><td>Email</td>        <td><input type="text" name="email" disabled value=<%= r.umail %>></td></tr>
+          <tr><td>Password</td>     <td><input type="text" name="password" value=<%= r.upswd %>></td></tr>
+          <!-- <tr><td>Gender</td>       <td><input type="text" name="gender" value=<%= r.gender %>></td></tr> -->
+          <tr><td>Is Admin</td>     <td><input type="text" name="isadmin" value=<%= r.admin %>></td></tr>
+          <br>
+          </table>
+          <button type="submit">Edit Details</button>
+        </form>
+        <form action="/userinfo">
+          <button type="submit"> View All</button>
+        </form>
+        
+      <% }); %>
+      
+    </ul>
+    
+  </div>
+
+</body>
+</html>
