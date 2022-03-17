@@ -133,17 +133,6 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
-app.get('/adminlogin/', function(req, res){
-    res.send("Hello from admin login URL");
-});
-
-app.get('/adminlogin/test/', function(req, res){
-    res.send("Hello from the 'test' URL");
-});
-
-app.listen(0, () => console.log('Application is running'));
-
-
 app.get('/userlogout', async(req,res) => {
   if(curSession) {
     curSession.destroy();
