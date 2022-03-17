@@ -232,3 +232,23 @@ app.get('/outfit', (req, res) => {
   res.render('pages/outfit-collages');
  });
 
+ //removebg
+ const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg")
+
+//able to change
+const url = "https://img0.baidu.com/it/u=2287973901,668883338&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300";
+const outputFile = "remove.png";
+ 
+removeBackgroundFromImageUrl({
+  url,
+  apiKey: "oZ4aG5Km9m7fCuVQxYYZsGSn",
+  size: "auto",
+  type: "default",
+  outputFile 
+}).then((result) => {
+ console.log(`File saved to ${outputFile}`);
+  const base64img = result.base64img;
+}).catch((errors) => {
+ console.log(JSON.stringify(errors));
+});
+
