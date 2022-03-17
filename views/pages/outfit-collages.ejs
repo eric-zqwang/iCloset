@@ -50,7 +50,7 @@
       </canvas>
     -->
     <ul>
-      <li><a href="#shirts">Shirts</a></li>
+      <li><a href="" onclick="changeCategory">Shirts</a></li>
       <li><a href="#coats">Coats</a></li>
       <li><a href="#suits">Suits</a></li>
       <li><a href="#sweaters">Sweaters</a></li>
@@ -72,3 +72,17 @@
 </div>
 </body>
 </html>
+<script>
+  changeCategory = function(event) {
+    category; // which category is selected?
+    result = query("select * from ddd where umail = and category = ''")
+    const b = "<ul>"
+    result.rows.forEach(item => {
+      b += "<li> item.name </li>"
+    });
+    b += "</ul>";
+
+    const a = document.getElementById("div2");
+    a.innerHTML = b; // sets or returns the content (innerHTML) of the selected elements. 
+  }
+  </script>
