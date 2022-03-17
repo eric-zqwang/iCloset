@@ -133,9 +133,6 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
-const express = require('express');
-const app = express();
-
 app.get('/adminlogin/', function(req, res){
     res.send("Hello from admin login URL");
 });
