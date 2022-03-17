@@ -117,8 +117,8 @@ app.post('/adminlogin', async (req, res) => {
 
   //If umail is not unique
   if (data.results.length > 1) {
-    console.log("DUPLICATE USERS!!!");
-  }
+    console.log("user email not correct");
+    }
   //If umail and password are correct and is admin, direct to user-list
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
     var user = {name:data.results[0].uname, password:data.results[0].upswd}
@@ -132,6 +132,20 @@ app.post('/adminlogin', async (req, res) => {
     console.log("incorrect login email or password");
   }
 })
+
+const express = require('express');
+const app = express();
+
+app.get('/adminlogin/', function(req, res){
+    res.send("Hello from admin login URL");
+});
+
+app.get('/adminlogin/test/', function(req, res){
+    res.send("Hello from the 'test' URL");
+});
+
+app.listen(0, () => console.log('Application is running'));
+
 
 app.get('/userlogout', async(req,res) => {
   if(curSession) {
@@ -231,24 +245,4 @@ app.get('/user-list', (request, response) => {
 app.get('/outfit', (req, res) => {
   res.render('pages/outfit-collages');
  });
-
- //removebg
- const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg")
-
-//able to change
-const url = "https://img0.baidu.com/it/u=2287973901,668883338&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300";
-const outputFile = "remove.png";
- 
-removeBackgroundFromImageUrl({
-  url,
-  apiKey: "oZ4aG5Km9m7fCuVQxYYZsGSn",
-  size: "auto",
-  type: "default",
-  outputFile 
-}).then((result) => {
- console.log(`File saved to ${outputFile}`);
-  const base64img = result.base64img;
-}).catch((errors) => {
- console.log(JSON.stringify(errors));
-});
 
