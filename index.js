@@ -50,7 +50,7 @@ pool = new Pool({
   // for local host
  // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
  //connectionString: 'postgres://postgres:root@localhost/try'   
-   connectionString: 'postgres://postgres:woaini10@localhost/users' 
+   
 })
 
 app.post('/signUp', async (req, res) => {
