@@ -43,19 +43,19 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  //  connectionString: process.env.DATABASE_URL,
-  //  ssl:{
-  //    rejectUnauthorized: false
-  //  },
+  // connectionString: process.env.DATABASE_URL,
+  // ssl:{
+  //   rejectUnauthorized: false
+  // }
+
   // for local host
- // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
- //connectionString: 'postgres://postgres:root@localhost/try'   
-   
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
+  var inputName = req.body.name;
 
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result){
@@ -63,8 +63,8 @@ app.post('/signUp', async (req, res) => {
   }
   else{
     try {
-      await pool.query(`INSERT INTO usrs (umail, upswd)
-      VALUES ('${inputEmail}', '${inputPswd}')`);
+      await pool.query(`INSERT INTO usrs (uname, umail, upswd) 
+      VALUES ('${inputName}', '${inputEmail}', '${inputPswd}')`);
       res.redirect('/userlogin.html');
     }
     catch (error) {
@@ -109,28 +109,26 @@ app.post('/adminlogin', async (req, res) => {
   var inputPswd = req.body.pswd;
 
   // search database using umail
-  let result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+  const data = { results: result.rows };
 
   //If umail is not unique
-  if (result.rows.length > 1) {
-    console.log("user email not correct");
-    }
+  if (data.results.length > 1) {
+    console.log("DUPLICATE USERS!!!");
+  }
   //If umail and password are correct and is admin, direct to user-list
-  else if (result.rows.length == 1 && inputPswd == result.rows[0].upswd && result.rows[0].admin == true) {
-    var user = {name:result.rows[0].uname, password:result.rows[0].upswd}
+  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
+    var user = {name:data.results[0].uname, password:data.results[0].upswd}
     req.session.user = user;
     curSession = req.session;
-    result = await pool.query(`SELECT * FROM usrs;`);
-    const data = { results: result.rows };
-    res.render('pages/adminpage', data)
+    res.render('pages/user-list', data)
   }
 
   //If umail does not exist or password is incorrect, alert user
-  else if (result.rows.length == 0 || inputPswd != result.rows[0].upswd) {
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
     console.log("incorrect login email or password");
   }
 })
-
 
 app.get('/userlogout', async(req,res) => {
   if(curSession) {
@@ -178,7 +176,8 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
 });
 
 //url removebg
-const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg")
+const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg");
+const res = require('express/lib/response');
 
 //able to change
 const url = "https://img0.baidu.com/it/u=2287973901,668883338&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300";
@@ -198,40 +197,40 @@ removeBackgroundFromImageUrl({
 });
 
 // user list
-// app.get('/user-list', (request, response) => {
-//     var page = request.query['page'] ? request.query['page'] : 1;
-//     var size = request.query['size'] ? request.query['size'] : 15;
-//     pool.connect(function(error, client, releaseFn) {
-//         if(error) {// if error then release the connection
-//             releaseFn();
-//             return console.log('Connection failed: ' + error);
-//         }
-//         var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
-//         client.query(countSql, (error, results) => {
-//             if(error) {
-//                 releaseFn();
-//                 return console.log('Query failed: ' + error);
-//             }
-//             // total number of users
-//             var total = results.rows[0].total;
-//             var offset= (page - 1) * size;
-//             // query the target page of users
-//             var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
-//             client.query(listSql, (error, results) => {
-//                 releaseFn();
-//                 if(error) {
-//                     return console.log('Query userInfo failed: ' + error);
-//                 }
-//                 var data = results.rows;
-//                 // OK, now we render the users
-//                 response.render('pages/user-list', {
-//                     users: data,
-//                     total: total
-//                 });
-//             });
-//         });
-//     });
-// });
+app.get('/user-list', (request, response) => {
+    var page = request.query['page'] ? request.query['page'] : 1;
+    var size = request.query['size'] ? request.query['size'] : 15;
+    pool.connect(function(error, client, releaseFn) {
+        if(error) {// if error then release the connection
+            releaseFn();
+            return console.log('Connection failed: ' + error);
+        }
+        var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
+        client.query(countSql, (error, results) => {
+            if(error) {
+                releaseFn();
+                return console.log('Query failed: ' + error);
+            }
+            // total number of users
+            var total = results.rows[0].total;
+            var offset= (page - 1) * size;
+            // query the target page of users
+            var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
+            client.query(listSql, (error, results) => {
+                releaseFn();
+                if(error) {
+                    return console.log('Query userInfo failed: ' + error);
+                }
+                var data = results.rows;
+                // OK, now we render the users
+                response.render('pages/user-list', {
+                    users: data,
+                    total: total
+                });
+            });
+        });
+    });
+});
 // app.use('/uploads', express.static('uploads'));
 
 app.get('/:id/outfit', async (req, res) => {
@@ -299,4 +298,25 @@ app.post('/edituser/:umail', async(req,res) => {
   res.render('pages/adminpage', data);
 })
 
+
+// click like
+app.post('/:uid/:imgID/postImg', async(req,res) => {
+  try{
+    var inputimgid = req.params.imgID.substring(1);
+    var inputuserid = req.params.uid.substring(1);
+    await pool.query(`insert into userInteraction (uid, likeNum, imgID)
+    values (${inputuserid}, 0 , ${inputimgid})`);
+
+    await pool.query(`update userobj1 set public = true where imgID = ${inputimgid}`)
+
+    const imgfile =  await pool.query(`select txtimg from userobj1 where public = true`)
+
+    const result = await pool.query(`select * from userInteraction`);
+    const data = {imgfile:imgfile.rows, results:result.rows};
+    res.render('pages/interactionPage', data);
+  }
+  catch(error){
+    res.end(error);
+  }
+})
 

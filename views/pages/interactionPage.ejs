@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <h1>Users Img</h1>
+        <% imgfile.forEach(function(r) { %>
+        <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
+        <% }); %>
+
+        <% results.forEach(function(r) { %>
+        <div>
+            <li>
+                <%= r.uid %>
+                <%= r.likeNum %>
+                <input type="button" value="clickLike">
+            </li>
+            <br>
+        </div>
+        <% }); %>
+    </body>
+</html>
