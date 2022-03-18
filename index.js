@@ -43,12 +43,13 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-  // connectionString: process.env.DATABASE_URL,
-  // ssl:{
-  //   rejectUnauthorized: false
-  // }
+   connectionString: process.env.DATABASE_URL,
+   ssl:{
+     rejectUnauthorized: false
+   }
   // for local host
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset'   
+ // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+ //connectionString: 'postgres://postgres:root@localhost/try'   
 })
 
 app.post('/signUp', async (req, res) => {
@@ -138,6 +139,13 @@ app.get('/userlogout', async(req,res) => {
   res.redirect('/userlogin.html');
 })
 
+app.get('/:id/uploadimg', async (req, res) => {
+  let id  =req.params.id.substring(1);
+  result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
+     data = { results: result.rows };
+  res.render('pages/uploadimg',data);
+
+})
 
 //upload image
 const fs = require('fs')
@@ -153,16 +161,19 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
-app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
+
+app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   function base64Encode(file) {
     var body = fs.readFileSync(file);
     return body.toString('base64');
   }
+  let id  =req.params.id.substring(1);
   var base64ImgData = base64Encode(req.file.path);
-  await pool.query(`insert into userobj1 (txtimg) values ('${base64ImgData}')`);
-  const result = await pool.query(`select * from userobj1`);
+  var owner = await pool.query(`select * from userobj1`);
+  await pool.query(`insert into userobj1 (txtimg, uid) values ('${base64ImgData}','${id}')`);
+  const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
   const data = { results: result.rows };
-  res.render('pages/homepage', data);
+  res.render('pages/outfit-collages', data);
 });
 
 // user list
@@ -202,9 +213,19 @@ app.post('/uploadImage', upload.single('upImg'), async (req, res) => {
 // });
 // app.use('/uploads', express.static('uploads'));
 
-app.get('/outfit', (req, res) => {
-  res.render('pages/outfit-collages');
- });
+app.get('/:id/outfit', async (req, res) => {
+  var id = req.params.id.substring(1);
+  var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
+  var data = { results: result.rows };
+   if(data.results.length==0){
+     result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
+     data = { results: result.rows };
+   }
+  
+  
+  res.render('pages/outfit-collages', data);
+
+});
 
 // Get users' information from database
 app.get('/', (req, res) => res.render('pages/index'));

@@ -67,9 +67,16 @@
   <div style="margin-left:25%;padding:1px 16px;height:1000px;">
     <h2>Hello, User</h2>
     <h3>Show all the clothes!!!</h3>
-    
+    <div>
+      <% results.forEach(function(r) { %>
+         <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
+        <% }); %>
+        <a href="./uploadimg">upload image</a>
+    </div>
   </div>
+
 </div>
+
 </body>
 </html>
 <script>

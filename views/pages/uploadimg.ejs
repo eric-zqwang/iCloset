@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+
+    var showimg = function (event) {
+      let reader = new FileReader();
+
+      reader.onload = function () {
+        var output = document.getElementById('outputImage');
+        output.src = reader.result;
+      };
+      reader.onloadend = () => {
+
+      };
+      reader.readAsDataURL(event.target.files[0]);
+
+    }
+
+  </script>
+  <title>upload page</title>
+</head>
+
+<body>
+
+
+  <div>
+
+  </div>
+  <div>
+    <!-- show existed images -->
+  </div>
+  <div>
+    <form class="" action="/:<%= results[0].uid %>/uploadImage" method="post" enctype="multipart/form-data">
+      <div>
+        <img id="outputImage" width="200" height="200" />
+      </div>
+      <input type="file" accept="image/*" onchange="showimg(event)" name="upImg" required />
+
+      <br>
+      <input type="submit" value="upload!">
+
+    </form>
+  </div>
+
+
+</body>
+
+</html>
