@@ -7,6 +7,9 @@
                 margin: 0;
                 list-style-type: none;
                 background-color: rgba(240, 248, 255, 0.671);
+                position: fixed;
+                width: 100%;
+                height: 120px;
                 overflow: hidden;
             }
             li{
@@ -17,36 +20,40 @@
                 font-weight: 600;
                 display: block;
                 color: black;
-                padding: 40px 30px;
+                padding: 50px 30px;
                 text-align: center;
                 text-decoration: none;
-                width: 160px;
+                width: 90px;
+            }
+
+            li a:hover:not(.active) {
+                color: rgb(138, 117, 165);
             }
             #navbar-brand{
                 position: relative;
-                top: 20px;
+                top: 30px;
                 left: 30px;
                 height: 40px;
                 width: 100px;
                 margin-right: 60px;
             }
             #temp{
-                position: absolute;
+                position: relative;
                 top: 20px;
-                right: 100px;
+                margin-left: 150px;;
                 font-size: larger;
                 font-weight: bolder;
             }
             #tempRange{
-                position: absolute;
-                top: 40px;
-                right: 90px;
+                position: relative;
+                top: 30px;
+                margin-left: 150px;
                 font-size: smaller;
                 font-weight: lighter;
             }
             #weatherAPI{
-                position: absolute;
-                right: 300px;
+                position: relative;
+                margin-left: 50px;
             } 
             
         </style>
@@ -83,9 +90,9 @@
                     y = document.getElementById("weather");
                     y.innerHTML = weather;
                     z = document.getElementById("temp");
-                    z.innerHTML = temp;
+                    z.innerHTML = (temp-273.15).toFixed(1) + "℃";
                     a = document.getElementById("tempRange");
-                    a.innerHTML = temp_min + "/" + temp_max;
+                    a.innerHTML = (temp_min-273.15).toFixed(1) + "℃ /" + (temp_max-273.15).toFixed(1) + "℃";
                  })
             }
         </script>

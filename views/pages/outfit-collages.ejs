@@ -14,9 +14,10 @@
       list-style-type: non;
       margin: 0;
       padding: 0;
-      width: 25%;
+      width: 160px;
       background-color: #f1f1f1;
       position: fixed;
+      top: 120px;
       height: 100%;
       overflow: auto;
     }
@@ -24,19 +25,37 @@
     .sidenav li a {
       display: block;
       color: #000;
-      padding: 8px 16px;
+      padding: 10px 25px;
       text-decoration: none;
     }
     
     .sidenav li a.active {
-      background-color: #04AA6D;
+      background-color: #86828a;
       color: white;
     }
     
     .sidenav li a:hover:not(.active) {
-      background-color: #555;
-      color: white;
+      color: rgb(138, 117, 165);
     }
+    
+    .source{
+      width: 75px;
+      height: 75px;
+      border: 1px solid black;
+      position: absolute;
+      top: 250px;
+      left: 150px;
+    }
+
+    .target{
+      width: 400px;
+      height: 500px;
+      border: 2px solid black;
+      position: fixed;
+      top:160px;
+      right: 50px;
+    }
+
     </style>
     
 </head>
@@ -61,21 +80,21 @@
       <li><a href="#accessories">Accessories</a></li>
       <li><a href="#others">Others</a></li>
     </ul>
-  
-  
-  
-  <div style="margin-left:25%;padding:1px 16px;height:1000px;">
-    <h2>Hello, User</h2>
-    <h3>Show all the clothes!!!</h3>
-    <div>
-      <% results.forEach(function(r) { %>
-         <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
-        <% }); %>
-        <a href="./uploadimg">upload image</a>
+
+    <div style="margin-left:25%;padding:1px 16px;height:1000px;">
+      <h2>Hello, User</h2>
+      <h3>Show all the clothes!!!</h3>
+      <div>
+        <% results.forEach(function(r) { %>
+          <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
+          <% }); %>
+          <a href="./uploadimg">upload image</a>
+      </div>
+      <div class="source" draggable="true"></div>
+      <div class="target"></div>
     </div>
   </div>
 
-</div>
 
 </body>
 </html>
