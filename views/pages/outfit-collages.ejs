@@ -14,10 +14,9 @@
       list-style-type: non;
       margin: 0;
       padding: 0;
-      width: 160px;
+      width: 25%;
       background-color: #f1f1f1;
       position: fixed;
-      top: 120px;
       height: 100%;
       overflow: auto;
     }
@@ -25,37 +24,19 @@
     .sidenav li a {
       display: block;
       color: #000;
-      padding: 10px 25px;
+      padding: 8px 16px;
       text-decoration: none;
     }
     
     .sidenav li a.active {
-      background-color: #86828a;
+      background-color: #04AA6D;
       color: white;
     }
     
     .sidenav li a:hover:not(.active) {
-      color: rgb(138, 117, 165);
+      background-color: #555;
+      color: white;
     }
-    
-    .source{
-      width: 75px;
-      height: 75px;
-      border: 1px solid black;
-      position: absolute;
-      top: 250px;
-      left: 150px;
-    }
-
-    .target{
-      width: 400px;
-      height: 500px;
-      border: 2px solid black;
-      position: fixed;
-      top:160px;
-      right: 50px;
-    }
-
     </style>
     
 </head>
@@ -68,6 +49,7 @@
       <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
       </canvas>
     -->
+
     <ul>
       <li><a href="" onclick="changeCategory">Shirts</a></li>
       <li><a href="#coats">Coats</a></li>
@@ -80,21 +62,26 @@
       <li><a href="#accessories">Accessories</a></li>
       <li><a href="#others">Others</a></li>
     </ul>
+  
 
-    <div style="margin-left:25%;padding:1px 16px;height:1000px;">
-      <h2>Hello, User</h2>
-      <h3>Show all the clothes!!!</h3>
-      <div>
-        <% results.forEach(function(r) { %>
-          <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
-          <% }); %>
-          <a href="./uploadimg">upload image</a>
-      </div>
-      <div class="source" draggable="true"></div>
-      <div class="target"></div>
+
+
+  <div style="margin-left:25%;padding:1px 16px;height:1000px;">
+    <h2>Hello, User</h2>
+    <h3>Show all the clothes!!!</h3>
+    <div>
+      <% results.forEach(function(r) { %>
+        <form action="/:<%= r.uid %>/:<%= r.imgid%>/postImg" method="post">
+         <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt="">
+         <input type="submit" value="post image">
+         <br>
+        </form>
+        <% }); %>
+        <a href="./uploadimg">upload image</a>
     </div>
   </div>
 
+</div>
 
 </body>
 </html>

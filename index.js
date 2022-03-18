@@ -304,10 +304,10 @@ app.post('/:uid/:imgID/postImg', async(req,res) => {
   try{
     var inputimgid = req.params.imgID.substring(1);
     var inputuserid = req.params.uid.substring(1);
-    await pool.query(`insert into userInteraction (uid, likeNum, imgID)
+    await pool.query(`insert into userInteraction (uid, likeNum, imgid)
     values (${inputuserid}, 0 , ${inputimgid})`);
 
-    await pool.query(`update userobj1 set public = true where imgID = ${inputimgid}`)
+    await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
 
     const imgfile =  await pool.query(`select txtimg from userobj1 where public = true`)
 
