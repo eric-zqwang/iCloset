@@ -43,13 +43,14 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-   connectionString: process.env.DATABASE_URL,
-   ssl:{
-     rejectUnauthorized: false
-   }
+  //  connectionString: process.env.DATABASE_URL,
+  //  ssl:{
+  //    rejectUnauthorized: false
+  //  },
   // for local host
  // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
  //connectionString: 'postgres://postgres:root@localhost/try'   
+   connectionString: 'postgres://postgres:woaini10@localhost/users' 
 })
 
 app.post('/signUp', async (req, res) => {
@@ -176,6 +177,26 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   res.render('pages/outfit-collages', data);
 });
 
+//url removebg
+const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg")
+
+//able to change
+const url = "https://img0.baidu.com/it/u=2287973901,668883338&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300";
+const outputFile = "remove.png";
+ 
+removeBackgroundFromImageUrl({
+  url,
+  apiKey: "oZ4aG5Km9m7fCuVQxYYZsGSn",
+  size: "auto",
+  type: "default",
+  outputFile 
+}).then((result) => {
+ console.log(`File saved to ${outputFile}`);
+  const base64img = result.base64img;
+}).catch((errors) => {
+ console.log(JSON.stringify(errors));
+});
+
 // user list
 // app.get('/user-list', (request, response) => {
 //     var page = request.query['page'] ? request.query['page'] : 1;
@@ -277,3 +298,5 @@ app.post('/edituser/:umail', async(req,res) => {
   const data = { results: result.rows };
   res.render('pages/adminpage', data);
 })
+
+
