@@ -84,8 +84,8 @@ app.post('/userlogin', async (req, res) => {
   
   // search database using umail
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
-
-  const data = { results: result.rows };
+  const currentid = await pool.query(`SELECT uid FROM usrs WHERE umail = '${inputEmail}';`);
+  const data = { currentuids:currentid.rows, results: result.rows };
 
   //If umail is not unique
   if (data.results.length > 1) {
@@ -96,7 +96,7 @@ app.post('/userlogin', async (req, res) => {
     var user = {name:data.results[0].uname, password:data.results[0].upswd}
     req.session.user = user;
     curSession = req.session;
-
+    
     res.render('pages/homepage', data);
   }
 
@@ -306,10 +306,12 @@ app.post('/edituser/:umail', async(req,res) => {
 
 
 // jin ru like page
-app.get('/my276project/views/pages/interactionPage.ejs', async(req,res) => {
+app.get('/:uid/like', async(req,res) => {
   try{
+    let uid = req.params.uid.substring(1);
+    const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
     const result = await pool.query(`select * from userobj1 where public = true`)
-    const data = {results:result.rows}
+    const data = {currentuids:currentid.rows, results:result.rows}
     res.render('pages/interactionPage', data)
   }
   catch(error){
@@ -319,36 +321,41 @@ app.get('/my276project/views/pages/interactionPage.ejs', async(req,res) => {
 
 
 // click like
-app.post('/:uid/:imgID/postImg', async(req,res) => {
+
+// app.post('/:uid/:imgID/postImg', async(req,res) => {
+//   try{
+//     var inputimgid = req.params.imgID.substring(1);
+//     var inputuserid = req.params.uid.substring(1);
+//     await pool.query(`update userobj1 set likenum = 0 where imgid = ${inputimgid}`);
+
+//     await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
+
+//     const result = await pool.query(`select * from userobj1 where public = true`);
+//     const data = {results:result.rows};
+//     res.render('pages/interactionPage', data);
+//   }
+//   catch(error){
+//     res.end(error);
+//   }
+// })
+
+
+app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
   try{
-    var inputimgid = req.params.imgID.substring(1);
-    var inputuserid = req.params.uid.substring(1);
-    await pool.query(`update userobj1 set likenum = 0 where imgid = ${inputimgid}`);
-
-    await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
-
-    const result = await pool.query(`select * from userobj1 where public = true`);
-    const data = {results:result.rows};
-    res.render('pages/interactionPage', data);
-  }
-  catch(error){
-    res.end(error);
-  }
-})
-
-
-app.post('/:uid/:imgID/clickLike', async(req,res) => {
-  try{
-    var inputuserid = req.params.uid.substring(1);
+    let uid = req.params.currentuid.substring(1);
+    const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
+    //var inputCurrentuid = req.params.currentuid.substring(1);
+    // var currentUID = req.params.currentuid(1);
+    // var inputuserid = req.params.uid.substring(1);
     var inputimgid = req.params.imgID.substring(1);
     // var IfLike = await pool.query(`select iflike from userobj1 where uid=${inputuserid}`);
     // console.log(IfLike);
     // if (IfLike != t){
-      await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
+    //  await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
       await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
     // }
     const result =  await pool.query(`select * from userobj1 where public = true`)
-    const data = {results:result.rows};
+    const data = {currentuids:currentid.rows, results:result.rows};
     res.render('pages/interactionPage', data);
   }
   catch(error){
@@ -357,7 +364,15 @@ app.post('/:uid/:imgID/clickLike', async(req,res) => {
 })
 
 
-
+// app.post('//:imgID/comment', async(req,res) => {
+//   try{
+//     var inputimgid = req.params.imgID.substring(1);
+//     await.pool(``)
+//   }
+//   catch(error){
+//     res.end(error);
+//   }
+// })
 
 
 

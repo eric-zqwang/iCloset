@@ -29,17 +29,24 @@
         <br>
 
         <h1>Users Img</h1>
+       
         <% results.forEach(function(r) { %>
         <div>
             <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
-            <form action="/:<%= r.uid %>/:<%= r.imgid%>/clickLike" method="post">
+            <form action="/:<%= currentuids[0].uid%>/:<%= r.uid %>/:<%= r.imgid%>/clickLike" method="post">
             <p>
                 User Name: <%= r.uname %>
                 <input type="submit" value="clickLike">
             </p>
             <!-- <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="" data-layout="standard" data-action="like" data-size="small" data-share="true"></div> -->
             <p>Like Number: <%= r.likenum %></p>
+
+            <form action="/comments" method="post">Comments: <input type="text" name="comments">
+                <input type="submit" value="submit comment">
+                <%= r.imagecomment %>
+            </form>
             <br>
+
             </form>
         </div>
         <% }); %>
