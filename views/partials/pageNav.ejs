@@ -17,6 +17,7 @@
             }
             li a{
                 font-size: large;
+                font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
                 font-weight: 600;
                 display: block;
                 color: black;
@@ -37,24 +38,29 @@
                 width: 100px;
                 margin-right: 60px;
             }
-            #temp{
+            #tempBlock{
                 position: relative;
-                top: 20px;
+                top: 10px;
                 margin-left: 150px;;
                 font-size: larger;
                 font-weight: bolder;
             }
-            #tempRange{
+            /* #tempRange{
                 position: relative;
-                top: 30px;
-                margin-left: 150px;
+                top: 20px;
+                margin-left: 15px;
                 font-size: smaller;
                 font-weight: lighter;
-            }
-            #weatherAPI{
+            } */
+            #weatherImg{
                 position: relative;
                 margin-left: 50px;
-            } 
+                top:10px;
+            }
+            #weatherData{
+                /* margin-top: 20px;
+                top:20px; */
+            }
             
         </style>
         <script defer>
@@ -108,19 +114,19 @@
             <li><a href="#calendar">CALENDAR</a></li>
             <li><a href="#account">ACCOUNT</a></li>
             <li><a href="#logout">LOG OUT</a></li>
-            <div id="weatherAPI">
-            <li id="weatherImg"></li>
             <li>
-                <ul>
-                    <br>
+                <li id="weatherImg"></li>
+                <li id="weatherData">
                     <li id="city"></li> <br>
                     <li id="weather"></li> <br>
                     <li id="name">The Weather Chanel</li>
-                </ul>
+                </li>
             </li>
-            </div>
-            <li id="temp"></li> <br>
-            <li id="tempRange"></li>
+            <li id="tempBlock">
+                <br>
+                <li id="temp"></li><br>
+                <li id="tempRange"></li><br>
+            </li>
         </ul>
     </body>
 </html>

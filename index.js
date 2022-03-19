@@ -47,9 +47,11 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-
+  
   // for local host
   connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  //connectionString: 'postgres://postgres:root@localhost/try'   
 })
 
 app.post('/signUp', async (req, res) => {
