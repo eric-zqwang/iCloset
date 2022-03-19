@@ -303,19 +303,38 @@ app.post('/:uid/:imgID/postImg', async(req,res) => {
   try{
     var inputimgid = req.params.imgID.substring(1);
     var inputuserid = req.params.uid.substring(1);
-    await pool.query(`insert into userInteraction (uid, likeNum, imgid)
-    values (${inputuserid}, 0 , ${inputimgid})`);
+    await pool.query(`update userobj1 set likenum = 0 where imgid = ${inputimgid}`);
 
     await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
 
-    const imgfile =  await pool.query(`select txtimg from userobj1 where public = true`)
-
-    const result = await pool.query(`select * from userInteraction`);
-    const data = {imgfile:imgfile.rows, results:result.rows};
+    const result = await pool.query(`select * from userobj1 where public = true`);
+    const data = {results:result.rows};
     res.render('pages/interactionPage', data);
   }
   catch(error){
     res.end(error);
   }
 })
+
+
+app.post('/:uid/:imgID/:ifLike/clickLike', async(req,res) => {
+  try{
+    var inputuserid = req.params.uid.substring(1);
+    var inputimgid = req.params.imgID.substring(1);
+    var inputIfLike = req.params.ifLike.substring(1);
+    
+    if (inputIfLike == false){
+      await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
+      await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
+    }
+    const result =  await pool.query(`select * from userobj1 where public = true`)
+    const data = {results:result.rows};
+    res.render('pages/interactionPage', data);
+  }
+  catch(error){
+    res.end(error)
+  }
+})
+
+
 
