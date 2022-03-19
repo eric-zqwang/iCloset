@@ -49,9 +49,10 @@ pool = new Pool({
   // }
   
   // for local host
-  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  // connectionString: 'postgres://postgres:root@localhost/try'   
+  //connectionString: 'postgres://postgres:root@localhost/try'
+  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 app.post('/signUp', async (req, res) => {
@@ -152,6 +153,8 @@ app.get('/:id/uploadimg', async (req, res) => {
 const fs = require('fs')
 const multer = require('multer');
 const { redirect } = require('express/lib/response');
+const {removeBackgroundFromImageFile} = require("remove.bg")
+
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './uploads');
@@ -169,41 +172,37 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     return body.toString('base64');
   }
   
+   var base64ImgData = base64Encode(req.file.path);
+   let id  =req.params.id.substring(1); 
+   var categoryType = req.body.category;
 
-  let id  =req.params.id.substring(1);
-
-  var nm = await(`select uname from usrs where uid = ${id}`);
-
-  var base64ImgData = base64Encode(req.file.path);
-  var categoryType = req.body.category;
-  await pool.query(`insert into userobj1 (uname, txtimg, uid,category_type,public) values ('${nm}', '${base64ImgData}','${id}','${categoryType}',false)`);
-  const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
-  const data = { results: result.rows };
-  res.render('pages/outfit-collages', data);
-});
-
-
-
-//url removebg
-const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg");
-const res = require('express/lib/response');
-
-//able to change
-const url = "https://img0.baidu.com/it/u=2287973901,668883338&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300";
-const outputFile = "remove.png";
- 
-removeBackgroundFromImageUrl({
-  url,
-  apiKey: "oZ4aG5Km9m7fCuVQxYYZsGSn",
+   const localFile = `${req.file.path}`;
+const outputFile = `.//out//${req.file.path}`;
+//console.log(__dirname+"/"+req.file.path)
+removeBackgroundFromImageFile({
+  path: localFile,
+  apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
   size: "auto",
   type: "default",
+  scale: "100%",
   outputFile 
-}).then((result) => {
+}).then((result1) => {
  console.log(`File saved to ${outputFile}`);
-  const base64img = result.base64img;
+ base64ImgData=result1.base64img;
+ 
 }).catch((errors) => {
  console.log(JSON.stringify(errors));
+})
+base64ImgData = base64Encode(outputFile);
+await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
+ const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
+ const data = { results: result.rows };
+ res.render('pages/outfit-collages', data);
+  
 });
+
+
+
 
 // user list
 app.get('/user-list', (request, response) => {
