@@ -168,10 +168,15 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     var body = fs.readFileSync(file);
     return body.toString('base64');
   }
+  
+
   let id  =req.params.id.substring(1);
+
+  var nm = await(`select uname from usrs where uid = ${id}`);
+
   var base64ImgData = base64Encode(req.file.path);
   var categoryType = req.body.category;
-  await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
+  await pool.query(`insert into userobj1 (uname, txtimg, uid,category_type,public) values ('${nm}', '${base64ImgData}','${id}','${categoryType}',false)`);
   const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
   const data = { results: result.rows };
   res.render('pages/outfit-collages', data);
@@ -301,6 +306,19 @@ app.post('/edituser/:umail', async(req,res) => {
 
 
 
+// jin ru like page
+app.get('/my276project/views/pages/interactionPage.ejs', async(req,res) => {
+  try{
+    const result = await pool.query(`select * from userobj1 where public = true`)
+    const data = {results:result.rows}
+    res.render('pages/interactionPage', data)
+  }
+  catch(error){
+    res.end(error);
+  }
+})
+
+
 // click like
 app.post('/:uid/:imgID/postImg', async(req,res) => {
   try{
@@ -320,16 +338,16 @@ app.post('/:uid/:imgID/postImg', async(req,res) => {
 })
 
 
-app.post('/:uid/:imgID/:ifLike/clickLike', async(req,res) => {
+app.post('/:uid/:imgID/clickLike', async(req,res) => {
   try{
     var inputuserid = req.params.uid.substring(1);
     var inputimgid = req.params.imgID.substring(1);
-    var inputIfLike = req.params.ifLike.substring(1);
-    
-    if (inputIfLike == false){
+    // var IfLike = await pool.query(`select iflike from userobj1 where uid=${inputuserid}`);
+    // console.log(IfLike);
+    // if (IfLike != t){
       await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
       await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
-    }
+    // }
     const result =  await pool.query(`select * from userobj1 where public = true`)
     const data = {results:result.rows};
     res.render('pages/interactionPage', data);
@@ -338,6 +356,8 @@ app.post('/:uid/:imgID/:ifLike/clickLike', async(req,res) => {
     res.end(error)
   }
 })
+
+
 
 
 

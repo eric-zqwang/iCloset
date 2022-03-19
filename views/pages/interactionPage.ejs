@@ -2,18 +2,43 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <div id="fb-root"></div>
+        <!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v13.0" nonce="XB0qme61"></script> -->
+        <style>
+            body {
+                margin: 0;
+                background-color: rgb(170, 172, 198);
+             }
+             div{
+                position:relative;
+                
+                margin-top: 100px;
+                margin-left: 50px;
+                margin-left: 50px;
+                margin-right: 50px;
+             }
+             li{
+                 list-style-type: none;
+             }
+        </style>
     </head>
     <body>
+        <%- include ("../partials/pageNav.ejs") %>
+        <br>
+        <br>
+        <br>
+
         <h1>Users Img</h1>
         <% results.forEach(function(r) { %>
-        <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
         <div>
-            <form action="/:<%= r.uid %>/:<%= r.imgid%>/:<%= r.iflike%>/clickLike" method="post">
-            <li>
-                <%= r.uid %>
+            <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
+            <form action="/:<%= r.uid %>/:<%= r.imgid%>/clickLike" method="post">
+            <p>
+                User Name: <%= r.uname %>
                 <input type="submit" value="clickLike">
-            </li>
-            <li><%= r.likenum %></li>
+            </p>
+            <!-- <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="" data-layout="standard" data-action="like" data-size="small" data-share="true"></div> -->
+            <p>Like Number: <%= r.likenum %></p>
             <br>
             </form>
         </div>
