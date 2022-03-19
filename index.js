@@ -49,10 +49,10 @@ pool = new Pool({
   // }
   
   // for local host
-  //connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   //connectionString: 'postgres://postgres:root@localhost/try'
-  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 app.post('/signUp', async (req, res) => {
@@ -113,6 +113,7 @@ app.post('/adminlogin', async (req, res) => {
 
   // search database using umail
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+  
   const data = { results: result.rows };
 
   //If umail is not unique
@@ -142,9 +143,10 @@ app.get('/userlogout', async(req,res) => {
 })
 
 app.get('/:id/uploadimg', async (req, res) => {
-  let id  =req.params.id.substring(1);
-  result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
-     data = { results: result.rows };
+  let uid  =req.params.id.substring(1);
+  result = await pool.query(`SELECT * FROM usrs WHERE uid = '${uid}'`);
+  const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
+  const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/uploadimg',data);
 
 })
@@ -171,14 +173,18 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     var body = fs.readFileSync(file);
     return body.toString('base64');
   }
+
   
+  
+
    var base64ImgData = base64Encode(req.file.path);
-   let id  =req.params.id.substring(1); 
+   var id  =req.params.id.substring(1); 
    var categoryType = req.body.category;
 
    const localFile = `${req.file.path}`;
 const outputFile = `.//out//${req.file.path}`;
-//console.log(__dirname+"/"+req.file.path)
+//remove background
+
 removeBackgroundFromImageFile({
   path: localFile,
   apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
@@ -193,10 +199,11 @@ removeBackgroundFromImageFile({
 }).catch((errors) => {
  console.log(JSON.stringify(errors));
 })
-base64ImgData = base64Encode(outputFile);
+ base64ImgData = base64Encode(outputFile);
 await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
  const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
- const data = { results: result.rows };
+ const currentid = await pool.query(`select uid from usrs where uid = '${id}'`);
+  const data = {currentuids:currentid.rows, results:result.rows};
  res.render('pages/outfit-collages', data);
   
 });
@@ -244,12 +251,9 @@ app.get('/user-list', (request, response) => {
 app.get('/:id/outfit', async (req, res) => {
   var id = req.params.id.substring(1);
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
-  var data = { results: result.rows };
-   if(data.results.length==0){
-     result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
-     data = { results: result.rows };
-   }
-    res.render('pages/outfit-collages', data);
+  const currentid = await pool.query(`select uid from usrs where uid = '${id}'`)
+  const data = {currentuids:currentid.rows, results:result.rows}
+  res.render('pages/outfit-collages', data);
 });
 
 // Get users' information from database
@@ -309,8 +313,8 @@ app.post('/edituser/:umail', async(req,res) => {
 app.get('/:uid/like', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
-    const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
     const result = await pool.query(`select * from userobj1 where public = true`)
+    const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
     const data = {currentuids:currentid.rows, results:result.rows}
     res.render('pages/interactionPage', data)
   }
