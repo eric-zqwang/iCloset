@@ -47,11 +47,9 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-  
+
   // for local host
- // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  connectionString: 'postgres://postgres:root@localhost/try'   
+  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
 })
 
 app.post('/signUp', async (req, res) => {
@@ -170,8 +168,13 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   }
   let id  =req.params.id.substring(1);
   var base64ImgData = base64Encode(req.file.path);
-  var categoryType = req.body.category;
-  await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
+  var owner = await pool.query(`select * from userobj1`);
+  await pool.query(`insert into userobj1 (txtimg, uid) values ('${base64ImgData}','${id}')`);
+
+
+
+  
+
   const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
   const data = { results: result.rows };
   res.render('pages/outfit-collages', data);
@@ -243,7 +246,10 @@ app.get('/:id/outfit', async (req, res) => {
      result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
      data = { results: result.rows };
    }
-    res.render('pages/outfit-collages', data);
+  
+  
+  res.render('pages/outfit-collages', data);
+
 });
 
 // Get users' information from database
