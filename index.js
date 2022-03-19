@@ -244,10 +244,7 @@ app.get('/:id/outfit', async (req, res) => {
      result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
      data = { results: result.rows };
    }
-  
-  
-  res.render('pages/outfit-collages', data);
-
+    res.render('pages/outfit-collages', data);
 });
 
 // Get users' information from database

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,9 +9,9 @@
   <style>
     body {
       margin: 0;
-      background-color:rgb(170,172,198) ;
+      background-color: rgb(170, 172, 198);
     }
-    
+
     .sidenav ul {
       list-style-type: non;
       margin: 0;
@@ -21,25 +22,25 @@
       height: 100%;
       overflow: auto;
     }
-    
+
     .sidenav li a {
       display: block;
       color: whitesmoke;
       padding: 15px 25px;
-      
+
       text-decoration: none;
     }
-    
+
     .sidenav li a.active {
       background-color: #04AA6D;
       color: white;
     }
-    
+
     .sidenav li a:hover:not(.active) {
       color: rgba(240, 248, 255, 0.671);
     }
-    
-    .source{
+
+    .source {
       width: 75px;
       height: 75px;
       border: 1px solid black;
@@ -49,93 +50,98 @@
       left: 200px;
     }
 
-    .target{
+    .target {
       width: 400px;
       height: 500px;
       border: 2px solid floralwhite;
       background: #ddd9f5;
       position: fixed;
-      top:160px;
+      top: 160px;
       right: 50px;
     }
-    </style>
-    
+  </style>
+
 </head>
+
 <body>
   <%- include ("../partials/pageNav.ejs") %>
-  <div class = "sidenav">
+    <div class="sidenav">
 
-    <!-- Fixed Full-Height Side Bar -->
-    <!-- 
+      <!-- Fixed Full-Height Side Bar -->
+      <!-- 
       <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
       </canvas>
     -->
 
-    <ul>
-      <li><a href="" onclick="changeCategory">Shirts</a></li>
-      <li><a href="#coats">Coats</a></li>
-      <li><a href="#suits">Suits</a></li>
-      <li><a href="#sweaters">Sweaters</a></li>
-      <li><a href="#pans">Pants</a></li>
-      <li><a href="#jeans">Jeans</a></li>
-      <li><a href="#shoes">Shoes</a></li>
-      <li><a href="#bags">Bags</a></li>
-      <li><a href="#accessories">Accessories</a></li>
-      <li><a href="#others">Others</a></li>
-    </ul>
+      <ul>
+        <li><a href="" onclick="changeCategory">Shirts</a></li>
+        <li><a href="#coats">Coats</a></li>
+        <li><a href="#suits">Suits</a></li>
+        <li><a href="#sweaters">Sweaters</a></li>
+        <li><a href="#pans">Pants</a></li>
+        <li><a href="#jeans">Jeans</a></li>
+        <li><a href="#shoes">Shoes</a></li>
+        <li><a href="#bags">Bags</a></li>
+        <li><a href="#accessories">Accessories</a></li>
+        <li><a href="#others">Others</a></li>
+      </ul>
 
-    <div style="margin-left:25%;padding:1px 16px;height:1000px;">
-      <h2>Hello, User</h2>
-      <h3>Show all the clothes!!!</h3>
-      <div draggable="true">
-        <% results.forEach(function(r) { %>
-          <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
-          <% }); %>
+      <div style="margin-left:25%;padding:1px 16px;height:1000px;">
+        <br><br><br><br><br><br><br>
+        <h2>Hello, User</h2>
+        <h3>Show all the clothes!!!</h3>
+        <div draggable="true">
+          <% if(results[0].txtimg){%>
+              <% results.forEach(function(r) { %>
+                  <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
+              <% }); %>
+          <% };%>
           <a href="./uploadimg">upload image</a>
+        </div>
+        <div id="source" class="source" draggable="true"></div>
+        <div class="target"></div>
+        <script>
+          const source = document.querySelector('.source');
+          const target = document.querySelector('.target');
+
+          source.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.id);
+            //the dragged item will become less solid
+            e.target.style.opacity = 0.3;
+          })
+
+          //stop dragging and let go the mouse, item go back to original state
+          source.addEventListener('dragend', (e) => {
+            e.target.style.opacity = 1;
+          })
+
+          //allow drop to happen
+          target.addEventListener('dragover', (e) => {
+            e.preventDefault();
+          })
+
+          target.addEventListener('dragenter', (e) => {
+            e.target.style.background = '#eee';
+          })
+
+          target.addEventListener('dragleave', (e) => {
+            e.target.style.background = '';
+          })
+
+          target.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const sourceID = e.dataTransfer.getData('text/plain');
+            e.target.appendChild(document.getElementById(sourceID));
+            e.target.style.background = '';
+          })
+        </script>
       </div>
-      <div id="source" class="source" draggable="true"></div>
-      <div class="target"></div>
-      <script>
-        const source = document.querySelector('.source');
-        const target = document.querySelector('.target');
-
-        source.addEventListener('dragstart',(e)=>{
-          e.dataTransfer.setData('text/plain',e.target.id);
-          //the dragged item will become less solid
-          e.target.style.opacity = 0.3;
-        })
-
-        //stop dragging and let go the mouse, item go back to original state
-        source.addEventListener('dragend',(e)=>{
-          e.target.style.opacity = 1;
-        })
-
-        //allow drop to happen
-        target.addEventListener('dragover',(e)=>{
-          e.preventDefault();
-        })
-
-        target.addEventListener('dragenter',(e)=>{
-          e.target.style.background = '#eee';
-        })
-
-        target.addEventListener('dragleave',(e)=>{
-          e.target.style.background = '';
-        })
-
-        target.addEventListener('drop',(e)=>{
-          e.preventDefault();
-          const sourceID = e.dataTransfer.getData('text/plain');
-          e.target.appendChild(document.getElementById(sourceID));
-          e.target.style.background = '';
-        })
-      </script>
     </div>
-  </div>
 
-</div>
+    </div>
 
 </body>
+
 </html>
 <!-- <script>
   // changeCategory = function(event) {
