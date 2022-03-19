@@ -47,9 +47,11 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-
+  
   // for local host
   connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  // connectionString: 'postgres://postgres:root@localhost/try'   
 })
 
 app.post('/signUp', async (req, res) => {
@@ -168,17 +170,14 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   }
   let id  =req.params.id.substring(1);
   var base64ImgData = base64Encode(req.file.path);
-  var owner = await pool.query(`select * from userobj1`);
-  await pool.query(`insert into userobj1 (txtimg, uid) values ('${base64ImgData}','${id}')`);
-
-
-
-  
-
+  var categoryType = req.body.category;
+  await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
   const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
   const data = { results: result.rows };
   res.render('pages/outfit-collages', data);
 });
+
+
 
 //url removebg
 const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg");
@@ -246,10 +245,7 @@ app.get('/:id/outfit', async (req, res) => {
      result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
      data = { results: result.rows };
    }
-  
-  
-  res.render('pages/outfit-collages', data);
-
+    res.render('pages/outfit-collages', data);
 });
 
 // Get users' information from database
@@ -304,6 +300,7 @@ app.post('/edituser/:umail', async(req,res) => {
 })
 
 
+
 // click like
 app.post('/:uid/:imgID/postImg', async(req,res) => {
   try{
@@ -341,6 +338,7 @@ app.post('/:uid/:imgID/:ifLike/clickLike', async(req,res) => {
     res.end(error)
   }
 })
+
 
 
 
