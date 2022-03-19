@@ -60,7 +60,41 @@
       right: 50px;
     }
   </style>
+<script>
+  const source = document.querySelector('.source');
+  const target = document.querySelector('.target');
 
+  source.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('text/plain', e.target.id);
+    //the dragged item will become less solid
+    e.target.style.opacity = 0.3;
+  })
+
+  //stop dragging and let go the mouse, item go back to original state
+  source.addEventListener('dragend', (e) => {
+    e.target.style.opacity = 1;
+  })
+
+  //allow drop to happen
+  target.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  })
+
+  target.addEventListener('dragenter', (e) => {
+    e.target.style.background = '#eee';
+  })
+
+  target.addEventListener('dragleave', (e) => {
+    e.target.style.background = '';
+  })
+
+  target.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const sourceID = e.dataTransfer.getData('text/plain');
+    e.target.appendChild(document.getElementById(sourceID));
+    e.target.style.background = '';
+  })
+</script>
 </head>
 
 <body>
@@ -91,50 +125,29 @@
         <h2>Hello, User</h2>
         <h3>Show all the clothes!!!</h3>
         <div draggable="true">
-          <% if(results[0].txtimg){%>
+          <% if(results[0].txtimg){%>  
+            <table >            
+              <% var count = 0; %>
+              <tr>
               <% results.forEach(function(r) { %>
-                  <br><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""><br>
-              <% }); %>
+                <%  count++;%>                
+                
+                  <td style="padding: 20px;"><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""> </td>                  
+                    <% if(count%4==0){%>
+                    </tr><tr>
+                    <% } %>
+              <% }); %>            
+                  <td><a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;"></a></td>          
+                       </tr>     
+            </table>
           <% };%>
-          <a href="./uploadimg">upload image</a>
+          <% if(!results[0].txtimg){%>  
+            <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;"></a>
+            <%};%>
         </div>
         <div id="source" class="source" draggable="true"></div>
         <div class="target"></div>
-        <script>
-          const source = document.querySelector('.source');
-          const target = document.querySelector('.target');
-
-          source.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', e.target.id);
-            //the dragged item will become less solid
-            e.target.style.opacity = 0.3;
-          })
-
-          //stop dragging and let go the mouse, item go back to original state
-          source.addEventListener('dragend', (e) => {
-            e.target.style.opacity = 1;
-          })
-
-          //allow drop to happen
-          target.addEventListener('dragover', (e) => {
-            e.preventDefault();
-          })
-
-          target.addEventListener('dragenter', (e) => {
-            e.target.style.background = '#eee';
-          })
-
-          target.addEventListener('dragleave', (e) => {
-            e.target.style.background = '';
-          })
-
-          target.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const sourceID = e.dataTransfer.getData('text/plain');
-            e.target.appendChild(document.getElementById(sourceID));
-            e.target.style.background = '';
-          })
-        </script>
+        
       </div>
     </div>
 

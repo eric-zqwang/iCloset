@@ -174,7 +174,6 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
   const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
   const data = { results: result.rows };
-  console.log(categoryType);
   res.render('pages/outfit-collages', data);
 });
 
