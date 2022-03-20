@@ -49,9 +49,9 @@ pool = new Pool({
   // }
 
   // for local host
-  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  //connectionString: 'postgres://postgres:root@localhost/try'
+  connectionString: 'postgres://postgres:root@localhost/try1'
   // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -96,7 +96,7 @@ app.post('/userlogin', async (req, res) => {
     var user = { name: data.results[0].uname, password: data.results[0].upswd }
     req.session.user = user;
     curSession = req.session;
-    
+
     res.render('pages/homepage', data);
   }
 
@@ -144,10 +144,11 @@ app.get('/userlogout', async (req, res) => {
 
 app.get('/:id/uploadimg', async (req, res) => {
   let uid  =req.params.id.substring(1);
-  result = await pool.query(`SELECT * FROM usrs WHERE uid = '${uid}'`);
+  const result = await pool.query(`SELECT * FROM usrs WHERE uid = '${uid}'`);
   const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
   const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/uploadimg',data);
+
 
 })
 
@@ -190,13 +191,13 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
       outputFile
     });
     var base64ImgData = base64Encode(outputFile);
+    //upload database
     await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
     const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
     const data = { currentuids:currentid.rows,results: result.rows };
     res.render('pages/outfit-collages', data);
   };
   myRemoveBgFunction(localFile, outputFile);
-  //upload database
 
 });
 
@@ -309,7 +310,7 @@ app.get('/:uid/like', async(req,res) => {
     const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows}
 
     res.render('pages/interactionPage', data)
-    
+ 
   }
   catch (error) {
     res.end(error);
@@ -319,7 +320,7 @@ app.get('/:uid/like', async(req,res) => {
 
 // click like
 
-// app.post('/:uid/:imgID/postImg', async(req,res) => {
+   // app.post('/:uid/:imgID/postImg', async(req,res) => {
 //   try{
 //     var inputimgid = req.params.imgID.substring(1);
 //     var inputuserid = req.params.uid.substring(1);
@@ -327,7 +328,7 @@ app.get('/:uid/like', async(req,res) => {
 
 //     await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
 
-//     const result = await pool.query(`select * from userobj1 where public = true`);
+   //     const result = await pool.query(`select * from userobj1 where public = true`);
 //     const data = {results:result.rows};
 //     res.render('pages/interactionPage', data);
 //   }
@@ -348,8 +349,8 @@ app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
     // var IfLike = await pool.query(`select iflike from userobj1 where uid=${inputuserid}`);
     // console.log(IfLike);
     // if (IfLike != t){
-    //  await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
-      await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
+       //  await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
+    await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
     // }
     const result =  await pool.query(`select * from userobj1 where public = true`)
 
@@ -388,18 +389,4 @@ app.post('/:currentuid/:uid/:imgID/comment', async(req,res) => {
     res.end(error);
   }
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

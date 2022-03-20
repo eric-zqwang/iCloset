@@ -125,7 +125,7 @@
         <h2>Hello, User</h2>
         <h3>Show all the clothes!!!</h3>
         <div draggable="true">
-          <% if(results[0].txtimg){%>  
+          <% if(results.length>0){%>  
             <table >            
               <% var count = 0; %>
               <tr>
@@ -141,7 +141,7 @@
                        </tr>     
             </table>
           <% };%>
-          <% if(!results[0].txtimg){%>  
+          <% if(results.length==0){%>  
             <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;"></a>
             <%};%>
         </div>
