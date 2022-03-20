@@ -12,7 +12,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // redirect user to login page if they dont have a session
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
     // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
@@ -22,11 +22,11 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', (req, res) => {
-  if (curSession){
-      res.render('pages/index');
-    } else {
-      res.redirect('/userlogin.html');
-    }
+  if (curSession) {
+    res.render('pages/index');
+  } else {
+    res.redirect('/userlogin.html');
+  }
 });
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 app.use(cookieParser());
@@ -47,12 +47,12 @@ pool = new Pool({
   // ssl:{
   //   rejectUnauthorized: false
   // }
-  
+
   // for local host
   //connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  //connectionString: 'postgres://postgres:root@localhost/try'
-  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  connectionString: 'postgres://postgres:root@localhost/try'
+  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 app.post('/signUp', async (req, res) => {
@@ -61,10 +61,10 @@ app.post('/signUp', async (req, res) => {
   var inputName = req.body.name;
 
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
-  if (!result){
+  if (!result) {
     res.send("The register email already exist")
   }
-  else{
+  else {
     try {
       await pool.query(`INSERT INTO usrs (uname, umail, upswd) 
       VALUES ('${inputName}', '${inputEmail}', '${inputPswd}')`);
@@ -81,7 +81,7 @@ var curSession;
 app.post('/userlogin', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
-  
+
   // search database using umail
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
 
@@ -93,7 +93,7 @@ app.post('/userlogin', async (req, res) => {
   }
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
-    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+    var user = { name: data.results[0].uname, password: data.results[0].upswd }
     req.session.user = user;
     curSession = req.session;
 
@@ -101,7 +101,7 @@ app.post('/userlogin', async (req, res) => {
   }
 
   //If umail does not exist or password is incorrect, alert user
-  else if (data.results.length == 0 || inputPswd != data.results[0].upswd)  {
+  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
     console.log("incorrect login email or password");
   }
 })
@@ -121,7 +121,7 @@ app.post('/adminlogin', async (req, res) => {
   }
   //If umail and password are correct and is admin, direct to user-list
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
-    var user = {name:data.results[0].uname, password:data.results[0].upswd}
+    var user = { name: data.results[0].uname, password: data.results[0].upswd }
     req.session.user = user;
     curSession = req.session;
     res.render('pages/user-list', data)
@@ -133,8 +133,8 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
-app.get('/userlogout', async(req,res) => {
-  if(curSession) {
+app.get('/userlogout', async (req, res) => {
+  if (curSession) {
     curSession.destroy();
   }
   req.session.destroy();
@@ -142,10 +142,10 @@ app.get('/userlogout', async(req,res) => {
 })
 
 app.get('/:id/uploadimg', async (req, res) => {
-  let id  =req.params.id.substring(1);
+  let id = req.params.id.substring(1);
   result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
-     data = { results: result.rows };
-  res.render('pages/uploadimg',data);
+  data = { results: result.rows };
+  res.render('pages/uploadimg', data);
 
 })
 
@@ -153,7 +153,7 @@ app.get('/:id/uploadimg', async (req, res) => {
 const fs = require('fs')
 const multer = require('multer');
 const { redirect } = require('express/lib/response');
-const {removeBackgroundFromImageFile} = require("remove.bg")
+const { removeBackgroundFromImageFile } = require("remove.bg")
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -165,79 +165,73 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
-
+//upload image post
 app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   function base64Encode(file) {
     var body = fs.readFileSync(file);
     return body.toString('base64');
   }
-  
-   var base64ImgData = base64Encode(req.file.path);
-   let id  =req.params.id.substring(1); 
-   var categoryType = req.body.category;
+  var id = req.params.id.substring(1);
+  var categoryType = req.body.category;
+  var localFile = req.file.path;
+  var outputFile = req.file.path;
+  //remove background
+  async function myRemoveBgFunction(path, outpath) {
+    const outputFile = outpath;
+    await removeBackgroundFromImageFile({
+      path,
+      apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
+      size: "auto",
+      type: "default",
+      scale: "100%",
+      outputFile
+    });
+    var base64ImgData = base64Encode(outputFile);
+    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
+    const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
+    const data = { results: result.rows };
+    res.render('pages/outfit-collages', data);
+  };
+  myRemoveBgFunction(localFile, outputFile);
+  //upload database
 
-   const localFile = `${req.file.path}`;
-const outputFile = `.//out//${req.file.path}`;
-//console.log(__dirname+"/"+req.file.path)
-removeBackgroundFromImageFile({
-  path: localFile,
-  apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
-  size: "auto",
-  type: "default",
-  scale: "100%",
-  outputFile 
-}).then((result1) => {
- console.log(`File saved to ${outputFile}`);
- base64ImgData=result1.base64img;
- 
-}).catch((errors) => {
- console.log(JSON.stringify(errors));
-})
-base64ImgData = base64Encode(outputFile);
-await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
- const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
- const data = { results: result.rows };
- res.render('pages/outfit-collages', data);
-  
 });
-
-
 
 
 // user list
 app.get('/user-list', (request, response) => {
-    var page = request.query['page'] ? request.query['page'] : 1;
-    var size = request.query['size'] ? request.query['size'] : 15;
-    pool.connect(function(error, client, releaseFn) {
-        if(error) {// if error then release the connection
-            releaseFn();
-            return console.log('Connection failed: ' + error);
+  var page = request.query['page'] ? request.query['page'] : 1;
+  var size = request.query['size'] ? request.query['size'] : 15;
+  pool.connect(function (error, client, releaseFn) {
+    if (error) {// if error then release the connection
+      releaseFn();
+      return console.log('Connection failed: ' + error);
+    }
+    var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
+    client.query(countSql, (error, results) => {
+      if (error) {
+        releaseFn();
+        return console.log('Query failed: ' + error);
+      }
+      // total number of users
+      var total = results.rows[0].total;
+      var offset = (page - 1) * size;
+      // query the target page of users
+      var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
+      client.query(listSql, (error, results) => {
+        releaseFn();
+        if (error) {
+          return console.log('Query userInfo failed: ' + error);
         }
-        var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
-        client.query(countSql, (error, results) => {
-            if(error) {
-                releaseFn();
-                return console.log('Query failed: ' + error);
-            }
-            // total number of users
-            var total = results.rows[0].total;
-            var offset= (page - 1) * size;
-            // query the target page of users
-            var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
-            client.query(listSql, (error, results) => {
-                releaseFn();
-                if(error) {
-                    return console.log('Query userInfo failed: ' + error);
-                }
-                var data = results.rows;
-                // OK, now we render the users
-                response.render('pages/user-list', {
-                    users: data,
-                    total: total
-                });
-            });
+        var data = results.rows;
+        // OK, now we render the users
+        response.render('pages/user-list', {
+          users: data,
+          total: total
         });
+      });
     });
+  });
 });
 // app.use('/uploads', express.static('uploads'));
 
@@ -245,20 +239,20 @@ app.get('/:id/outfit', async (req, res) => {
   var id = req.params.id.substring(1);
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
   var data = { results: result.rows };
-   if(data.results.length==0){
-     result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
-     data = { results: result.rows };
-   }
-    res.render('pages/outfit-collages', data);
+  if (data.results.length == 0) {
+    result = await pool.query(`SELECT * FROM usrs WHERE uid = '${id}'`);
+    data = { results: result.rows };
+  }
+  res.render('pages/outfit-collages', data);
 });
 
 // Get users' information from database
 app.get('/', (req, res) => res.render('pages/index'));
-app.get('/userinfo', async (req,res) => {
+app.get('/userinfo', async (req, res) => {
   //invoke a query that selects all row from the users table
   try {
     const result = await pool.query('SELECT * FROM usrs');
-    const data = { results : result.rows };
+    const data = { results: result.rows };
     res.render('pages/adminpage', data);
   }
   catch (error) {
@@ -267,28 +261,28 @@ app.get('/userinfo', async (req,res) => {
 })
 
 //Diplay details of the selected user
-app.get('/usrs/:umail', async(req,res) => {
+app.get('/usrs/:umail', async (req, res) => {
   var email = req.params.umail;
   //search the database using id
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
-  const data = { results : result.rows };
+  const data = { results: result.rows };
   res.render('pages/userdetail', data);
 })
 
 // Delete rectangles by ID
-app.post('/usrs/:umail', async(req,res) => {
-  var email = req.params.umail; 
+app.post('/usrs/:umail', async (req, res) => {
+  var email = req.params.umail;
   //search the database using id
   await pool.query(`DELETE FROM usrs WHERE umail= '${email}';`);
   //display current database
   const result = await pool.query("SELECT * FROM usrs");
-  const data = { results : result.rows };
+  const data = { results: result.rows };
   res.render('pages/adminpage', data);
 })
 
 
 // Edit details of existing users
-app.post('/edituser/:umail', async(req,res) => {
+app.post('/edituser/:umail', async (req, res) => {
   var email = req.params.umail;
   //define variables that allow for changing
   var name = req.body.name;
@@ -306,21 +300,21 @@ app.post('/edituser/:umail', async(req,res) => {
 
 
 // jin ru like page
-app.get('/my276project/views/pages/interactionPage.ejs', async(req,res) => {
-  try{
+app.get('/my276project/views/pages/interactionPage.ejs', async (req, res) => {
+  try {
     const result = await pool.query(`select * from userobj1 where public = true`)
-    const data = {results:result.rows}
+    const data = { results: result.rows }
     res.render('pages/interactionPage', data)
   }
-  catch(error){
+  catch (error) {
     res.end(error);
   }
 })
 
 
 // click like
-app.post('/:uid/:imgID/postImg', async(req,res) => {
-  try{
+app.post('/:uid/:imgID/postImg', async (req, res) => {
+  try {
     var inputimgid = req.params.imgID.substring(1);
     var inputuserid = req.params.uid.substring(1);
     await pool.query(`update userobj1 set likenum = 0 where imgid = ${inputimgid}`);
@@ -328,30 +322,30 @@ app.post('/:uid/:imgID/postImg', async(req,res) => {
     await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
 
     const result = await pool.query(`select * from userobj1 where public = true`);
-    const data = {results:result.rows};
+    const data = { results: result.rows };
     res.render('pages/interactionPage', data);
   }
-  catch(error){
+  catch (error) {
     res.end(error);
   }
 })
 
 
-app.post('/:uid/:imgID/clickLike', async(req,res) => {
-  try{
+app.post('/:uid/:imgID/clickLike', async (req, res) => {
+  try {
     var inputuserid = req.params.uid.substring(1);
     var inputimgid = req.params.imgID.substring(1);
     // var IfLike = await pool.query(`select iflike from userobj1 where uid=${inputuserid}`);
     // console.log(IfLike);
     // if (IfLike != t){
-      await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
-      await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
+    await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
+    await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
     // }
-    const result =  await pool.query(`select * from userobj1 where public = true`)
-    const data = {results:result.rows};
+    const result = await pool.query(`select * from userobj1 where public = true`)
+    const data = { results: result.rows };
     res.render('pages/interactionPage', data);
   }
-  catch(error){
+  catch (error) {
     res.end(error)
   }
 })
