@@ -174,6 +174,7 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     return body.toString('base64');
   }
   var id = req.params.id.substring(1);
+  const currentid = await pool.query(`select uid from usrs where uid = '${id}'`)
   var categoryType = req.body.category;
   var localFile = req.file.path;
   var outputFile = req.file.path;
@@ -191,7 +192,7 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     var base64ImgData = base64Encode(outputFile);
     await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
     const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
-    const data = { results: result.rows };
+    const data = { currentuids:currentid.rows,results: result.rows };
     res.render('pages/outfit-collages', data);
   };
   myRemoveBgFunction(localFile, outputFile);
