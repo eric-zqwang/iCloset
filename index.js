@@ -155,7 +155,7 @@ app.get('/:id/uploadimg', async (req, res) => {
 const fs = require('fs')
 const multer = require('multer');
 const { redirect } = require('express/lib/response');
-const {removeBackgroundFromImageFile} = require("remove.bg")
+const { removeBackgroundFromImageFile } = require("remove.bg")
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -167,45 +167,36 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
-
+//upload image post
 app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   function base64Encode(file) {
     var body = fs.readFileSync(file);
     return body.toString('base64');
   }
+  var id = req.params.id.substring(1);
+  var categoryType = req.body.category;
+  var localFile = req.file.path;
+  var outputFile = req.file.path;
+  //remove background
+  async function myRemoveBgFunction(path, outpath) {
+    const outputFile = outpath;
+    await removeBackgroundFromImageFile({
+      path,
+      apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
+      size: "auto",
+      type: "default",
+      scale: "100%",
+      outputFile
+    });
+    var base64ImgData = base64Encode(outputFile);
+    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
+    const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
+    const data = { results: result.rows };
+    res.render('pages/outfit-collages', data);
+  };
+  myRemoveBgFunction(localFile, outputFile);
+  //upload database
 
-  
-  
-
-   var base64ImgData = base64Encode(req.file.path);
-   var id  =req.params.id.substring(1); 
-   var categoryType = req.body.category;
-
-   const localFile = `${req.file.path}`;
-const outputFile = `.//out//${req.file.path}`;
-//remove background
-
-removeBackgroundFromImageFile({
-  path: localFile,
-  apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
-  size: "auto",
-  type: "default",
-  scale: "100%",
-  outputFile 
-}).then((result1) => {
- console.log(`File saved to ${outputFile}`);
- base64ImgData=result1.base64img;
- 
-}).catch((errors) => {
- console.log(JSON.stringify(errors));
-})
- base64ImgData = base64Encode(outputFile);
-await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
- const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
- const currentid = await pool.query(`select uid from usrs where uid = '${id}'`);
-  const data = {currentuids:currentid.rows, results:result.rows};
- res.render('pages/outfit-collages', data);
-  
 });
 
 
@@ -380,7 +371,7 @@ app.post('/:currentuid/:uid/:imgID/comment', async(req,res) => {
     const currentuid = await pool.query(`select uid from usrs where uid = '${uid}'`)
 
     var uname = await pool.query(`select uname from usrs where uid=${uid}`)    
-    //Debug: console.log(uname['rows'][0]['uname']);
+
     var currentUID = req.params.currentuid.substring(1);
     var inputimgid = req.params.imgID.substring(1);
     var comment = req.body.comments;
