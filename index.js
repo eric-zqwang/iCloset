@@ -315,8 +315,11 @@ app.get('/:uid/like', async(req,res) => {
     let uid = req.params.uid.substring(1);
     const result = await pool.query(`select * from userobj1 where public = true`)
     const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
-    const data = {currentuids:currentid.rows, results:result.rows}
+    const comments = await pool.query(`select * from usercomment`);
+    const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows}
+
     res.render('pages/interactionPage', data)
+    
   }
   catch(error){
     res.end(error);
@@ -359,7 +362,10 @@ app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
       await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
     // }
     const result =  await pool.query(`select * from userobj1 where public = true`)
-    const data = {currentuids:currentid.rows, results:result.rows};
+
+    const comments = await pool.query(`select * from usercomment`);
+
+    const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows};
     res.render('pages/interactionPage', data);
   }
   catch(error){
@@ -368,15 +374,42 @@ app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
 })
 
 
-// app.post('//:imgID/comment', async(req,res) => {
-//   try{
-//     var inputimgid = req.params.imgID.substring(1);
-//     await.pool(``)
-//   }
-//   catch(error){
-//     res.end(error);
-//   }
-// })
+app.post('/:currentuid/:uid/:imgID/comment', async(req,res) => {
+  try{
+    let uid = req.params.currentuid.substring(1);
+    const currentuid = await pool.query(`select uid from usrs where uid = '${uid}'`)
+
+    var uname = await pool.query(`select uname from usrs where uid=${uid}`)    
+    //Debug: console.log(uname['rows'][0]['uname']);
+    var currentUID = req.params.currentuid.substring(1);
+    var inputimgid = req.params.imgID.substring(1);
+    var comment = req.body.comments;
+
+    await pool.query(`insert into usercomment (uname, imgid, uid, imagecomment)
+    VALUES ('${uname['rows'][0]['uname']}', ${inputimgid}, ${currentUID}, '${comment}')`)
+
+    const result =  await pool.query(`select * from userobj1 where public = true`);
+    const comments = await pool.query(`select * from usercomment`);
+    
+    const data = {currentuids:currentuid.rows,results:result.rows, usercomments:comments.rows}
+    res.render('pages/interactionPage', data)
+  }
+  catch(error){
+    res.end(error);
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

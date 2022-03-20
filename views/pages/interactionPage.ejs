@@ -40,13 +40,25 @@
             </p>
             <!-- <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="" data-layout="standard" data-action="like" data-size="small" data-share="true"></div> -->
             <p>Like Number: <%= r.likenum %></p>
-
-            <form action="/comments" method="post">Comments: <input type="text" name="comments">
-                <input type="submit" value="submit comment">
-                <%= r.imagecomment %>
-            </form>
             <br>
 
+            </form>
+
+            <form action="/:<%= currentuids[0].uid%>/:<%= r.uid %>/:<%= r.imgid%>/comment" method="post">
+                Comments: <input type="text" name="comments">
+                <input type="submit" value="submit comment">
+                <p>
+                <% usercomments.forEach(function(r1) { %>
+    
+                    <% if (r.imgid == r1.imgid) { %>
+                        <%= r1.uname %>
+                        :
+                        <%= r1.imagecomment %>
+                    <% } %>
+                    <br>
+
+                <% }); %>
+                </p>
             </form>
         </div>
         <% }); %>
