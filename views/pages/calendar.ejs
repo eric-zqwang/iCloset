@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Calendar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <style type="text/css">
+    ul {
+        padding: 0 10px;
+        margin: 0;
+    }
+    .top-nav {
+        background: #EEE;
+    }
+    .left-nav {
+        display: inline-block;
+        min-width: 100px;
+        max-width: 130px;
+        background: #9690BB;
+    }
+    ul li.nav-item {
+        list-style: none;
+        display: inline-block;
+    }
+    ul li.nav-item a {
+        text-decoration: none;
+    }
+    .top-nav .nav-item {
+        height: 60px;
+        line-height: 60px;
+        font-size: 20px;
+        min-width: 80px;
+        padding: 0 5px;
+    }
+    .top-nav .nav-item:hover {
+        background: #FFF;
+    }
+    .top-nav .nav-item:hover a {
+        color: #555;
+    }
+    .left-nav .nav-item {
+        height: 24px;
+        line-height: 24px;
+        font-size: 18px;
+        padding: 5px;
+    }
+    .left-nav .nav-item:hover {
+        background: #ABC;
+    }
+    .top-nav .nav-item a {
+        color: #000;
+    }
+    .left-nav .nav-item a {
+        color: #FFF;
+    }
+    .body {
+        display: inline-block;
+        min-width: calc(100% - 130px - 5px);
+        max-width: calc(100% - 100px - 5px);
+        text-align: center;
+        vertical-align: top;
+    }
+    .calendar {
+        display: inline-block;
+        width: 400px;
+        margin-top: 60px;
+        padding: 15px;
+        border: 1px solid #CCC;
+        border-radius: 10px;
+    }
+    .calendar .current {
+        width: calc(100% - 20px);
+        position: relative;
+        padding: 10px;
+        border-bottom: 1px solid #000;
+    }
+    .calendar .current .btn {
+        width: 30px;
+        display: inline-block;
+        position: absolute;
+    }
+    .calendar .current .btn-prev {
+        left: 0;
+    }
+    .calendar .current .btn-prev:hover,
+    .calendar .current .btn-next:hover {
+        background: #AAA;
+        color: #EEE;
+        cursor: pointer;
+    }
+    .calendar .current .btn-next {
+        right: 0;
+    }
+    .calendar .current .year-month {
+        display: inline-block;
+        max-width: 300px;
+        font-size: 20px;
+        font-weight: 700;
+    }
+    .calendar .current .fa {
+        font-size: 30px;
+    }
+    .calendar .header .week-day {
+        font-weight: 700;
+    }
+    .calendar .header .week-day,
+    .calendar .dates .row .digit,
+    .calendar .dates .row .digit-placeholder {
+        display: inline-block;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        border: 1px solid rgba(200,200,200,0);
+        margin: 2px 5px;
+    }
+    .calendar .dates .row .digit.active,
+    .calendar .dates .row .digit.selected,
+    .calendar .dates .row .digit:hover {
+        cursor: pointer;
+        color: #FFF;
+    }
+    .calendar .dates .row .digit.active {
+        background: #00E;
+    }
+    .calendar .dates .row .digit.selected,
+    .calendar .dates .row .digit:hover {
+        background: #D18D11;
+    }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <ul>
+            <!--<li class="nav-item"><a href="/"><i class="fa fa-home"></i></a></li>-->
+            <li class="nav-item"><a href="/">HOME</a></li>
+            <li class="nav-item"><a href="/category">CATEGORY</a></li>
+            <li class="nav-item"><a href="/outfits">OUTFITS</a></li>
+            <li class="nav-item"><a href="/calendar">CALENDAR</a></li>
+        </ul>
+    </div>
+    <div class="left-nav">
+        <ul>
+            <li class="nav-item"><a href="/shirts">Shirts</a></li>
+            <li class="nav-item"><a href="/coats">Coats</a></li>
+            <li class="nav-item"><a href="/suits">Suits</a></li>
+            <li class="nav-item"><a href="/sweaters">Sweaters</a></li>
+            <li class="nav-item"><a href="/pants">Pants</a></li>
+            <li class="nav-item"><a href="/jeans">Jeans</a></li>
+            <li class="nav-item"><a href="/shoes">Shoes</a></li>
+            <li class="nav-item"><a href="/bags">Bags</a></li>
+            <li class="nav-item"><a href="/accessories">Accessories</a></li>
+            <li class="nav-item"><a href="/others">Others</a></li>
+        </ul>
+    </div>
+    <div class="body">
+        <div class="calendar" id="calendar">
+            <div class="current">
+                <div class="btn btn-prev" v-on:click="previous()"><i class="fa fa-angle-left"></i></div>
+                <div class="year-month">{{ currentYearMonthFn() }}</div>
+                <div class="btn btn-next" v-on:click="next()"><i class="fa fa-angle-right"></i></div>
+            </div>
+            <div class="header">
+                <div class="week-day" v-for="d in locale_week">{{ d }}</div>
+            </div>
+            <div class="dates">
+                <div class="row" v-for="row in getAllDatesOfCurrentMonth()">
+                    <div v-on:click="dateSelect(d,$event)" :class="digitKlass(d)" v-for="d in row">{{ d ? d : '&nbsp' }}</div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+        var date = new Date;
+        var vueInst = new Vue({
+            el: '#calendar',
+            data: {
+                locale_week: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                origin_year:  date.getYear() + 1900,
+                origin_month: date.getMonth() + 1,
+                origin_date: date.getDate(),
+                current_year: date.getYear() + 1900,
+                current_month: date.getMonth() + 1,
+                current_date: date.getDate(),
+            },
+            methods: {
+                currentYearMonthFn: function() {
+                    if (this.current_month >= 10) {
+                        return this.current_year + '-' + this.current_month;
+                    } else {
+                        return this.current_year + '-0' + this.current_month;
+                    }
+                },
+                getAllDatesOfCurrentMonth: function() {
+                    var current = new Date(this.current_year + '-' + this.current_month);
+                    var weekday = current.getDay();
+                    var days    = new Date(this.current_year, this.current_month, 0).getDate();
+                    //
+                    var dates = [], dates2 = [];
+                    for(var i = 1; i <= days; ++i) {
+                        dates2.push(i < 10 ? ('0' + i) : ('' + i));
+                    }
+                    for(var i = 0; i < weekday; ++i) {
+                        dates2.unshift('');
+                    }
+                    while(dates2.length % 7 > 0) {
+                        dates2.push('');
+                    }
+                    while(dates2.length > 0) {
+                        dates.push(dates2.splice(0, 7));
+                    }
+                    return dates;
+                },
+                previous: function() {
+                    if(this.current_month == 1) {
+                        this.current_year--;
+                        this.current_month = 12;
+                    } else {
+                        this.current_month--;
+                    }
+                },
+                next: function() {
+                    if(this.current_month == 12) {
+                        this.current_year++;
+                        this.current_month = 1;
+                    } else {
+                        this.current_month++;
+                    }
+                },
+                digitKlass: function(day) {
+                    var klass = 'digit';
+                    if(day == '') {
+                        klass = 'digit-placeholder';
+                    } else {
+                        if(this.current_year == this.origin_year
+                            && this.current_month == this.origin_month
+                            && day == this.origin_date) {// current day
+                            klass += ' active';
+                        }
+                    }
+                    return klass;
+                },
+                dateSelect: function(d,ev) {
+                    if(d == '') return ;
+                    d = parseInt(d);
+                    var dom = ev.target;
+                    dom.addKlass('selected');
+                }
+            },
+            addKlass: function(dom, klass) {
+                if(!dom || !klass) return ;
+                var origin = dom.getAttribute('class');
+                var klasses= origin.split(/\s+/);
+                klass = klass.split(/\s+/);
+                for(var i = 0; i < klass.length; ++i) {
+                    if(klasses.indexOf(klass[i]) < 0) {
+                        klasses.push(klass[i]);
+                    }
+                }
+                dom.setAttribute('class', klasses.join(' '));
+            },
+            removeKlass: function(dom, klass) {
+                if(!dom || !klass) return ;
+                var origin = dom.getAttribute('class');
+                var klasses= origin.split(/\s+/);
+                var klass  = klass.split(/\s+/);
+                for(var i = 0; i < klass.length; ++i) {
+                    if(klasses.indexOf(klass[i]) >= 0) {
+                        klasses.splice(klasses.indexOf(klass[i]), 1);
+                    }
+                }
+                return klasses.join(' ');
+            }
+        });
+        </script>
+    </div>
+</body>
+</html>
