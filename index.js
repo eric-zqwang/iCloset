@@ -288,6 +288,10 @@ app.get('/user-list', (request, response) => {
     });
   });
 });
+// calendar page
+app.get('/calendar', (request, response) => {
+    response.render('pages/calendar', {});
+});
 // app.use('/uploads', express.static('uploads'));
 
 app.get('/:id/outfit', async (req, res) => {
