@@ -149,7 +149,13 @@ app.get('/:id/uploadimg', async (req, res) => {
   const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/uploadimg',data);
 })
-
+app.get('/:id/outfit', async (req, res) => {
+  var id = req.params.id.substring(1);
+  var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
+  const currentid = await pool.query(`select uid from usrs where uid = '${id}'`)
+  const data = {currentuids:currentid.rows, results:result.rows}
+  res.render('pages/outfit-collages', data);
+});
 
 //upload image
 const fs = require('fs')
@@ -174,7 +180,6 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     return body.toString('base64');
   }
   var id = req.params.id.substring(1);
-  const currentid = await pool.query(`select uid from usrs where uid = '${id}'`)
   var categoryType = req.body.category;
   var localFile = req.file.path;
   var outputFile = req.file.path;
@@ -190,11 +195,9 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
       outputFile
     }).catch(e => {console.log(e); throw e;});
     var base64ImgData = base64Encode(outputFile);
-    //upload database
+    //update database
     await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
-    const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
-    const data = { currentuids:currentid.rows,results: result.rows };
-    res.render('pages/outfit-collages', data);
+    res.redirect(`/:${id}/outfit`)
   };
   myRemoveBgFunction(localFile, outputFile);
 });
@@ -255,52 +258,43 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
 
 
 // user list
-app.get('/user-list', (request, response) => {
-  var page = request.query['page'] ? request.query['page'] : 1;
-  var size = request.query['size'] ? request.query['size'] : 15;
-  pool.connect(function (error, client, releaseFn) {
-    if (error) {// if error then release the connection
-      releaseFn();
-      return console.log('Connection failed: ' + error);
-    }
-    var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
-    client.query(countSql, (error, results) => {
-      if (error) {
-        releaseFn();
-        return console.log('Query failed: ' + error);
-      }
-      // total number of users
-      var total = results.rows[0].total;
-      var offset = (page - 1) * size;
-      // query the target page of users
-      var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
-      client.query(listSql, (error, results) => {
-        releaseFn();
-        if (error) {
-          return console.log('Query userInfo failed: ' + error);
-        }
-        var data = results.rows;
-        // OK, now we render the users
-        response.render('pages/user-list', {
-          users: data,
-          total: total
-        });
-      });
-    });
-  });
-});
+// app.get('/user-list', (request, response) => {
+//   var page = request.query['page'] ? request.query['page'] : 1;
+//   var size = request.query['size'] ? request.query['size'] : 15;
+//   pool.connect(function (error, client, releaseFn) {
+//     if (error) {// if error then release the connection
+//       releaseFn();
+//       return console.log('Connection failed: ' + error);
+//     }
+//     var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
+//     client.query(countSql, (error, results) => {
+//       if (error) {
+//         releaseFn();
+//         return console.log('Query failed: ' + error);
+//       }
+//       // total number of users
+//       var total = results.rows[0].total;
+//       var offset = (page - 1) * size;
+//       // query the target page of users
+//       var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
+//       client.query(listSql, (error, results) => {
+//         releaseFn();
+//         if (error) {
+//           return console.log('Query userInfo failed: ' + error);
+//         }
+//         var data = results.rows;
+//         // OK, now we render the users
+//         response.render('pages/user-list', {
+//           users: data,
+//           total: total
+//         });
+//       });
+//     });
+//   });
+// });
 // calendar page
 app.get('/calendar', (request, response) => {
     response.render('pages/calendar', {});
-});
-// app.use('/uploads', express.static('uploads'));
-
-app.get('/:id/outfit', async (req, res) => {
-  var id = req.params.id.substring(1);
-  var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
-  const currentid = await pool.query(`select uid from usrs where uid = '${id}'`)
-  const data = {currentuids:currentid.rows, results:result.rows}
-  res.render('pages/outfit-collages', data);
 });
 
 // Get users' information from database
@@ -360,9 +354,9 @@ app.post('/edituser/:umail', async (req, res) => {
 app.get('/:uid/like', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
-    const result = await pool.query(`select * from userobj1 where public = true`)
+    const result = await pool.query(`select * from userobj1 where public = true order by imgid`)
     const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
-    const comments = await pool.query(`select * from usercomment`);
+    const comments = await pool.query(`select * from usercomment order by imgid`);
     const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows}
 
     res.render('pages/interactionPage', data)
