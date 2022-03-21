@@ -198,7 +198,58 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     res.render('pages/outfit-collages', data);
   };
   myRemoveBgFunction(localFile, outputFile);
+  //calendar page
+  const { google } = req('googleapis');
+  const { OAuth2 } = google.auth;
+  const oAuth2Client = new OAuth2(
+    '35253322607-kfd6ne8p2i96vlbuo604cti09jl6tfl3.apps.googleusercontent.com',
+    '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'
+  )
+  oAuth2Client.setCredentials({
+    refresh_token:
+    '1//04NXDevq6qwbgCgYIARAAGAQSNwF-L9IrNijE-svUeHMDyijveSuoPR3-r_DUZRTROynpb_GZHuWh01IxMbYIGLTffpzFXnGk1uE'
+  })
+  const calendar = google.calendar({version:'v3', auth:  oAuth2Client});
 
+  const eventStartTime = new Data();
+  eventStartTime.getData();
+  const eventEndTime = new Data();
+  eventEndTime.getData();
+
+  const event = {
+    summary:'',
+    location:'',
+    description:'',
+    start:{
+      datatime: eventStartTime,
+      timezone:'Canada/Whithouse',
+    },
+    end:{
+      datatime: eventEndTime,
+      timezone:'Canada/Whithouse',
+    },
+    colorId: 1,
+  }
+
+  calendar.freebusy.query(
+  // {
+  //   resource{
+  //     timezone:'Canada/Whithouse',
+  //     item:[{id：'primary'}],
+  //   },
+  // },
+  (err,res) => {
+    if(err) return console.error('Free Busy Query Error', err)
+    const eventArr = res.data.calendars.primary.busy
+    if(eventArr.length == 0) return calendar.events.insert( {calendarId:'primary',resource: event},(err)=>{
+      if(err) return console.error('Calendar Events Creation Error', err)
+
+      return console.log('Calendar Event Created.')
+    }
+    )
+    return console.log('Busy.')
+  }
+  )
 });
 
 
