@@ -125,7 +125,7 @@ app.post('/adminlogin', async (req, res) => {
     var user = { name: data.results[0].uname, password: data.results[0].upswd }
     req.session.user = user;
     curSession = req.session;
-    res.render('pages/user-list', data)
+    res.render('pages/adminpage', data)
   }
 
   //If umail does not exist or password is incorrect, alert user
@@ -148,9 +148,8 @@ app.get('/:id/uploadimg', async (req, res) => {
   const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
   const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/uploadimg',data);
-
-
 })
+
 
 //upload image
 const fs = require('fs')
@@ -192,65 +191,67 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     }).catch(e => {console.log(e); throw e;});
     var base64ImgData = base64Encode(outputFile);
     //upload database
-    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);
+    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
     const result = await pool.query(`select * from userobj1 where uid = '${id}'`);
     const data = { currentuids:currentid.rows,results: result.rows };
     res.render('pages/outfit-collages', data);
   };
   myRemoveBgFunction(localFile, outputFile);
-  //calendar page
-  const { google } = req('googleapis');
-  const { OAuth2 } = google.auth;
-  const oAuth2Client = new OAuth2(
-    '35253322607-kfd6ne8p2i96vlbuo604cti09jl6tfl3.apps.googleusercontent.com',
-    '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'
-  )
-  oAuth2Client.setCredentials({
-    refresh_token:
-    '1//04NXDevq6qwbgCgYIARAAGAQSNwF-L9IrNijE-svUeHMDyijveSuoPR3-r_DUZRTROynpb_GZHuWh01IxMbYIGLTffpzFXnGk1uE'
-  })
-  const calendar = google.calendar({version:'v3', auth:  oAuth2Client});
-
-  const eventStartTime = new Data();
-  eventStartTime.getData();
-  const eventEndTime = new Data();
-  eventEndTime.getData();
-
-  const event = {
-    summary:'',
-    location:'',
-    description:'',
-    start:{
-      datatime: eventStartTime,
-      timezone:'Canada/Whithouse',
-    },
-    end:{
-      datatime: eventEndTime,
-      timezone:'Canada/Whithouse',
-    },
-    colorId: 1,
-  }
-
-  calendar.freebusy.query(
-  // {
-  //   resource{
-  //     timezone:'Canada/Whithouse',
-  //     item:[{id：'primary'}],
-  //   },
-  // },
-  (err,res) => {
-    if(err) return console.error('Free Busy Query Error', err)
-    const eventArr = res.data.calendars.primary.busy
-    if(eventArr.length == 0) return calendar.events.insert( {calendarId:'primary',resource: event},(err)=>{
-      if(err) return console.error('Calendar Events Creation Error', err)
-
-      return console.log('Calendar Event Created.')
-    }
-    )
-    return console.log('Busy.')
-  }
-  )
 });
+
+  //calendar page
+  // const { google } = require('googleapis');
+  // const { OAuth2 } = google.auth;
+  // const oAuth2Client = new OAuth2(
+  //   '35253322607-kfd6ne8p2i96vlbuo604cti09jl6tfl3.apps.googleusercontent.com',
+  //   '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'
+  // )
+  // oAuth2Client.setCredentials({
+  //   refresh_token:
+  //   '1//04NXDevq6qwbgCgYIARAAGAQSNwF-L9IrNijE-svUeHMDyijveSuoPR3-r_DUZRTROynpb_GZHuWh01IxMbYIGLTffpzFXnGk1uE'
+  // })
+  // const calendar = google.calendar({version:'v3', auth:  oAuth2Client});
+
+  // const eventStartTime = new Data();
+  // eventStartTime.getData();
+  // const eventEndTime = new Data();
+  // eventEndTime.getData();
+
+  // const event = {
+  //   summary:'',
+  //   location:'',
+  //   description:'',
+  //   start:{
+  //     datatime: eventStartTime,
+  //     timezone:'Canada/Whithouse',
+  //   },
+  //   end:{
+  //     datatime: eventEndTime,
+  //     timezone:'Canada/Whithouse',
+  //   },
+  //   colorId: 1,
+  // }
+
+  // calendar.freebusy.query(
+  // // {
+  // //   resource{
+  // //     timezone:'Canada/Whithouse',
+  // //     item:[{id：'primary'}],
+  // //   },
+  // // },
+  // (err,res) => {
+  //   if(err) return console.error('Free Busy Query Error', err)
+  //   const eventArr = res.data.calendars.primary.busy
+  //   if(eventArr.length == 0) return calendar.events.insert( {calendarId:'primary',resource: event},(err)=>{
+  //     if(err) return console.error('Calendar Events Creation Error', err)
+
+  //     return console.log('Calendar Event Created.')
+  //   }
+  //   )
+  //   return console.log('Busy.')
+  // }
+  // )
+
 
 
 // user list
@@ -407,9 +408,9 @@ app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
        //  await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
     await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
     // }
-    const result =  await pool.query(`select * from userobj1 where public = true`)
+    const result =  await pool.query(`select * from userobj1 where public = true order by imgid`)
 
-    const comments = await pool.query(`select * from usercomment`);
+    const comments = await pool.query(`select * from usercomment order by imgid`);
 
     const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows};
     res.render('pages/interactionPage', data);

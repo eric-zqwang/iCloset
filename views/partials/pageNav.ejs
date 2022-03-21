@@ -98,7 +98,7 @@
                     z = document.getElementById("temp");
                     z.innerHTML = (temp-273.15).toFixed(1) + "℃";
                     a = document.getElementById("tempRange");
-                    a.innerHTML = (temp_min-273.15).toFixed(1) + "℃ /" + (temp_max-273.15).toFixed(1) + "℃";
+                    a.innerHTML = (temp_min-273.15).toFixed(1) + "℃ ~ " + (temp_max-273.15).toFixed(1) + "℃";
                  })
             }
         </script>
@@ -111,7 +111,7 @@
             <li><a href="#home">HOME</a></li>
             <li><a href="#category">CATEGORY</a></li>
             <li><a href="/:<%= currentuids[0].uid %>/outfit">OUTFITS</a></li>
-            <li><a href="#calendar">CALENDAR</a></li>
+            <li><a href="/calendar">CALENDAR</a></li>
             <li><a href="#account">ACCOUNT</a></li>
             <li><a href="#logout">LOG OUT</a></li>
         
