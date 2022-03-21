@@ -184,12 +184,12 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     const outputFile = outpath;
     await removeBackgroundFromImageFile({
       path,
-      apiKey: "YUDDFV44uBx1T4XMpB9QrwaY",
+      apiKey: "jgYkJ6ChpodLBhqBv3XY2Gha",
       size: "auto",
       type: "default",
       scale: "100%",
       outputFile
-    });
+    }).catch(e => {console.log(e); throw e;});
     var base64ImgData = base64Encode(outputFile);
     //upload database
     await pool.query(`insert into userobj1 (txtimg, uid,category_type,public) values ('${base64ImgData}','${id}','${categoryType}',false)`);

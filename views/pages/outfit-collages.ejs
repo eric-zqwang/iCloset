@@ -27,7 +27,6 @@
       display: block;
       color: whitesmoke;
       padding: 15px 25px;
-
       text-decoration: none;
     }
 
@@ -59,50 +58,16 @@
       top: 160px;
       right: 50px;
     }
-  </style>
-<script>
-  const source = document.querySelector('.source');
-  const target = document.querySelector('.target');
-
-  source.addEventListener('dragstart', (e) => {
-    e.dataTransfer.setData('text/plain', e.target.id);
-    //the dragged item will become less solid
-    e.target.style.opacity = 0.3;
-  })
-
-  //stop dragging and let go the mouse, item go back to original state
-  source.addEventListener('dragend', (e) => {
-    e.target.style.opacity = 1;
-  })
-
-  //allow drop to happen
-  target.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  })
-
-  target.addEventListener('dragenter', (e) => {
-    e.target.style.background = '#eee';
-  })
-
-  target.addEventListener('dragleave', (e) => {
-    e.target.style.background = '';
-  })
-
-  target.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const sourceID = e.dataTransfer.getData('text/plain');
-    e.target.appendChild(document.getElementById(sourceID));
-    e.target.style.background = '';
-  })
-</script>
+    </style>
 </head>
 
+<script src="https://unpkg.com/konva@8/konva.min.js"></script>
 <body>
   <%- include ("../partials/pageNav.ejs") %>
-    <div class="sidenav">
+  <div class = "sidenav">
 
-      <!-- Fixed Full-Height Side Bar -->
-      <!-- 
+    <!-- Fixed Full-Height Side Bar -->
+    <!-- 
       <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
       </canvas>
     -->
@@ -132,7 +97,7 @@
               <% results.forEach(function(r) { %>
                 <%  count++;%>                
                 
-                  <td style="padding: 20px;"><img src="data:image/gif;base64,<%= r.txtimg %>" width="200" height="200" alt=""> </td>                  
+                  <td style="padding: 20px;"><img src="data:image/gif;base64,<%= r.txtimg %>" draggable="true" class="imageDraggable" width="200" height="200" alt=""> </td>                  
                     <% if(count%4==0){%>
                     </tr><tr>
                     <% } %>
@@ -145,18 +110,109 @@
             <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;"></a>
             <%};%>
         </div>
-        <div id="source" class="source" draggable="true"></div>
-        <div class="target"></div>
-        
+        <div id="target" class="target"></div>
       </div>
+      
     </div>
-
-    </div>
-
+  </div>
+  
 </body>
-
 </html>
-<!-- <script>
+
+<script>
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const stage = new Konva.Stage({
+      container: 'target',
+      width: 600,
+      height: 600,
+  });
+  const layer = new Konva.Layer();
+  stage.add(layer);
+
+  var images = document.getElementsByClassName("imageDraggable");
+  // for (var i = 0; i < images.length; i++) {
+  //   images[i].addEventListener('dragstart', (e) => {
+  //     e.dataTransfer.setData('text/plain', e.target.id);
+  //     //the dragged item will become less solid
+  //     e.target.style.opacity = 0.3;
+  //   })
+  // };
+
+  // for (var i = 0; i < images.length; i++) {
+  //   images[i].addEventListener('dragend', (e) => {
+  //     e.dataTransfer.setData('text/plain', e.target.id);
+  //     //the dragged item will become less solid
+  //     e.target.style.opacity = 1;
+  //   })
+  // };
+
+  for (var i = 0; i < images.length; i++) {
+    images[i].addEventListener('click', (e) => {
+      const image = e.target;
+      var darthVaderImg = new Konva.Image({
+        image: image,
+        x: Math.random() * stage.width() / 2,
+        y: Math.random() * stage.width() / 2,
+        width: 200,
+        height: 137,
+        draggable: true,
+        name: 'image',
+      });
+      // add cursor styling
+      darthVaderImg.on('mouseover', function () {
+        document.body.style.cursor = 'pointer';
+      });
+      darthVaderImg.on('mouseout', function () {
+        document.body.style.cursor = 'default';
+      });
+
+      const tr = new Konva.Transformer({
+        node: darthVaderImg
+      });
+      layer.add(tr);
+      const deleteButton = new Konva.Circle({
+        radius: 10,
+        fill: 'red'
+      });
+      tr.add(deleteButton);
+      function updatePos() {
+        deleteButton.position(tr.findOne('.top-right').position());
+      }
+      deleteButton.on("mouseup", function(e) {
+        tr.remove();
+        darthVaderImg.remove();
+        layer.draw();
+      });
+      updatePos();
+      darthVaderImg.on('transform', updatePos);
+
+      stage.on('click tap', function (e) {
+        // if click on empty area - remove all selections
+        if (e.target === stage) {
+          tr.nodes([]);
+          return;
+        }
+
+        // do nothing if clicked NOT on our images
+        if (!e.target.hasName('image')) {
+          return;
+        }
+
+        const isSelected = tr.nodes().indexOf(e.target) >= 0;
+
+        if (!isSelected) {
+          // if no key pressed and the node is not selected
+          // select just one
+          tr.nodes([e.target]);
+        }
+      });
+
+      layer.add(darthVaderImg);
+      // layer.draw();
+    })
+  };
+     
   // changeCategory = function(event) {
   //   category; // which category is selected?
   //   result = query("select * from ddd where umail = and category = ''")
@@ -171,4 +227,4 @@
   // }
 
 
-</script> -->
+</script>
