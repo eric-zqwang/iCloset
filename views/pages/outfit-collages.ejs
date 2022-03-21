@@ -58,12 +58,23 @@
       top: 160px;
       right: 50px;
     }
+    .outfitContent{
+    margin-left: 160px ;
+    padding:1px 16px;
+    overflow:scroll;
+    width:50%;
+    border-collapse: collapse;
+    height:700px;
+    }
+    
     </style>
 </head>
 
 <script src="https://unpkg.com/konva@8/konva.min.js"></script>
 <body>
+  
   <%- include ("../partials/pageNav.ejs") %>
+  
   <div class = "sidenav">
 
     <!-- Fixed Full-Height Side Bar -->
@@ -84,14 +95,14 @@
         <li><a href="#accessories">Accessories</a></li>
         <li><a href="#others">Others</a></li>
       </ul>
-
-      <div style="margin-left:25%;padding:1px 16px;height:1000px;">
-        <br><br><br><br><br><br><br>
-        <h2>Hello, User</h2>
-        <h3>Show all the clothes!!!</h3>
-        <div draggable="true">
-          <% if(results.length>0){%>  
-            <table >            
+  </div>
+  <br><br><br><br><br><br><br>
+        <h2 style ="margin-left: 200px ;">Hello, <%=currentuids[0].uname%></h2>
+        <p style ="margin-left: 200px ;" >Click &darr; &darr; &darr; to add clothes!!!</p>
+        <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;margin-left: 200px ;"></a></p>
+  <div class="outfitContent" draggable="true" >
+                  <% if(results.length>0){%>  
+            <table>            
               <% var count = 0; %>
               <tr>
               <% results.forEach(function(r) { %>
@@ -101,20 +112,17 @@
                     <% if(count%4==0){%>
                     </tr><tr>
                     <% } %>
-              <% }); %>            
-                  <td><a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;"></a></td>          
+              <% }); %>                                        
                        </tr>     
             </table>
           <% };%>
           <% if(results.length==0){%>  
-            <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;"></a>
+          </table>
             <%};%>
-        </div>
-        <div id="target" class="target"></div>
-      </div>
-      
-    </div>
   </div>
+  <div id="target" class="target"></div>
+  
+  
   
 </body>
 </html>

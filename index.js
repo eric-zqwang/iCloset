@@ -145,14 +145,14 @@ app.get('/userlogout', async (req, res) => {
 app.get('/:id/uploadimg', async (req, res) => {
   let uid  =req.params.id.substring(1);
   const result = await pool.query(`SELECT * FROM usrs WHERE uid = '${uid}'`);
-  const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
+  const currentid = await pool.query(`select * from usrs where uid = '${uid}'`)
   const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/uploadimg',data);
 })
 app.get('/:id/outfit', async (req, res) => {
   var id = req.params.id.substring(1);
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
-  const currentid = await pool.query(`select uid from usrs where uid = '${id}'`)
+  const currentid = await pool.query(`select * from usrs where uid = '${id}'`)
   const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/outfit-collages', data);
 });
