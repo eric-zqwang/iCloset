@@ -58,82 +58,74 @@
       top: 160px;
       right: 50px;
     }
-    .outfitContent{
-    margin-left: 160px ;
-    padding:1px 16px;
-    overflow:scroll;
-    width:50%;
-    border-collapse: collapse;
-    height:700px;
+
+    .outfitContent {
+      margin-left: 160px;
+      padding: 1px 16px;
+      overflow: scroll;
+      width: 50%;
+      border-collapse: collapse;
+      height: 700px;
     }
-    
-    </style>
+  </style>
 </head>
 
 <script src="https://unpkg.com/konva@8/konva.min.js"></script>
-<body>
-  
-  <%- include ("../partials/pageNav.ejs") %>
-  
-  <div class = "sidenav">
 
-    <!-- Fixed Full-Height Side Bar -->
-    <!-- 
+<body>
+
+  <%- include ("../partials/pageNav.ejs") %>
+    <div class="sidenav">
+
+      <!-- Fixed Full-Height Side Bar -->
+      <!-- 
       <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
       </canvas>
     -->
 
       <ul>
-        <li><a href="" onclick="changeCategory">Shirts</a></li>
-        <li><a href="#coats">Coats</a></li>
-        <li><a href="#suits">Suits</a></li>
-        <li><a href="#sweaters">Sweaters</a></li>
-        <li><a href="#pans">Pants</a></li>
-        <li><a href="#jeans">Jeans</a></li>
-        <li><a href="#shoes">Shoes</a></li>
-        <li><a href="#bags">Bags</a></li>
-        <li><a href="#accessories">Accessories</a></li>
-        <li><a href="#others">Others</a></li>
+        <li><a href="#all" onclick="changeCategory('imageDraggable')">All</a></li>
+        <li><a href="#shirts" onclick="changeCategory('Shirts')">Shirts</a></li>
+        <li><a href="#coats" onclick="changeCategory('Coats')">Coats</a></li>
+        <li><a href="#suits"onclick="changeCategory('Suits')">Suits</a></li>
+        <li><a href="#sweaters"onclick="changeCategory('Sweaters')">Sweaters</a></li>
+        <li><a href="#pans"onclick="changeCategory('Pants')">Pants</a></li>
+        <li><a href="#jeans"onclick="changeCategory('Jeans')">Jeans</a></li>
+        <li><a href="#shoes"onclick="changeCategory('Shoes')">Shoes</a></li>
+        <li><a href="#bags"onclick="changeCategory('Bags')">Bags</a></li>
+        <li><a href="#accessories"onclick="changeCategory('Accessories')">Accessories</a></li>
+        <li><a href="#others"onclick="changeCategory('Others')">Others</a></li>
       </ul>
-  </div>
-  <br><br><br><br><br><br><br>
-        <h2 style ="margin-left: 200px ;">Hello, <%=currentuids[0].uname%></h2>
-        <p style ="margin-left: 200px ;" >Click &darr; &darr; &darr; to add clothes!!!</p>
-        <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image" style="width:200px;height:200px;margin-left: 200px ;"></a></p>
-  <div class="outfitContent" draggable="true" >
-                  <% if(results.length>0){%>  
-            <table>            
-              <% var count = 0; %>
-              <tr>
-              <% results.forEach(function(r) { %>
-                <%  count++;%>                
-                
-                  <td style="padding: 20px;"><img src="data:image/gif;base64,<%= r.txtimg %>" draggable="true" class="imageDraggable" width="200" height="200" alt=""> </td>                  
-                    <% if(count%4==0){%>
-                    </tr><tr>
-                    <% } %>
-              <% }); %>                                        
-                       </tr>     
+    </div>
+    <br><br><br><br><br><br><br>
+    <h2 style="margin-left: 200px ;">Hello, <%=currentuids[0].uname%></h2>
+    <p style="margin-left: 200px ;">Click &darr; &darr; &darr; to add clothes!!!</p>
+    <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image"
+        style="width:200px;height:200px;margin-left: 200px ;"></a></p>
+    <div class="outfitContent" draggable="true" id="category-img">
+      <% if(results.length>0){%>
+
+           <% results.forEach(function(r) { %>
+            <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 20px;" draggable="true"
+               class="imageDraggable <%= r.category_type%>" width="200" height="200" alt=""> 
+            <% }); %>
+        <% };%>
+          <% if(results.length==0){%>
             </table>
-          <% };%>
-          <% if(results.length==0){%>  
-          </table>
             <%};%>
-  </div>
-  <div id="target" class="target"></div>
-  
-  
-  
+    </div>
+    <div id="target" class="target"></div>
 </body>
+
 </html>
 
 <script>
   const width = window.innerWidth;
   const height = window.innerHeight;
   const stage = new Konva.Stage({
-      container: 'target',
-      width: 600,
-      height: 600,
+    container: 'target',
+    width: 600,
+    height: 600,
   });
   const layer = new Konva.Layer();
   stage.add(layer);
@@ -187,7 +179,7 @@
       function updatePos() {
         deleteButton.position(tr.findOne('.top-right').position());
       }
-      deleteButton.on("mouseup", function(e) {
+      deleteButton.on("mouseup", function (e) {
         tr.remove();
         darthVaderImg.remove();
         layer.draw();
@@ -220,19 +212,16 @@
       // layer.draw();
     })
   };
-     
-  // changeCategory = function(event) {
-  //   category; // which category is selected?
-  //   result = query("select * from ddd where umail = and category = ''")
-  //   const b = "<ul>"
-  //   result.rows.forEach(item => {
-  //     b += "<li> item.name </li>"
-  //   });
-  //   b += "</ul>";
 
-  //   const a = document.getElementById("div2");
-  //   a.innerHTML = b; // sets or returns the content (innerHTML) of the selected elements. 
-  // }
-
-
+  const imagestore =  document.querySelectorAll(".imageDraggable");
+  function changeCategory(val) {
+  
+    var img = imagestore;
+    document.getElementById("category-img").textContent="";
+    for(i=0;i<img.length;i++){
+      if(img[i].classList.contains(val)){
+        document.getElementById("category-img").append(img[i]);
+      }
+    }
+  }
 </script>

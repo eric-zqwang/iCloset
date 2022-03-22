@@ -255,8 +255,6 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   // }
   // )
 
-
-
 // user list
 // app.get('/user-list', (request, response) => {
 //   var page = request.query['page'] ? request.query['page'] : 1;
@@ -439,4 +437,3 @@ app.post('/:currentuid/:uid/:imgID/comment', async(req,res) => {
     res.end(error);
   }
 })
-
