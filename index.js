@@ -13,21 +13,36 @@ app.set('view engine', 'ejs')
 
 // redirect user to login page if they dont have a session
 app.use(function (req, res, next) {
-  if (curSession == null && (!req.path.endsWith("login") && !req.path.endsWith("signUp"))) {
+  function validateAccess(sessionUID, reqPath) {
+    const regex = /^\/\:(\d+)\/\s*/g;
+    const results = regex.exec(reqPath);
+    console.log("DEBUGGGG " + reqPath + " " + JSON.stringify(results));
+    if ( !!results && results.length > 1) {
+      const requestUID = results[1];
+      return sessionUID == requestUID;
+    }
+    return true;
+  }
+
+  if (req.path.endsWith("login") || req.path.endsWith("signUp")) {
+    next();
+  } else if (curSession == null) {
     // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
-  } else {
+  } else if (validateAccess(curSession.user.uid, req.path)) {
     next();
+  } else {
+    res.send("Access denied on viewing resources")
   }
 });
 
-app.get('/', (req, res) => {
-  if (curSession) {
-    res.render('pages/index');
-  } else {
-    res.redirect('/userlogin.html');
-  }
-});
+// app.get('/', (req, res) => {
+//   if (curSession) {
+//     res.render('pages/index');
+//   } else {
+//     res.redirect('/userlogin.html');
+//   }
+// });
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 app.use(cookieParser());
 
@@ -50,8 +65,8 @@ pool = new Pool({
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  connectionString: 'postgres://postgres:root@localhost/try1'
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  // connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -93,7 +108,11 @@ app.post('/userlogin', async (req, res) => {
   }
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
-    var user = { name: data.results[0].uname, password: data.results[0].upswd }
+    var user = { 
+      name: data.results[0].uname, 
+      password: data.results[0].upswd,
+      uid: data.results[0].uid
+    };
     req.session.user = user;
     curSession = req.session;
 
