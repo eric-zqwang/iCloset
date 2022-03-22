@@ -50,8 +50,8 @@ pool = new Pool({
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  //connectionString: 'postgres://postgres:root@localhost/try1'
+  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -150,7 +150,7 @@ app.get('/:id/uploadimg', async (req, res) => {
   res.render('pages/uploadimg',data);
 })
 
-app.get('/:id/outfit', async (req, res) => {
+app.get('/:id/collage', async (req, res) => {
   var id = req.params.id.substring(1);
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
   const currentid = await pool.query(`select * from usrs where uid = '${id}'`)
@@ -198,7 +198,7 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     var base64ImgData = base64Encode(outputFile);
     //update database
     await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
-    res.redirect(`/:${id}/outfit`)
+    res.redirect(`/:${id}/collage`)
   };
   myRemoveBgFunction(localFile, outputFile);
 });
