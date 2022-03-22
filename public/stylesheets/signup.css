@@ -18,6 +18,7 @@ html {
   margin: auto;
   height: 80%;
 }
+/* 
 .box {
   position: relative; 
   width: 400px;
@@ -26,8 +27,7 @@ html {
   padding: 20px 40px;
   border-radius: 5px;
   box-shadow: 0 10px 34px -15px rgb(0 0 0 / 24%);
-  
-}
+} */
 
 input[type=text], input[type=password] {
   width: 92%;
