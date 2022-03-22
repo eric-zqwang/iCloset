@@ -99,21 +99,15 @@
       </ul>
     </div>
     <br><br><br><br><br><br><br>
-    <h2 style="margin-left: 200px ;">Hello, <%=currentuids[0].uname%></h2>
-    <p style="margin-left: 200px ;">Click &darr; &darr; &darr; to add clothes!!!</p>
-    <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image"
-        style="width:200px;height:200px;margin-left: 200px ;"></a></p>
+    <h2 style="margin-left: 200px ;">Hello, <%=currentuids[0].uname%>, try to click on the images to see how they go.</h2>
+    <br><br>
     <div class="outfitContent" draggable="true" id="category-img">
       <% if(results.length>0){%>
-
            <% results.forEach(function(r) { %>
-            <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 20px;" draggable="true"
+            <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;" draggable="true"
                class="imageDraggable <%= r.category_type%>" width="200" height="200" alt=""> 
             <% }); %>
         <% };%>
-          <% if(results.length==0){%>
-            </table>
-            <%};%>
     </div>
     <div id="target" class="target"></div>
 </body>

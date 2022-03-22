@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit Collages</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: rgb(170, 172, 198);
+        }
+
+        .sidenav ul {
+            list-style-type: non;
+            margin: 0;
+            padding: 0;
+            width: 160px;
+            background-color: rgb(131, 134, 170);
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .sidenav li a {
+            display: block;
+            color: whitesmoke;
+            padding: 15px 25px;
+            text-decoration: none;
+        }
+
+        .sidenav li a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        .sidenav li a:hover:not(.active) {
+            color: rgba(240, 248, 255, 0.671);
+        }
+
+        .source {
+            width: 75px;
+            height: 75px;
+            border: 1px solid black;
+            background: crimson;
+            position: absolute;
+            top: 250px;
+            left: 200px;
+        }
+
+        .target {
+            width: 400px;
+            height: 500px;
+            border: 2px solid floralwhite;
+            background: #ddd9f5;
+            position: fixed;
+            top: 160px;
+            right: 50px;
+        }
+
+        .outfitContent {
+            margin-left: 160px;
+            padding: 1px 16px;
+            overflow: scroll;
+            width: 50%;
+            border-collapse: collapse;
+            height: 700px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            width: 220px;
+            padding: 5pt;
+        }
+    </style>
+    <!-- <link rel="stylesheet" href="./stylesheets/outfit.css"> -->
+</head>
+
+<body>
+
+    <%- include ("../partials/pageNav.ejs") %>
+        <div class="sidenav">
+
+            <!-- Fixed Full-Height Side Bar -->
+            <!-- 
+      <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
+      </canvas>
+    -->
+
+
+            <br><br><br><br><br><br><br>
+            <% r=results[0];  %>
+                <div class="" id="outfits-img" style="margin-left: 200px ;">
+                    <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;" draggable="true"
+                        class="imageDraggable <%= r.category_type%>" width="200" height="200" alt="">
+
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Owner</th>
+                                <td>
+                                    <%= currentuids[0].uname %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ImageID</th>
+                                <td>
+                                    <%= r.imgid %>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>Category</th>
+                                <td>
+                                    <%= r.category_type %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Public</th>
+                                <td>
+                                    <%= r.public %>
+                                </td>
+                            </tr>
+
+                        </table>
+                        <br><br>
+                        <form action="/:<%= currentuids[0].uid %>/outfits/:<%= r.imgid %>" method="post">
+                            <fieldset style="width:200px; padding: 5pt;">
+                                <label for="category">Choose a Type:</label>
+                                <select name="category" id="categoryid">
+                                    <option value="Shirts">Shirts</option>
+                                    <option value="Coats">Coats</option>
+                                    <option value="Suits">Suits</option>
+                                    <option value="Sweaters">Sweaters</option>
+                                    <option value="Pants">Pants</option>
+                                    <option value="Jeans">Jeans</option>
+                                    <option value="Shoes">Shoes</option>
+                                    <option value="Bags">Bags</option>
+                                    <option value="Accessories">Accessories</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                                <label for="public">Post it to public place ?</label>
+                                <select name="public" id="publicboolean">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                                <input type="submit" value="Change Attributes" style="float:right">
+
+                            </fieldset>
+                        </form>
+                    </div>
+                    
+</body>
+
+</html>

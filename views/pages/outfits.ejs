@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outfit Collages</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: rgb(170, 172, 198);
+    }
+
+    .sidenav ul {
+      list-style-type: non;
+      margin: 0;
+      padding: 0;
+      width: 160px;
+      background-color: rgb(131, 134, 170);
+      position: fixed;
+      height: 100%;
+      overflow: auto;
+    }
+
+    .sidenav li a {
+      display: block;
+      color: whitesmoke;
+      padding: 15px 25px;
+      text-decoration: none;
+    }
+
+    .sidenav li a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    .sidenav li a:hover:not(.active) {
+      color: rgba(240, 248, 255, 0.671);
+    }
+
+    .source {
+      width: 75px;
+      height: 75px;
+      border: 1px solid black;
+      background: crimson;
+      position: absolute;
+      top: 250px;
+      left: 200px;
+    }
+
+    .target {
+      width: 400px;
+      height: 500px;
+      border: 2px solid floralwhite;
+      background: #ddd9f5;
+      position: fixed;
+      top: 160px;
+      right: 50px;
+    }
+
+    .outfitContent {
+      margin-left: 160px;
+      padding: 1px 16px;
+      overflow: scroll;
+      width: 50%;
+      border-collapse: collapse;
+      height: 700px;
+    }
+  </style>
+  <!-- <link rel="stylesheet" href="./stylesheets/outfit.css"> -->
+</head>
+
+<body>
+
+  <%- include ("../partials/pageNav.ejs") %>
+    <div class="sidenav">
+
+      <!-- Fixed Full-Height Side Bar -->
+      <!-- 
+      <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
+      </canvas>
+    -->
+
+      <ul>
+        <li><a href="#all" onclick="changeCategory('imageDraggable')">All</a></li>
+        <li><a href="#shirts" onclick="changeCategory('Shirts')">Shirts</a></li>
+        <li><a href="#coats" onclick="changeCategory('Coats')">Coats</a></li>
+        <li><a href="#suits"onclick="changeCategory('Suits')">Suits</a></li>
+        <li><a href="#sweaters"onclick="changeCategory('Sweaters')">Sweaters</a></li>
+        <li><a href="#pans"onclick="changeCategory('Pants')">Pants</a></li>
+        <li><a href="#jeans"onclick="changeCategory('Jeans')">Jeans</a></li>
+        <li><a href="#shoes"onclick="changeCategory('Shoes')">Shoes</a></li>
+        <li><a href="#bags"onclick="changeCategory('Bags')">Bags</a></li>
+        <li><a href="#accessories"onclick="changeCategory('Accessories')">Accessories</a></li>
+        <li><a href="#others"onclick="changeCategory('Others')">Others</a></li>
+      </ul>
+    </div>
+    <br><br><br><br><br><br><br>
+    <h2 style="margin-left: 200px ;">Hello, <%=currentuids[0].uname%>, click on the image to view details.</h2>
+    <p style="margin-left: 200px ;">Click &darr; &darr; &darr; to add clothes!!!</p>
+    <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image"
+        style="width:200px;height:200px;margin-left: 200px ;"></a></p>
+    <div class="" id="outfits-img" style="margin-left: 200px ;">
+      <% if(results.length>0){%>
+           <% results.forEach(function(r) { %>
+           <a href="/:<%= currentuids[0].uid %>/outfits/:<%= r.imgid %>"> <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;" draggable="true"
+               class="imageDraggable <%= r.category_type%>" width="200" height="200" alt=""> </a>
+            <% }); %>
+        <% };%>
+    </div>
+</body>
+<script>
+  const imagestore =  document.querySelectorAll(".imageDraggable");
+  function changeCategory(val) {  
+    var img = imagestore;
+    document.getElementById("outfits-img").textContent="";
+    for(i=0;i<img.length;i++){
+      if(img[i].classList.contains(val)){
+        document.getElementById("outfits-img").append(img[i]);
+      }
+    }
+  }
+</script>
+</html>

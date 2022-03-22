@@ -145,17 +145,43 @@ app.get('/:id/userlogout', async (req, res) => {
 app.get('/:id/uploadimg', async (req, res) => {
   let uid  =req.params.id.substring(1);
   const result = await pool.query(`SELECT * FROM usrs WHERE uid = '${uid}'`);
-  const currentid = await pool.query(`select * from usrs where uid = '${uid}'`)
-  const data = {currentuids:currentid.rows, results:result.rows}
+  const currentid = await pool.query(`select * from usrs where uid = '${uid}'`);
+  const data = {currentuids:currentid.rows, results:result.rows};
   res.render('pages/uploadimg',data);
 })
 
 app.get('/:id/collage', async (req, res) => {
   var id = req.params.id.substring(1);
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
-  const currentid = await pool.query(`select * from usrs where uid = '${id}'`)
-  const data = {currentuids:currentid.rows, results:result.rows}
+  const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
+  const data = {currentuids:currentid.rows, results:result.rows};
   res.render('pages/outfit-collages', data);
+});
+
+app.get('/:id/outfits', async (req, res) => {
+  var id = req.params.id.substring(1);
+  var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
+  const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
+  const data = {currentuids:currentid.rows, results:result.rows};
+  res.render('pages/outfits', data);
+});
+
+app.get('/:id/outfits/:imgid', async (req, res) => {
+  var id = req.params.id.substring(1);
+  var imgid = req.params.imgid.substring(1);
+  var result = await pool.query(`select * from userobj1 where imgid ='${imgid}'`);
+  const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
+  const data = {currentuids:currentid.rows, results:result.rows};
+  res.render('pages/outfits-images', data);
+});
+
+app.post('/:id/outfits/:imgid', async (req, res) => {
+   const id = req.params.id.substring(1);
+   const imgid = req.params.imgid.substring(1);
+   const type = req.body.category;
+   const public = req.body.public;
+   await pool.query(`update userobj1 set category_type = '${type}', public = '${public}' where imgid = '${imgid}'`);
+  res.redirect(`/:${id}/outfits/:${imgid}`);
 });
 
 //upload image
@@ -198,7 +224,7 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
     var base64ImgData = base64Encode(outputFile);
     //update database
     await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
-    res.redirect(`/:${id}/collage`)
+    res.redirect(`/:${id}/outfits`)
   };
   myRemoveBgFunction(localFile, outputFile);
 });
