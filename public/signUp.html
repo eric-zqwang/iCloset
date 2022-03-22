@@ -3,37 +3,47 @@
     <head>
         <meta charset="utf-8">
         <script src="signUp.js" defer></script>
-        <link rel="stylesheet" href="./stylesheets/icloset.css">
+        <link rel="stylesheet" href="./stylesheets/signup.css">
     </head>
     <body>
-        <form action="/signUp" method="post">
-            <div class="container" id="container">
-                <h1>Sign Up</h1>
-                <p>Please fill in this form to create an account.</p>
-                <hr>
-                <label><b>Name</b></label> <br>
-                <input id="name" type="text" placeholder="Enter Name" name="name"><br>
-
-                <label><b>Email</b></label> <br>
-                <input id="email" type="text" placeholder="Enter Email" name="email" onkeyup="check_email()" required> <br>
-                <span id="message2"></span> <br>
-
-                <label><b>Password</b></label> <br>
-                <input id="pswd" type="password" placeholder="Enter Password" name="pswd" onkeyup="validate_password()" required> <br>
-                <span id="message1"></span> <br>
-    
-                <label><b>Repeat Password</b></label> <br>
-                <input id="repeatPswd" type="password" placeholder="Repeat Password" name="repeatPswd" onkeyup="check_password()" required>
-                <span id="message"></span> <br>
-
-                <div class="clearfix">
-                    <button type="submit" id="submitButton" class="button" onclick="validatePassword()">Sign Up</button> <br>
-                    <button type="button" id="cancelButton" class="button" onclick="cancel()">Cancel</button>
-                </div>
+        <div class = "box">
+            <div>
+                <form action="/signUp" method="post">
+                    <div class="container" id="container">
+                        <h1>Sign Up</h1>
+                        <p>Please fill in this form to create an account.</p>
+                        <hr>
+                        <div>
+                            <label><b>Name</b></label> <br>
+                            <input id="name" type="text" placeholder="Enter Name" name="name">
+                        </div>
+                        <div>
+                            <label><b>Email</b></label> <br>
+                            <input id="email" type="text" placeholder="Enter Email" name="email" onkeyup="check_email()" required>
+                            <span id="message2"></span>
+                        </div>
+                        <div>
+                            <label><b>Password</b></label> <br>
+                            <input id="pswd" type="password" placeholder="Enter Password" name="pswd" onkeyup="validate_password()" required>
+                            <span id="message1"></span>
+                        </div>
+                        <div>
+                            <label><b>Repeat Password</b></label> <br>
+                            <input id="repeatPswd" type="password" placeholder="Repeat Password" name="repeatPswd" onkeyup="check_password()" required>
+                            <span id="message"></span>
+                        </div>
+                        <div>
+                            <button type="submit" id="submitButton" class="button" onclick="validatePassword()">Sign Up</button>
+                        </div>
+                        
+                    </div>
+                </form>
             </div>
-        </form>
+            <div>
+                <p>Have an account? <a href="userlogin.html">Login</p>
+            </div>
+        </div>
     </body>
-
-    </html>
+</html>
 
     

@@ -43,6 +43,6 @@ function validate_password(){
     }
 }
 
-function cancel(){
+function direct2userlogin(){
     window.location.href = "/userlogin.html";
 }
