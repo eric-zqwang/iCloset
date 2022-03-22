@@ -134,7 +134,7 @@ app.post('/adminlogin', async (req, res) => {
   }
 })
 
-app.get('/userlogout', async (req, res) => {
+app.get('/:id/userlogout', async (req, res) => {
   if (curSession) {
     curSession.destroy();
   }
@@ -149,6 +149,7 @@ app.get('/:id/uploadimg', async (req, res) => {
   const data = {currentuids:currentid.rows, results:result.rows}
   res.render('pages/uploadimg',data);
 })
+
 app.get('/:id/outfit', async (req, res) => {
   var id = req.params.id.substring(1);
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
