@@ -112,22 +112,21 @@ app.post('/adminlogin', async (req, res) => {
   var inputPswd = req.body.pswd;
 
   // search database using umail
-  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+  let result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
   
-  const data = { results: result.rows };
-
   //If umail is not unique
-  if (data.results.length > 1) {
+  if (result.rows.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
   //If umail and password are correct and is admin, direct to user-list
-  else if (data.results.length == 1 && inputPswd == data.results[0].upswd && data.results[0].admin == true) {
-    var user = { name: data.results[0].uname, password: data.results[0].upswd }
+  else if (result.rows.length == 1 && inputPswd == result.rows[0].upswd && result.rows[0].admin == true) {
+    var user = { name: result.rows[0].uname, password: result.rows[0].upswd }
     req.session.user = user;
     curSession = req.session;
+    result = await pool.query(`SELECT * FROM usrs;`);
+    data = {results : result.rows};
     res.render('pages/adminpage', data)
   }
-
   //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
     console.log("incorrect login email or password");
@@ -345,7 +344,7 @@ app.get('/usrs/:umail', async (req, res) => {
   res.render('pages/userdetail', data);
 })
 
-// Delete rectangles by ID
+// Delete user by ID
 app.post('/usrs/:umail', async (req, res) => {
   var email = req.params.umail;
   //search the database using id
