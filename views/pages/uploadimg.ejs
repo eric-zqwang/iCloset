@@ -35,7 +35,7 @@
     <!-- show existed images -->
   </div>
   <div>
-    <form class="" action="/:<%= results[0].uid %>/uploadImage" method="post" enctype="multipart/form-data">
+    <form class="" action="/:<%= results[0].uid %>/uploadImagewithRemoveBG" method="post" enctype="multipart/form-data">
       <div>
         <img id="outputImage" width="200" height="200" />
       </div>
@@ -54,8 +54,7 @@
         <option value="Others">Others</option>
       </select>
       <br>
-      <input type="submit" value="upload!">
-
+      <button type="submit">Upload image with auto background remove</button> <button type="submit" formaction="/:<%= results[0].uid %>/uploadImage">Upload origin image</button>
     </form>
   </div>
 

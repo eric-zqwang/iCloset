@@ -227,7 +227,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 //upload image post
-app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
+app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res) => {
   function base64Encode(file) {
     var body = fs.readFileSync(file);
     return body.toString('base64');
@@ -254,6 +254,19 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   };
   myRemoveBgFunction(localFile, outputFile);
 });
+
+app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
+  function base64Encode(file) {
+    var body = fs.readFileSync(file);
+    return body.toString('base64');
+  }
+  var id = req.params.id.substring(1);
+  var categoryType = req.body.category;
+  var base64ImgData = base64Encode(req.file.path);
+  //update database
+  await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
+  res.redirect(`/:${id}/outfits`)
+ });
 
   //calendar page
   // const { google } = require('googleapis');
