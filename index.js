@@ -249,7 +249,8 @@ app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res
     }).catch(e => {console.log(e); throw e;});
     var base64ImgData = base64Encode(outputFile);
     //update database
-    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
+    var name = await pool.query(`select uname from usrs where uid ='${id}'`);
+    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname) values ('${base64ImgData}','${id}','${categoryType}',false,0,'${name.rows[0].uname}')`);  
     res.redirect(`/:${id}/outfits`)
   };
   myRemoveBgFunction(localFile, outputFile);
@@ -264,7 +265,8 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   var categoryType = req.body.category;
   var base64ImgData = base64Encode(req.file.path);
   //update database
-  await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum) values ('${base64ImgData}','${id}','${categoryType}',false,0)`);
+  var name = await pool.query(`select uname from usrs where uid ='${id}'`);
+  await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname) values ('${base64ImgData}','${id}','${categoryType}',false,0,'${name.rows[0].uname}')`);
   res.redirect(`/:${id}/outfits`)
  });
 
