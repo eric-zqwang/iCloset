@@ -436,44 +436,34 @@ app.get('/:uid/like', async(req,res) => {
 
 // click like
 
-   // app.post('/:uid/:imgID/postImg', async(req,res) => {
-//   try{
-//     var inputimgid = req.params.imgID.substring(1);
-//     var inputuserid = req.params.uid.substring(1);
-//     await pool.query(`update userobj1 set likenum = 0 where imgid = ${inputimgid}`);
-
-//     await pool.query(`update userobj1 set public = true where imgid = ${inputimgid}`)
-
-   //     const result = await pool.query(`select * from userobj1 where public = true`);
-//     const data = {results:result.rows};
-//     res.render('pages/interactionPage', data);
-//   }
-//   catch(error){
-//     res.end(error);
-//   }
-// })
-
-
-app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
+app.post('/:currentuid/:imgID/clickLike', async(req,res) => {
   try{
-    let uid = req.params.currentuid.substring(1);
-    const currentid = await pool.query(`select uid from usrs where uid = '${uid}'`)
-    //var inputCurrentuid = req.params.currentuid.substring(1);
-    // var currentUID = req.params.currentuid(1);
-    // var inputuserid = req.params.uid.substring(1);
+    let currentUID = req.params.currentuid.substring(1);
+    const currentid = await pool.query(`select uid from usrs where uid = '${currentUID}'`)
     var inputimgid = req.params.imgID.substring(1);
-    // var IfLike = await pool.query(`select iflike from userobj1 where uid=${inputuserid}`);
-    // console.log(IfLike);
-    // if (IfLike != t){
-       //  await pool.query(`update userobj1 set iflike = true where uid = ${inputuserid}`)
-    await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
-    // }
-    const result =  await pool.query(`select * from userobj1 where public = true order by imgid`)
+    
+    var ifexists = await pool.query(`select exists (select iflike from userlike where imgid = ${inputimgid} AND uid = ${currentUID})`)
+    
+    if(ifexists['rows'][0]['exists'] == false){
+      await pool.query(`insert into userlike (imgid, uid, iflike) values (${inputimgid}, ${currentUID}, true )`);
 
-    const comments = await pool.query(`select * from usercomment order by imgid`);
+      await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
+    
+      const result =  await pool.query(`select * from userobj1 where public = true order by imgid`)
+  
+      const comments = await pool.query(`select * from usercomment`);
 
-    const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows};
-    res.render('pages/interactionPage', data);
+  
+      const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows};
+      res.render('pages/interactionPage', data);
+    }
+    else{
+      const result =  await pool.query(`select * from userobj1 where public = true order by imgid`)
+      const comments = await pool.query(`select * from usercomment`);
+      const data = {usercomments:comments.rows, currentuids:currentid.rows, results:result.rows};
+      res.render('pages/interactionPage', data);
+    }
+    
   }
   catch (error) {
     res.end(error)
@@ -481,7 +471,7 @@ app.post('/:currentuid/:uid/:imgID/clickLike', async(req,res) => {
 })
 
 
-app.post('/:currentuid/:uid/:imgID/comment', async(req,res) => {
+app.post('/:currentuid/:imgID/comment', async(req,res) => {
   try{
     let uid = req.params.currentuid.substring(1);
     const currentuid = await pool.query(`select uid from usrs where uid = '${uid}'`)
@@ -496,7 +486,7 @@ app.post('/:currentuid/:uid/:imgID/comment', async(req,res) => {
     VALUES ('${uname['rows'][0]['uname']}', ${inputimgid}, ${currentUID}, '${comment}')`)
 
     const result =  await pool.query(`select * from userobj1 where public = true`);
-    const comments = await pool.query(`select * from usercomment`);
+    const comments = await pool.query(`select * from usercomment order by imgid`);
     
     const data = {currentuids:currentuid.rows,results:result.rows, usercomments:comments.rows}
     res.render('pages/interactionPage', data)

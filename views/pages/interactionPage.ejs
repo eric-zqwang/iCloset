@@ -29,7 +29,7 @@
         <% results.forEach(function(r) { %>
         <div>
             <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
-            <form action="/:<%= currentuids[0].uid%>/:<%= r.uid %>/:<%= r.imgid%>/clickLike" method="post">
+            <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/clickLike" method="post">
             <p>
                 User Name: <%= r.uname %>
                 <br>
@@ -41,7 +41,7 @@
 
             </form>
 
-            <form action="/:<%= currentuids[0].uid%>/:<%= r.uid %>/:<%= r.imgid%>/comment" method="post">
+            <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/comment" method="post">
                 Comments: <input type="text" name="comments"  required>
                 <input type="submit" value="submit comment">
                 <p>
