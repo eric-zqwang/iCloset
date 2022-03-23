@@ -64,9 +64,9 @@ pool = new Pool({
   // }
 
   // for local host
-    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+   // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  // connectionString: 'postgres://postgres:root@localhost/try1'
+   connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -200,6 +200,14 @@ app.post('/:id/outfits/:imgid', async (req, res) => {
    const public = req.body.public;
    await pool.query(`update userobj1 set category_type = '${type}', public = '${public}' where imgid = '${imgid}'`);
   res.redirect(`/:${id}/outfits/:${imgid}`);
+});
+
+app.post('/:id/outfits/:imgid/delete', async (req, res) => {
+  const id = req.params.id.substring(1);
+  const imgid = req.params.imgid.substring(1);
+  await pool.query(`delete from userobj1 where imgid = '${imgid}'`);
+  await pool.query(`delete from usercomment where imgid = '${imgid}'`);
+ res.redirect(`/:${id}/outfits`);
 });
 
 //upload image
