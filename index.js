@@ -64,8 +64,8 @@ pool = new Pool({
 
   // for local host
    // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-   connectionString: 'postgres://postgres:root@localhost/try1'
+   connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  // connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -172,7 +172,7 @@ app.get('/:id/collage', async (req, res) => {
   var result = await pool.query(`select * from userobj1 where uid ='${id}'`);
   const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
   const data = {currentuids:currentid.rows, results:result.rows};
-  res.render('pages/outfit-collages', data);
+  res.render('pages/collages', data);
 });
 
 app.get('/:id/outfits', async (req, res) => {
@@ -322,41 +322,6 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   // }
   // )
 
-// user list
-// app.get('/user-list', (request, response) => {
-//   var page = request.query['page'] ? request.query['page'] : 1;
-//   var size = request.query['size'] ? request.query['size'] : 15;
-//   pool.connect(function (error, client, releaseFn) {
-//     if (error) {// if error then release the connection
-//       releaseFn();
-//       return console.log('Connection failed: ' + error);
-//     }
-//     var countSql = 'SELECT COUNT(*) AS total FROM userInfo';
-//     client.query(countSql, (error, results) => {
-//       if (error) {
-//         releaseFn();
-//         return console.log('Query failed: ' + error);
-//       }
-//       // total number of users
-//       var total = results.rows[0].total;
-//       var offset = (page - 1) * size;
-//       // query the target page of users
-//       var listSql = 'SELECT * FROM userInfo LIMIT ' + size + ' OFFSET ' + offset;
-//       client.query(listSql, (error, results) => {
-//         releaseFn();
-//         if (error) {
-//           return console.log('Query userInfo failed: ' + error);
-//         }
-//         var data = results.rows;
-//         // OK, now we render the users
-//         response.render('pages/user-list', {
-//           users: data,
-//           total: total
-//         });
-//       });
-//     });
-//   });
-// });
 // calendar page
 app.get('/calendar', (request, response) => {
     response.render('pages/calendar', {});

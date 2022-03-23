@@ -11,54 +11,47 @@
       margin: 0;
       background-color: rgb(170, 172, 198);
     }
-
     .sidenav ul {
-      list-style-type: non;
+      top: 120px;
+      list-style-type: none;
       margin: 0;
       padding: 0;
-      width: 160px;
       background-color: rgb(131, 134, 170);
       position: fixed;
+      width: 160px;
       height: 100%;
       overflow: auto;
     }
-
+    .sidenav li {
+      float: left;
+    }
     .sidenav li a {
+      font-size: large;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      font-weight: 600;
       display: block;
       color: whitesmoke;
-      padding: 15px 25px;
+      padding: 15px 20px;
+      text-align: center;
       text-decoration: none;
+      width: 120px;
     }
-
     .sidenav li a.active {
       background-color: #04AA6D;
       color: white;
     }
-
     .sidenav li a:hover:not(.active) {
       color: rgba(240, 248, 255, 0.671);
     }
-
-    .source {
-      width: 75px;
-      height: 75px;
-      border: 1px solid black;
-      background: crimson;
-      position: absolute;
-      top: 250px;
-      left: 200px;
-    }
-
     .target {
       width: 400px;
       height: 500px;
       border: 2px solid floralwhite;
-      background: #ddd9f5;
+      background: #ffffff;
       position: fixed;
       top: 160px;
       right: 50px;
     }
-
     .outfitContent {
       margin-left: 160px;
       padding: 1px 16px;
@@ -68,7 +61,6 @@
       height: 700px;
     }
   </style>
-  <!-- <link rel="stylesheet" href="./stylesheets/outfit.css"> -->
 </head>
 
 <body>
