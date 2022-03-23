@@ -16,7 +16,6 @@ app.use(function (req, res, next) {
   function validateAccess(sessionUID, reqPath) {
     const regex = /^\/\:(\d+)\/\s*/g;
     const results = regex.exec(reqPath);
-    console.log("DEBUGGGG " + reqPath + " " + JSON.stringify(results));
     if ( !!results && results.length > 1) {
       const requestUID = results[1];
       return sessionUID == requestUID;
