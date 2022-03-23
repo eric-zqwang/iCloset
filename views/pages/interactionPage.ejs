@@ -41,7 +41,7 @@
             </form>
 
             <form action="/:<%= currentuids[0].uid%>/:<%= r.uid %>/:<%= r.imgid%>/comment" method="post">
-                Comments: <input type="text" name="comments">
+                Comments: <input type="text" name="comments"  required>
                 <input type="submit" value="submit comment">
                 <p>
                 <% usercomments.forEach(function(r1) { %>
@@ -50,8 +50,8 @@
                         <%= r1.uname %>
                         :
                         <%= r1.imagecomment %>
+                        <br>
                     <% } %>
-                    <br>
 
                 <% }); %>
                 </p>
