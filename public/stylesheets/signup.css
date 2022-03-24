@@ -30,7 +30,7 @@ html {
 } */
 
 input[type=text], input[type=password] {
-  width: 92%;
+  width: 300px;
   padding: 15px;
   margin: 5px 0 22px 0;
   display: inline-block;
@@ -90,4 +90,8 @@ label{
   font-size: 15px;
   text-transform: uppercase;
   font-weight: lighter;
+}
+
+div.container {
+  width: 330px;
 }

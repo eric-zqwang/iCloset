@@ -4,12 +4,12 @@ function check_password(){
 
     if(password != repeat_password) {
         document.getElementById("message").style.color = 'red';
-        document.getElementById("message").innerHTML = 'not matching';
+        document.getElementById("message").innerHTML = ' not matching';
         document.getElementById("submitButton").disabled = true;
     }
     else{
         document.getElementById("message").style.color = 'green';
-        document.getElementById("message").innerHTML = 'matching';
+        document.getElementById("message").innerHTML = ' matching';
         document.getElementById("submitButton").disabled = false;
     }
 }
@@ -20,7 +20,7 @@ function check_email(){
     if (!mail.match(mailFormat))
     {
         document.getElementById("message2").style.color = 'red';
-        document.getElementById("message2").innerHTML = 'invalid format of email';
+        document.getElementById("message2").innerHTML = ' invalid format of email';
         document.getElementById("submitButton").disabled = true;
     }
     else{
@@ -34,7 +34,7 @@ function validate_password(){
     var passw=  /^[A-Za-z]\w{6,14}$/;
     if (!password.match(passw)){
         document.getElementById("message1").style.color = 'red';
-        document.getElementById("message1").innerHTML = 'Password is too simple! You should begin with letter and at least 7 bits';
+        document.getElementById("message1").innerHTML = ' Password is too simple! You should begin with a letter and have at least 7 characters.';
         document.getElementById("submitButton").disabled = true;
     }
     else{

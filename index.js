@@ -35,13 +35,6 @@ app.use(function (req, res, next) {
   }
 });
 
-// app.get('/', (req, res) => {
-//   if (curSession) {
-//     res.render('pages/index');
-//   } else {
-//     res.redirect('/userlogin.html');
-//   }
-// });
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 app.use(cookieParser());
 
@@ -106,6 +99,7 @@ app.post('/userlogin', async (req, res) => {
   if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
+
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
     var user = { 
@@ -121,7 +115,7 @@ app.post('/userlogin', async (req, res) => {
 
   //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
-    console.log("incorrect login email or password");
+    res.send(" Incorrect email or password");
   }
 })
 

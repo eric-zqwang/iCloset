@@ -15,22 +15,22 @@
                         <hr>
                         <div>
                             <label><b>Name</b></label> <br>
-                            <input id="name" type="text" placeholder="Enter Name" name="name">
+                            <input id="name" type="text" placeholder="Enter Name" name="name"><br>
                         </div>
                         <div>
-                            <label><b>Email</b></label> <br>
-                            <input id="email" type="text" placeholder="Enter Email" name="email" onkeyup="check_email()" required>
-                            <span id="message2"></span>
+                            <label><b>Email</b></label><span class="message" id="message2"></span><br>
+                            <input id="email" type="text" placeholder="Enter Email" name="email" onkeyup="check_email()" required><br>
+                            
                         </div>
                         <div>
-                            <label><b>Password</b></label> <br>
-                            <input id="pswd" type="password" placeholder="Enter Password" name="pswd" onkeyup="validate_password()" required>
-                            <span id="message1"></span>
+                            <label><b>Password</b></label><span class="message" id="message1"></span> <br>
+                            <input id="pswd" type="password" placeholder="Enter Password" name="pswd" onkeyup="validate_password()" required><br>
+                            
                         </div>
                         <div>
-                            <label><b>Repeat Password</b></label> <br>
-                            <input id="repeatPswd" type="password" placeholder="Repeat Password" name="repeatPswd" onkeyup="check_password()" required>
-                            <span id="message"></span>
+                            <label><b>Repeat Password</b></label> <span class="message" id="message"></span><br>
+                            <input id="repeatPswd" type="password" placeholder="Repeat Password" name="repeatPswd" onkeyup="check_password()" required><br>
+                            
                         </div>
                         <div>
                             <button type="submit" id="submitButton" class="button" onclick="validatePassword()">Sign Up</button>
