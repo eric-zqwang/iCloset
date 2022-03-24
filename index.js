@@ -54,14 +54,14 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-   connectionString: process.env.DATABASE_URL,
-    ssl:{
-     rejectUnauthorized: false
-   }
+  //  connectionString: process.env.DATABASE_URL,
+  //   ssl:{
+  //    rejectUnauthorized: false
+  //  }
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+   connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   // connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
@@ -158,6 +158,7 @@ app.post('/adminlogin', async (req, res) => {
 app.get('/:id/userlogout', async (req, res) => {
   if (curSession) {
     curSession.destroy();
+    curSession = null;
   }
   req.session.destroy();
   res.redirect('/userlogin.html');
