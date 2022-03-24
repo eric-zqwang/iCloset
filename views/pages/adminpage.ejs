@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html>
 <style>
+  body {
+  margin: 0;
+  background-color: rgb(170, 172, 198);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: whitesmoke;  
+}
+
   table {
     font-family:Georgia, 'Times New Roman', Times, serif;
     border-collapse: collapse;
@@ -8,23 +15,32 @@
   }
   td, th {
       border: 1px solid  #b8b8b8;
-      font-size: 13px;
+      background-color: #a393b7;
+      font-size: 15px;
       text-align: left;
-      padding: 4px;
+      padding: 12px;
   }
 
-  th {background-color: #d1d1d1;}
+  th {background-color: #5f5074;}
   [type="text"] {
       border: 1px solid #9b9a9a;
       border-radius: 2px;
       width: 40px;
       height: 25px;
   }
+
+  .container {
+    top: 120px;
+    padding: 20px 50px;
+    position: fixed;
+  }
+  
 </style>
 <head>
 </head>
 
 <body>
+  <div><%- include ("../partials/adminNav.ejs") %></div>
   <div class="container">
     <h2>User Information</h2>
     <table>

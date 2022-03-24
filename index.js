@@ -23,12 +23,16 @@ app.use(function (req, res, next) {
     return true;
   }
 
+  console.log("DEBUGG ROOT "+ req.path );
+
   if (req.path.endsWith("login") || req.path.endsWith("signUp")) {
     next();
   } else if (curSession == null) {
     // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
   } else if (validateAccess(curSession.user.uid, req.path)) {
+    console.log("DEBUGG ROOT user id " + curSession.user.uid );
+
     next();
   } else {
     res.send("Access denied on viewing resources")
@@ -126,18 +130,23 @@ app.post('/adminlogin', async (req, res) => {
 
   // search database using umail
   let result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
-  
+
   //If umail is not unique
   if (result.rows.length > 1) {
     console.log("DUPLICATE USERS!!!");
   }
   //If umail and password are correct and is admin, direct to user-list
   else if (result.rows.length == 1 && inputPswd == result.rows[0].upswd && result.rows[0].admin == true) {
-    var user = { name: result.rows[0].uname, password: result.rows[0].upswd }
+    const uid = result.rows[0].uid;
+    var user = { 
+      name: result.rows[0].uname, 
+      password: result.rows[0].upswd,
+      uid: uid
+     };
     req.session.user = user;
     curSession = req.session;
     result = await pool.query(`SELECT * FROM usrs;`);
-    data = {results : result.rows};
+    let data = { uid: uid, results: result.rows };
     res.render('pages/adminpage', data)
   }
   //If umail does not exist or password is incorrect, alert user
@@ -328,7 +337,7 @@ app.get('/userinfo', async (req, res) => {
   //invoke a query that selects all row from the users table
   try {
     const result = await pool.query('SELECT * FROM usrs');
-    const data = { results: result.rows };
+    const data = { uid: curSession.user.uid, results: result.rows };
     res.render('pages/adminpage', data);
   }
   catch (error) {
@@ -341,7 +350,7 @@ app.get('/usrs/:umail', async (req, res) => {
   var email = req.params.umail;
   //search the database using id
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
-  const data = { results: result.rows };
+  const data = { uid: curSession.user.uid, results: result.rows };
   res.render('pages/userdetail', data);
 })
 
@@ -352,7 +361,7 @@ app.post('/usrs/:umail', async (req, res) => {
   await pool.query(`DELETE FROM usrs WHERE umail= '${email}';`);
   //display current database
   const result = await pool.query("SELECT * FROM usrs");
-  const data = { results: result.rows };
+  const data = { uid: curSession.user.uid, results: result.rows };
   res.render('pages/adminpage', data);
 })
 
@@ -369,7 +378,7 @@ app.post('/edituser/:umail', async (req, res) => {
   await pool.query(`UPDATE usrs SET uname = '${name}', upswd = '${password}', admin = ${isadmin} WHERE umail = '${email}';`)
   //display current database
   const result = await pool.query(`SELECT * FROM usrs;`);
-  const data = { results: result.rows };
+  const data = { uid: curSession.user.uid, results: result.rows };
   res.render('pages/adminpage', data);
 })
 
