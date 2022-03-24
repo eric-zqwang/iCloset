@@ -64,7 +64,7 @@ pool = new Pool({
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   // connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:root@localhost/try1'
-  //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+   // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 app.post('/signUp', async (req, res) => {
