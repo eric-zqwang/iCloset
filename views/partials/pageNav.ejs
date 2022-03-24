@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         <style>
             body {
                 margin: 0;
@@ -79,7 +80,7 @@
                  .then(response => response.json())
                  .then(data => {
                     // Debug: for find json pair value
-                    console.log(data)
+                    // console.log(data)
                     var city = data['name'];
                     var country = data['sys']['country']
                     var temp = data['main']['temp']
