@@ -244,7 +244,7 @@ app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res
     const outputFile = outpath;
     await removeBackgroundFromImageFile({
       path,
-      apiKey: "jgYkJ6ChpodLBhqBv3XY2Gha",
+      apiKey: "oG1pnYKp9UKwEycz9gRkCGV4",
       size: "auto",
       type: "default",
       scale: "100%",
