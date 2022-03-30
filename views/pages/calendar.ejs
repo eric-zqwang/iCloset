@@ -68,6 +68,7 @@
         padding: 15px;
         border: 1px solid #CCC;
         border-radius: 10px;
+        vertical-align: top;
     }
     .calendar .current {
         width: calc(100% - 20px);
@@ -127,10 +128,45 @@
     .calendar .dates .row .digit:hover {
         background: #D18D11;
     }
+    .image-container {
+        display: inline-block;
+        width: 300px;
+        min-height: 330px;
+        border: 1px solid #CCC;
+        margin-top: 60px;
+        margin-left: 20px;
+        padding: 5px;
+    }
+    .image-container img {
+        width: 100%;
+        height: auto;
+    }
     </style>
 </head>
 <body>
-    
+    <div class="top-nav">
+        <ul>
+            <!--<li class="nav-item"><a href="/"><i class="fa fa-home"></i></a></li>-->
+            <li class="nav-item"><a href="/">HOME</a></li>
+            <li class="nav-item"><a href="/category">CATEGORY</a></li>
+            <li class="nav-item"><a href="/outfits">OUTFITS</a></li>
+            <li class="nav-item"><a href="/calendar">CALENDAR</a></li>
+        </ul>
+    </div>
+    <div class="left-nav">
+        <ul>
+            <li class="nav-item"><a href="/shirts">Shirts</a></li>
+            <li class="nav-item"><a href="/coats">Coats</a></li>
+            <li class="nav-item"><a href="/suits">Suits</a></li>
+            <li class="nav-item"><a href="/sweaters">Sweaters</a></li>
+            <li class="nav-item"><a href="/pants">Pants</a></li>
+            <li class="nav-item"><a href="/jeans">Jeans</a></li>
+            <li class="nav-item"><a href="/shoes">Shoes</a></li>
+            <li class="nav-item"><a href="/bags">Bags</a></li>
+            <li class="nav-item"><a href="/accessories">Accessories</a></li>
+            <li class="nav-item"><a href="/others">Others</a></li>
+        </ul>
+    </div>
     <div class="body">
         <div class="calendar" id="calendar">
             <div class="current">
@@ -147,81 +183,104 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-        var date = new Date;
-        var vueInst = new Vue({
-            el: '#calendar',
-            data: {
-                locale_week: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                origin_year:  date.getYear() + 1900,
-                origin_month: date.getMonth() + 1,
-                origin_date: date.getDate(),
-                current_year: date.getYear() + 1900,
-                current_month: date.getMonth() + 1,
-                current_date: date.getDate(),
+        <div class="image-container">
+            <div class="image-item" v-for="img in images">
+                <img :src="getImgSrc(img)" />
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    var date = new Date;
+    var images = [
+        {src: 'https://img0.baidu.com/it/u=1895837640,2691329714&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'},
+        {src: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg11.360buyimg.com%2Fn1%2Fs350x449_jfs%2Ft1%2F171633%2F3%2F22172%2F479874%2F613a15c4Ecd580df0%2Fcf565bf2a474dcf4.jpg%21cc_350x449.jpg&refer=http%3A%2F%2Fimg11.360buyimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650820033&t=8a622213782970e04463773c26cd22b7'},
+        {src: 'https://img0.baidu.com/it/u=272871951,2076114354&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'},
+        {src: 'https://img0.baidu.com/it/u=2668765741,2232204886&fm=253&fmt=auto&app=120&f=JPEG?w=350&h=449'},
+    ];
+    var vueInst = new Vue({
+        el: '.body',
+        data: {
+            locale_week: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            origin_year:  date.getYear() + 1900,
+            origin_month: date.getMonth() + 1,
+            origin_date: date.getDate(),
+            current_year: date.getYear() + 1900,
+            current_month: date.getMonth() + 1,
+            current_date: date.getDate(),
+            images: [],
+            current_date_dom: null,
+        },
+        methods: {
+            currentYearMonthFn: function() {
+                if (this.current_month >= 10) {
+                    return this.current_year + '-' + this.current_month;
+                } else {
+                    return this.current_year + '-0' + this.current_month;
+                }
             },
-            methods: {
-                currentYearMonthFn: function() {
-                    if (this.current_month >= 10) {
-                        return this.current_year + '-' + this.current_month;
-                    } else {
-                        return this.current_year + '-0' + this.current_month;
+            getAllDatesOfCurrentMonth: function() {
+                var current = new Date(this.current_year + '-' + this.current_month);
+                var weekday = current.getDay();
+                var days    = new Date(this.current_year, this.current_month, 0).getDate();
+                //
+                var dates = [], dates2 = [];
+                for(var i = 1; i <= days; ++i) {
+                    dates2.push(i < 10 ? ('0' + i) : ('' + i));
+                }
+                for(var i = 0; i < weekday; ++i) {
+                    dates2.unshift('');
+                }
+                while(dates2.length % 7 > 0) {
+                    dates2.push('');
+                }
+                while(dates2.length > 0) {
+                    dates.push(dates2.splice(0, 7));
+                }
+                return dates;
+            },
+            previous: function() {
+                if(this.current_month == 1) {
+                    this.current_year--;
+                    this.current_month = 12;
+                } else {
+                    this.current_month--;
+                }
+            },
+            next: function() {
+                if(this.current_month == 12) {
+                    this.current_year++;
+                    this.current_month = 1;
+                } else {
+                    this.current_month++;
+                }
+            },
+            digitKlass: function(day) {
+                var klass = 'digit';
+                if(day == '') {
+                    klass = 'digit-placeholder';
+                } else {
+                    if(this.current_year == this.origin_year
+                        && this.current_month == this.origin_month
+                        && day == this.origin_date) {// current day
+                        klass += ' active';
                     }
-                },
-                getAllDatesOfCurrentMonth: function() {
-                    var current = new Date(this.current_year + '-' + this.current_month);
-                    var weekday = current.getDay();
-                    var days    = new Date(this.current_year, this.current_month, 0).getDate();
-                    //
-                    var dates = [], dates2 = [];
-                    for(var i = 1; i <= days; ++i) {
-                        dates2.push(i < 10 ? ('0' + i) : ('' + i));
-                    }
-                    for(var i = 0; i < weekday; ++i) {
-                        dates2.unshift('');
-                    }
-                    while(dates2.length % 7 > 0) {
-                        dates2.push('');
-                    }
-                    while(dates2.length > 0) {
-                        dates.push(dates2.splice(0, 7));
-                    }
-                    return dates;
-                },
-                previous: function() {
-                    if(this.current_month == 1) {
-                        this.current_year--;
-                        this.current_month = 12;
-                    } else {
-                        this.current_month--;
-                    }
-                },
-                next: function() {
-                    if(this.current_month == 12) {
-                        this.current_year++;
-                        this.current_month = 1;
-                    } else {
-                        this.current_month++;
-                    }
-                },
-                digitKlass: function(day) {
-                    var klass = 'digit';
-                    if(day == '') {
-                        klass = 'digit-placeholder';
-                    } else {
-                        if(this.current_year == this.origin_year
-                            && this.current_month == this.origin_month
-                            && day == this.origin_date) {// current day
-                            klass += ' active';
-                        }
-                    }
-                    return klass;
-                },
-                dateSelect: function(d,ev) {
-                    if(d == '') return ;
-                    d = parseInt(d);
-                    var dom = ev.target;
-                    dom.addKlass('selected');
+                }
+                return klass;
+            },
+            dateSelect: function(d,ev) {
+                if(this.current_date_dom) {
+                    this.removeKlass(this.current_date_dom, 'selected');
+                }
+                if(d == '') return ;
+                d = parseInt(d);
+                var dom = ev.target;
+                this.current_date_dom = dom;
+                this.addKlass(dom, 'selected');
+                //
+                this.images = [];
+                for(var i = 0; i < 2; ++i) {
+                    var idx = parseInt(Math.random() * images.length);
+                    this.images.push(images[idx])
                 }
             },
             addKlass: function(dom, klass) {
@@ -246,10 +305,13 @@
                         klasses.splice(klasses.indexOf(klass[i]), 1);
                     }
                 }
-                return klasses.join(' ');
-            }
-        });
-        </script>
-    </div>
+                dom.setAttribute('class', klasses.join(' '));
+            },
+            getImgSrc: function(image) {
+                return image.src;
+            },
+        },
+    });
+    </script>
 </body>
 </html>
