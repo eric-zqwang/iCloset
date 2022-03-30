@@ -54,13 +54,13 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-     ssl:{
-      rejectUnauthorized: false
-    }
+    // connectionString: process.env.DATABASE_URL,
+    //  ssl:{
+    //   rejectUnauthorized: false
+    // }
 
   // for local host
-    // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   // connectionString: 'postgres://postgres:root@localhost/try1'
   //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
@@ -458,6 +458,26 @@ app.post('/:currentuid/:imgID/comment', async(req,res) => {
     
     const data = {currentuids:currentuid.rows,results:result.rows, usercomments:comments.rows}
     res.render('pages/interactionPage', data)
+  }
+  catch(error){
+    res.end(error);
+  }
+})
+
+//delete comment
+app.post('/:currentuid/:imgID/:commentid/deleteComment', async(req,res) => {
+  try{
+    let uid = req.params.currentuid.substring(1);
+    let commentID = req.params.commentid.substring(1);
+    console.log(commentID);
+
+    await pool.query(`delete from usercomment where commentid = ${commentID}`);
+
+    const result = await pool.query(`select * from userobj1 where public = true order by imgid`)
+    const currentuid = await pool.query(`select uid from usrs where uid = '${uid}'`)
+    const comments = await pool.query(`select * from usercomment order by imgid`);
+    const data = {usercomments:comments.rows, currentuids:currentuid.rows, results:result.rows}
+    res.render('pages/interactionPage', data);
   }
   catch(error){
     res.end(error);
