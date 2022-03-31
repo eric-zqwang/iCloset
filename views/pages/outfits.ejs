@@ -11,6 +11,11 @@
       margin: 0;
       background-color: rgb(170, 172, 198);
     }
+    .main {
+      top: 145px;
+      left: 210px;
+      position: fixed;
+    }
     .sidenav ul {
       top: 120px;
       list-style-type: none;
@@ -42,15 +47,6 @@
     }
     .sidenav li a:hover:not(.active) {
       color: rgba(240, 248, 255, 0.671);
-    }
-    .target {
-      width: 400px;
-      height: 500px;
-      border: 2px solid floralwhite;
-      background: #ffffff;
-      position: fixed;
-      top: 160px;
-      right: 50px;
     }
     .outfitContent {
       margin-left: 160px;
@@ -88,20 +84,23 @@
         <li><a href="#others"onclick="changeCategory('Others')">Others</a></li>
       </ul>
     </div>
-    <br><br><br><br><br><br><br>
-    <h2 style="margin-left: 200px ;">Hello, <%=currentuids[0].uname%>, click on the image to view details.</h2>
-    <p style="margin-left: 200px ;">Click &darr; &darr; &darr; to add clothes!!!</p>
-    <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image"
-        style="width:200px;height:200px;margin-left: 200px ;"></a></p>
-    <div class="" id="outfits-img" style="margin-left: 200px ;">
-      <% if(results.length>0){%>
-           <% results.forEach(function(r) { %>
-            <span  class="imageDraggable <%= r.category_type%>">
-           <a href="/:<%= currentuids[0].uid %>/outfits/:<%= r.imgid %>" > 
-            <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;" draggable="true" width="200" height="200" alt=""></a>
-           </span >
-            <% }); %>
-        <% };%>
+    <div class="main">
+      <div>
+        <h2>Hello, <%=currentuids[0].uname%>, click on the image to view details.</h2>
+        <p>Click &darr; &darr; &darr; to add clothes!!!</p>
+        <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image"
+            style="width:200px;height:200px;"></a></p>
+      </div>
+      <div class="" id="outfits-img">
+        <% if(results.length>0){%>
+             <% results.forEach(function(r) { %>
+              <span  class="imageDraggable <%= r.category_type%>">
+             <a href="/:<%= currentuids[0].uid %>/outfits/:<%= r.imgid %>" > 
+              <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;" draggable="true" width="200" height="200" alt=""></a>
+             </span >
+              <% }); %>
+          <% };%>
+      </div>
     </div>
 </body>
 <script>
