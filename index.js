@@ -253,7 +253,7 @@ app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res
     var base64ImgData = base64Encode(outputFile);
     //update database
     var name = await pool.query(`select uname from usrs where uid ='${id}'`);
-    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname) values ('${base64ImgData}','${id}','${categoryType}',false,0,'${name.rows[0].uname}')`);  
+    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname,date) values ('${base64ImgData}','${id}','${categoryType}',false,0,'${name.rows[0].uname}', 0)`);  
     res.redirect(`/:${id}/outfits`)
   };
   myRemoveBgFunction(localFile, outputFile);
@@ -382,8 +382,6 @@ app.post('/edituser/:umail', async (req, res) => {
   res.render('pages/adminpage', data);
 })
 
-
-
 // jin ru like page
 app.get('/:uid/like', async(req,res) => {
   try{
@@ -478,6 +476,20 @@ app.post('/:currentuid/:imgID/:commentid/deleteComment', async(req,res) => {
     const comments = await pool.query(`select * from usercomment order by imgid`);
     const data = {usercomments:comments.rows, currentuids:currentuid.rows, results:result.rows}
     res.render('pages/interactionPage', data);
+  }
+  catch(error){
+    res.end(error);
+  }
+})
+
+// jin ru calendar page
+app.get('/:uid/calendar', async(req,res) => {
+  try{
+    let uid = req.params.uid.substring(1);
+    const currentuid = await pool.query(`select uid from usrs where uid = ${uid}`);
+    const result = await pool.query(`select * from userobj1`);
+    const data = {currentuids:currentuid.rows, results:result.rows};
+    res.render('pages/calendar', data);
   }
   catch(error){
     res.end(error);

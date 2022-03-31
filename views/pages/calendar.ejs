@@ -6,54 +6,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
     <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
     <style type="text/css">
-    ul {
-        padding: 0 10px;
-        margin: 0;
-    }
-    .top-nav {
-        background: #EEE;
-    }
-    .left-nav {
-        display: inline-block;
-        min-width: 100px;
-        max-width: 130px;
-        background: #9690BB;
-    }
-    ul li.nav-item {
-        list-style: none;
-        display: inline-block;
-    }
-    ul li.nav-item a {
-        text-decoration: none;
-    }
-    .top-nav .nav-item {
-        height: 60px;
-        line-height: 60px;
-        font-size: 20px;
-        min-width: 80px;
-        padding: 0 5px;
-    }
-    .top-nav .nav-item:hover {
-        background: #FFF;
-    }
-    .top-nav .nav-item:hover a {
-        color: #555;
-    }
-    .left-nav .nav-item {
-        height: 24px;
-        line-height: 24px;
-        font-size: 18px;
-        padding: 5px;
-    }
-    .left-nav .nav-item:hover {
-        background: #ABC;
-    }
-    .top-nav .nav-item a {
-        color: #000;
-    }
-    .left-nav .nav-item a {
-        color: #FFF;
-    }
     .body {
         display: inline-block;
         min-width: calc(100% - 130px - 5px);
@@ -63,8 +15,9 @@
     }
     .calendar {
         display: inline-block;
-        width: 400px;
-        margin-top: 60px;
+        width: 1000px;
+        height: 1000px;
+        margin-top: 200px;
         padding: 15px;
         border: 1px solid #CCC;
         border-radius: 10px;
@@ -84,12 +37,7 @@
     .calendar .current .btn-prev {
         left: 0;
     }
-    .calendar .current .btn-prev:hover,
-    .calendar .current .btn-next:hover {
-        background: #AAA;
-        color: #EEE;
-        cursor: pointer;
-    }
+  
     .calendar .current .btn-next {
         right: 0;
     }
@@ -105,69 +53,31 @@
     .calendar .header .week-day {
         font-weight: 700;
     }
+    
     .calendar .header .week-day,
     .calendar .dates .row .digit,
     .calendar .dates .row .digit-placeholder {
         display: inline-block;
-        width: 36px;
-        height: 36px;
-        line-height: 36px;
+        width: 130px;
+        height: 130px;
         border: 1px solid rgba(200,200,200,0);
         margin: 2px 5px;
     }
     .calendar .dates .row .digit.active,
-    .calendar .dates .row .digit.selected,
-    .calendar .dates .row .digit:hover {
+    .calendar .dates .row .digit.selected {
         cursor: pointer;
         color: #FFF;
     }
     .calendar .dates .row .digit.active {
         background: #00E;
     }
-    .calendar .dates .row .digit.selected,
-    .calendar .dates .row .digit:hover {
-        background: #D18D11;
-    }
-    .image-container {
-        display: inline-block;
-        width: 300px;
-        min-height: 330px;
-        border: 1px solid #CCC;
-        margin-top: 60px;
-        margin-left: 20px;
-        padding: 5px;
-    }
-    .image-container img {
-        width: 100%;
-        height: auto;
-    }
+
     </style>
 </head>
 <body>
-    <div class="top-nav">
-        <ul>
-            <!--<li class="nav-item"><a href="/"><i class="fa fa-home"></i></a></li>-->
-            <li class="nav-item"><a href="/">HOME</a></li>
-            <li class="nav-item"><a href="/category">CATEGORY</a></li>
-            <li class="nav-item"><a href="/outfits">OUTFITS</a></li>
-            <li class="nav-item"><a href="/calendar">CALENDAR</a></li>
-        </ul>
-    </div>
-    <div class="left-nav">
-        <ul>
-            <li class="nav-item"><a href="/shirts">Shirts</a></li>
-            <li class="nav-item"><a href="/coats">Coats</a></li>
-            <li class="nav-item"><a href="/suits">Suits</a></li>
-            <li class="nav-item"><a href="/sweaters">Sweaters</a></li>
-            <li class="nav-item"><a href="/pants">Pants</a></li>
-            <li class="nav-item"><a href="/jeans">Jeans</a></li>
-            <li class="nav-item"><a href="/shoes">Shoes</a></li>
-            <li class="nav-item"><a href="/bags">Bags</a></li>
-            <li class="nav-item"><a href="/accessories">Accessories</a></li>
-            <li class="nav-item"><a href="/others">Others</a></li>
-        </ul>
-    </div>
+    <div><%- include ("../partials/pageNav.ejs") %></div>
     <div class="body">
+    
         <div class="calendar" id="calendar">
             <div class="current">
                 <div class="btn btn-prev" v-on:click="previous()"><i class="fa fa-angle-left"></i></div>
@@ -177,26 +87,28 @@
             <div class="header">
                 <div class="week-day" v-for="d in locale_week">{{ d }}</div>
             </div>
+
             <div class="dates">
-                <div class="row" v-for="row in getAllDatesOfCurrentMonth()">
-                    <div v-on:click="dateSelect(d,$event)" :class="digitKlass(d)" v-for="d in row">{{ d ? d : '&nbsp' }}</div>
+                <div class="row" v-for="row in getAllDatesOfCurrentMonth()" >
+                    <div v-on:click="dateSelect(d,$event)" :class="digitKlass(d)" v-for="d in row">
+                        {{ d ? d : '&nbsp' }}
+                        <% results.forEach(function(r) { %>
+                            <div v-if="d =='<%= r.date%>' && d!=0 "> 
+                                <img style="display:block;" width="100%" height="100%" src="data:image/gif;base64,<%= r.txtimg%>">
+                                
+                            </div>
+                        <% }); %> 
+                    </div>
+                    
                 </div>
             </div>
         </div>
-        <div class="image-container">
-            <div class="image-item" v-for="img in images">
-                <img :src="getImgSrc(img)" />
-            </div>
-        </div>
     </div>
+
+
     <script type="text/javascript">
+
     var date = new Date;
-    var images = [
-        {src: 'https://img0.baidu.com/it/u=1895837640,2691329714&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'},
-        {src: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg11.360buyimg.com%2Fn1%2Fs350x449_jfs%2Ft1%2F171633%2F3%2F22172%2F479874%2F613a15c4Ecd580df0%2Fcf565bf2a474dcf4.jpg%21cc_350x449.jpg&refer=http%3A%2F%2Fimg11.360buyimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650820033&t=8a622213782970e04463773c26cd22b7'},
-        {src: 'https://img0.baidu.com/it/u=272871951,2076114354&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'},
-        {src: 'https://img0.baidu.com/it/u=2668765741,2232204886&fm=253&fmt=auto&app=120&f=JPEG?w=350&h=449'},
-    ];
     var vueInst = new Vue({
         el: '.body',
         data: {
@@ -210,6 +122,7 @@
             images: [],
             current_date_dom: null,
         },
+
         methods: {
             currentYearMonthFn: function() {
                 if (this.current_month >= 10) {
@@ -222,7 +135,6 @@
                 var current = new Date(this.current_year + '-' + this.current_month);
                 var weekday = current.getDay();
                 var days    = new Date(this.current_year, this.current_month, 0).getDate();
-                //
                 var dates = [], dates2 = [];
                 for(var i = 1; i <= days; ++i) {
                     dates2.push(i < 10 ? ('0' + i) : ('' + i));
@@ -312,6 +224,7 @@
             },
         },
     });
+
     </script>
 </body>
 </html>
