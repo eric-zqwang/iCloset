@@ -14,8 +14,22 @@
     .main {
       top: 145px;
       left: 210px;
+      width: 90%;
+      height: 90%;
       position: fixed;
+      overflow: scroll;
+      float: left;
+      content: "";
+  display: table;
+  clear: both;
     }
+    .left {
+      width: 60%;
+    }
+    .right {
+      width: 40%;
+    }
+
     .sidenav ul {
       top: 120px;
       list-style-type: none;
@@ -57,9 +71,14 @@
       top: 160px;
       right: 50px;
     }
+    .savebutton {
+      position: fixed;
+      top:680px;
+      right: 50px;
+    }
     .outfitContent {
       overflow: scroll;
-      width: 50%;
+      width: 100%;
       border-collapse: collapse;
       height: 600px;
     }
@@ -72,13 +91,6 @@
 
   <%- include ("../partials/pageNav.ejs") %>
     <div class="sidenav">
-
-      <!-- Fixed Full-Height Side Bar -->
-      <!-- 
-      <canvas id="collage-canvas" width="200" height="100" style="border:1px solid #000000;">
-      </canvas>
-    -->
-
       <ul>
         <li><a href="#all" onclick="changeCategory('imageDraggable')">All</a></li>
         <li><a href="#shirts" onclick="changeCategory('Shirts')">Shirts</a></li>
@@ -94,7 +106,7 @@
       </ul>
     </div>
     <div class="main">
-      <div>
+      <div class="column left">
         <div>
           <h2>Hello, <%=currentuids[0].uname%>, try to click on the images to see how they go.</h2>
         </div>
@@ -107,9 +119,9 @@
             <% };%>
         </div>
       </div>
-      <div>
+      <div class="column right">
         <div id="target" class="target"></div>
-        <div><button type="submit">Save Style</button></div>
+        <div class="savebutton"><button type="submit">Save Style</button></div>
       </div>
     </div>
 </body>
@@ -121,8 +133,8 @@
   const height = window.innerHeight;
   const stage = new Konva.Stage({
     container: 'target',
-    width: 600,
-    height: 600,
+    width: 400,
+    height: 500,
   });
   const layer = new Konva.Layer();
   stage.add(layer);
