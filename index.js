@@ -325,6 +325,7 @@ app.post('/:id/outfits/:imgid/delete', async (req, res) => {
   await pool.query(`delete from usercomment where imgid = '${imgid}'`);
   await pool.query(`delete from requests where recipientimgid = '${imgid}'`);
   await pool.query(`delete from requests where requestorimgid = '${imgid}'`);
+  await pool.query(`delete from userlike where imgid = '${imgid}'`);
  res.redirect(`/:${id}/outfits`);
 });
 

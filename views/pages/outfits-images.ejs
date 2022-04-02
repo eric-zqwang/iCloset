@@ -76,6 +76,7 @@
                             <fieldset style="width:200px; padding: 5pt;">
                                 <label for="category">Choose a Type:</label>
                                 <select name="category" id="categoryid">
+                                    <option selected="selected"><%= r.category_type %></option>
                                     <option value="Shirts">Shirts</option>
                                     <option value="Coats">Coats</option>
                                     <option value="Suits">Suits</option>
@@ -89,6 +90,12 @@
                                 </select>
                                 <label for="public">Post it to public place ?</label>
                                 <select name="public" id="publicboolean">
+                                    <%if(r.public==true){%>
+                                    <option selected="selected">Yes</option>
+                                    <%}%>
+                                    <%if(r.public==false){%>
+                                        <option selected="selected">No</option>
+                                        <%}%>
                                     <option value="false">No</option>
                                     <option value="true">Yes</option>                                    
                                 </select>
