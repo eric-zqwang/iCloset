@@ -62,30 +62,74 @@ pool = new Pool({
     // }
 
   // for local host
-    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   // connectionString: 'postgres://postgres:root@localhost/try1'
-  //  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
+
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  service:'gmail',
+  auth: {
+     user: 'iclosetcmpt@gmail.com', 
+     pass: 'Icloset276' 
+  }
+});
+// const sgMail = require('@sendgrid/mail');
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
   var inputName = req.body.name;
+  emailToken = crypto.randomBytes(64).toString('hex');
 
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result) {
     res.send("The register email already exist")
+    console.log("succeed")
   }
   else {
-    try {
-      await pool.query(`INSERT INTO usrs (uname, umail, upswd) 
-      VALUES ('${inputName}', '${inputEmail}', '${inputPswd}')`);
-      res.redirect('/userlogin.html');
+    var message = {
+      from: 'iclosetcmpt@gmail.com',
+      to: inputEmail,
+      subject: 'iCloset - verify your email',
+      html:`
+        <h1>Hello,</h1>
+        <p>thanks for registering on our site.</p>
+        <p>Please click the link below to verify your account.</p>
+        <a href="http://${req.headers.host}/verify-email?token=${emailToken}">verify your account</a>
+      `
     }
-    catch (error) {
-      res.send("User NAME ALREADY EXISTS");
-    }
+    //sending email
+    
+    try{
+      transporter.sendMail(message, async(error, info)=>{
+        if(error){
+          console.log(error)
+        }
+        else{
+          console.log('verification email is sent to your gmail account')
+          await pool.query(`INSERT INTO usrs (uname, umail, upswd) VALUES ('${inputName}', '${inputEmail}', '${inputPswd}')`)
+          res.redirect('/confirm.html');
+        }
+      })
+    }catch(error){
+      console.log(error);
+    }    
+  }    
+})
+
+//Email verification route
+app.get('/verify-email', async(req,res)=>{
+  try {
+    emailToken = null;
+    res.redirect('/userlogin.html');
+  }catch(error){
+    console.log(error);
+    res.redirect('/signUp.html');
   }
 })
 
@@ -103,6 +147,10 @@ app.post('/userlogin', async (req, res) => {
   //If umail is not unique
   if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
+  }
+
+  else if(result.rows.confirm == false){
+    console.log("Fail to confirm!!")
   }
 
   //If umail and password are correct, direct to homepage
@@ -219,7 +267,9 @@ app.post('/:id/outfits/:imgid/delete', async (req, res) => {
 const fs = require('fs')
 const multer = require('multer');
 const { redirect } = require('express/lib/response');
-const { removeBackgroundFromImageFile } = require("remove.bg")
+const { removeBackgroundFromImageFile } = require("remove.bg");
+const { user } = require('pg/lib/defaults');
+const { Router } = require('express');
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {

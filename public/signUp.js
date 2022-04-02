@@ -46,3 +46,4 @@ function validate_password(){
 function direct2userlogin(){
     window.location.href = "/userlogin.html";
 }
+
