@@ -483,7 +483,56 @@ app.get('/:uid/calendar', async(req,res) => {
   }
 })
 
+//get messages
+app.get('/:id/Messages', async (req, res) => {
+  const id = req.params.id.substring(1);
 
+  //RR = requests recevied by the uesr; YR = The user's requests
+
+  var RRrequestimg = await pool.query(
+    `select txtimg,reqid,status from requests inner join userobj1 
+    on userobj1.imgid = requests.requestorimgid and requests.recipientid = ${id} order by reqid`);
+
+   var RRreceiverimg = await pool.query(
+    `select txtimg,reqid,status from requests inner join userobj1 
+    on userobj1.imgid = requests.recipientimgid and requests.recipientid = ${id} order by reqid`);
+  
+
+  var YRrequestimg = await pool.query(
+    `select txtimg,reqid,status from requests inner join userobj1 
+    on userobj1.imgid = requests.requestorimgid and requests.requestorid = ${id} order by reqid`);
+
+   var YRreceiverimg = await pool.query(
+    `select txtimg,reqid,status from requests inner join userobj1 
+    on userobj1.imgid = requests.recipientimgid and requests.requestorid = ${id} order by reqid`);
+    const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
+  const data = {currentuids:currentid.rows, RRreceiverimgs:RRreceiverimg.rows, RRrequestimgs:RRrequestimg.rows,
+                 YRreceiverimgs:YRreceiverimg.rows, YRrequestimgs:YRrequestimg.rows};
+  res.render('pages/MessagesCenter', data);
+});
+
+//get trading
+app.get('/:id/:imgid/trade', async (req, res) => {
+  const id = req.params.id.substring(1);
+  const imgid = req.params.imgid.substring(1);
+  const targetimg = await pool.query(`select * from userobj1 where imgid ='${imgid}'`);
+  const currentuserimg = await pool.query(`select * from userobj1 where uid ='${id}'`);
+  const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
+  const data = {currentuids:currentid.rows, targetimgs:targetimg.rows, currentuserimgs:currentuserimg.rows};
+  res.render('pages/trading', data);
+});
+
+//post a trading request
+app.post('/:id/trade/:imgid', async (req, res) => {
+  //requestor
+  const uid = req.params.id.substring(1);
+  const choosenimgid=req.body.choosenid;
+  //recipent
+  const recipentimgid = req.params.imgid.substring(1); 
+  const recipentid = await pool.query(`select uid from userobj1 where imgid = ${recipentimgid}`);
+  await pool.query(`insert into requests (recipientid, recipientimgid,requestorid,requestorimgid, status) values ('${recipentid.rows[0].uid}','${recipentimgid}','${uid}','${choosenimgid}', 'processing')`);
+  res.redirect(`/:${uid}/Messages`);
+});
 
 
 module.exports = app;

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outfit Collages</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: rgb(170, 172, 198);
+    }
+    .main {
+      top: 145px;
+      left: 50px;
+      width: 90%;
+      height: 90%;
+      position: fixed;
+      overflow: scroll;
+      float: left;
+      content: "";
+  display: table;
+  clear: both;
+    }
+    .left {
+      width: 50%;
+      float:left;
+      overflow-x:auto;
+    }
+    .right {
+      width: 50%;
+      overflow-x:auto;
+      float:right;
+    }
+
+    .sidenav ul {
+      top: 120px;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      background-color: rgb(131, 134, 170);
+      position: fixed;
+      width: 160px;
+      height: 100%;
+      overflow: auto;
+    }
+    .sidenav li {
+      float: left;
+    }
+    .sidenav li a {
+      font-size: large;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      display: block;
+      color: whitesmoke;
+      padding: 15px 20px;
+      text-align: center;
+      text-decoration: none;
+      width: 120px;
+    }
+    .sidenav li a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+    .sidenav li a:hover:not(.active) {
+      color: rgba(240, 248, 255, 0.671);
+    }
+   
+    .savebutton {
+      position: fixed;
+      top:680px;
+      right: 50px;
+    }
+    .outfitContent {
+      overflow: scroll;
+      width: 100%;
+      border-collapse: collapse;
+      height: 600px;
+    }
+    .center {
+     padding: 5px;
+     text-align: center;
+    }
+    table, th, td {
+  border:1px solid black;
+  border-collapse: collapse;
+  overflow-x:auto;
+}
+  </style>
+</head>
+
+<body>
+
+  <%- include ("../partials/pageNav.ejs") %>
+    
+    <div class="main">
+      <div class="left"> 
+        <h1>Your Requests</h1>
+        <table>
+          <tr>
+            <th>Request id</th>
+            <th>Your Cloth</th>
+            <th>Requestor's Cloth</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          <% var j = 0;%>
+            <% while(YRreceiverimgs.length>j){%>    
+                <tr>
+                  <td><%= YRreceiverimgs[j].reqid%>
+                </td>
+                <td><img src="data:image/gif;base64,<%= YRreceiverimgs[j].txtimg %>" style="padding: 15px;" 
+                  width="200" height="200" alt="">
+                  </td>
+                  <td><img src="data:image/gif;base64,<%= YRrequestimgs[j].txtimg %>" style="padding: 15px;" 
+                    width="200" height="200" alt="">
+                    </td>
+                    
+                      <td><%= YRreceiverimgs[j].status%>
+                    </td>
+                    <td>
+                        <form action="/:id/cancel_trading_request" method="post">
+                        <button type="submit" formmethod="post">Remove Request</button>
+                      </form>
+                    </td>
+                </tr>
+                  <% j++; %>
+            <% };%>
+          </table>
+      </div>
+      <div  class="right">
+        <h1>Requests Recevied</h1>
+        <table>
+            <tr>
+              <th>Request id</th>
+              <th>Your Cloth</th>
+              <th>Requestor's Cloth</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+            <% var i = 0;%>
+            <% while(RRreceiverimgs.length>i){%>    
+                <tr>
+                    <td><%= RRreceiverimgs[i].reqid%>
+                    </td>
+                    <td><img src="data:image/gif;base64,<%= RRreceiverimgs[i].txtimg %>" style="padding: 15px;" 
+                      width="200" height="200" alt="">
+                    </td>
+                    <td><img src="data:image/gif;base64,<%= RRrequestimgs[i].txtimg %>" style="padding: 15px;" 
+                    width="200" height="200" alt="">
+                    </td>
+                    <td><%= RRreceiverimgs[i].status%>
+                    </td>
+                    <td>
+                      <form action="/:id/reject_trading_request" method="get">
+                          <button type="submit" formmethod="post">Reject</button>
+                        </form>
+                        <br>
+                      <form action="/:id/accept_trading_request" method="get">
+                          <button type="submit" formmethod="post">Accept</button>
+                        </form>
+                    </td>
+              </tr>
+                  <% i++; %>
+            <% };%>
+           
+          </table>
+      </div>
+    </div>
+</body>
+
+
+</html>
