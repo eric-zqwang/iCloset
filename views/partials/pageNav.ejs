@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         <style>
             body {
                 margin: 0;
@@ -66,6 +65,7 @@
 
         </style>
         <script defer>
+
             window.onload = function(){
                 x = document.getElementById("message")
                 try{
@@ -75,6 +75,7 @@
                     x.innerHTML = err;
                 }
             }
+
             function showPosition(position) {
                 fetch('https://api.openweathermap.org/data/2.5/weather?lat='+position.coords.latitude+'&lang=en&&lon='+position.coords.longitude+'&appid=e3845fac91ea09459899128cb71305c1')
                  .then(response => response.json())
@@ -101,6 +102,23 @@
                     z.innerHTML = (temp-273.15).toFixed(1) + "℃";
                     a = document.getElementById("tempRange");
                     a.innerHTML = (temp_min-273.15).toFixed(1) + "℃ ~ " + (temp_max-273.15).toFixed(1) + "℃";
+                    var temp_max = data['main']['temp_max'];
+                    var temp_min = data['main']['temp_min'];
+                    temp_min = temp_min-273.15;
+                    temp_max = temp_max-273.15;
+                    
+                    if((temp_max + temp_min)/2 < 0){
+                        document.getElementById("reminder").innerHTML = "today is tooo cold, you should chuan hou dian"
+                    }
+                    else if((temp_max + temp_min)/2 < 10){
+                        document.getElementById("reminder").innerHTML="hai shi gai chuan yu rong fu";
+                    }
+                    else if((temp_max + temp_min)/2 < 20){
+                        document.getElementById("reminder").innerHTML= "chuan ge wei yi";
+                    }
+                    else{
+                        document.getElementById("reminder").innerHTML = "chuan duan xiu";
+                    }
                  })
             }
         </script>
@@ -115,7 +133,7 @@
             <li><a href="/:<%= currentuids[0].uid %>/collage">COLLAGE</a></li>
             <li><a href="/:<%= currentuids[0].uid %>/calendar">CALENDAR</a></li>
             <li><a href="#account">ACCOUNT</a></li>
-            <li><a href="/:<%= currentuids[0].uid %>/like">MARKET</a></li>
+            <li><a href="/:<%= currentuids[0].uid %>/market">MARKET</a></li>
             <li><a href="/:<%= currentuids[0].uid %>/userlogout">LOG OUT</a></li>
             <li class="weather">
                 <li id="weatherImg"></li>
@@ -128,6 +146,7 @@
                     <p id="temp"></p>
                     <p id="tempRange"></p>
                 </li>
+                <p id="reminder"></p>
             </li>
         </ul>
     </body>
