@@ -90,7 +90,7 @@ app.post('/signUp', async (req, res) => {
   emailToken = crypto.randomBytes(64).toString('hex');
 
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
-  if (!result) {
+  if (result) {
     res.send("The register email already exist")
     console.log("error")
   }
