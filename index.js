@@ -29,7 +29,10 @@ app.use(function (req, res, next) {
 
   if (req.path.endsWith("login") || req.path.endsWith("signUp")) {
     next();
-  } else if (curSession == null) {
+  } else if(req.path.endsWith("pswd") || req.path.endsWith("resetPswd")){
+    next();
+  }
+  else if (curSession == null) {
     // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
   } else if (validateAccess(curSession.user.uid, req.path)) {
@@ -89,7 +92,7 @@ app.post('/signUp', async (req, res) => {
   var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
   if (!result) {
     res.send("The register email already exist")
-    console.log("succeed")
+    console.log("error")
   }
   else {
     var message = {
@@ -111,9 +114,9 @@ app.post('/signUp', async (req, res) => {
           console.log(error)
         }
         else{
-          console.log('verification email is sent to your gmail account')
+          // console.log('verification email is sent to your gmail account')
           await pool.query(`INSERT INTO usrs (uname, umail, upswd) VALUES ('${inputName}', '${inputEmail}', '${inputPswd}')`)
-          res.redirect('/confirm.html');
+          res.send("Please confirm your email.");
         }
       })
     }catch(error){
@@ -149,10 +152,6 @@ app.post('/userlogin', async (req, res) => {
     console.log("DUPLICATE USERS!!!");
   }
 
-  else if(result.rows.confirm == false){
-    console.log("Fail to confirm!!")
-  }
-
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
     var user = { 
@@ -168,7 +167,7 @@ app.post('/userlogin', async (req, res) => {
 
   //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
-    res.send(" Incorrect email or password");
+    res.send("Incorrect email or password");
   }
 })
 
@@ -201,6 +200,69 @@ app.post('/adminlogin', async (req, res) => {
   //If umail does not exist or password is incorrect, alert user
   else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
     console.log("incorrect login email or password");
+  }
+})
+
+app.post('/resetPswd', async(req,res)=>{
+  var emailNew = req.body.email;
+  var pswdNew = req.body.pswd;
+
+  var result = pool.query(`SELECT * FROM usrs WHERE umail = '${emailNew}';`)
+  // if (result[0].upswd == pswdNew) {
+  //   res.send("You cannot set the same password!!!")
+  // }
+ if(!result){
+    res.send("You are not the iCloset user!!!")
+  }
+  else {
+    try {
+      await pool.query(`UPDATE usrs SET upswd = '${pswdNew}' WHERE umail = '${emailNew}';`);
+      res.redirect('/userlogin.html');
+    }
+    catch (error) {
+      res.send("Please try again");
+    }
+  }
+})
+
+app.post('/pswd', async (req, res) => {
+  var inputEmail = req.body.email;
+  emailToken = crypto.randomBytes(64).toString('hex');
+    var message = {
+      from: 'iclosetcmpt@gmail.com',
+      to: inputEmail,
+      subject: 'iCloset - change your password',
+      html:`
+        <h1>Hello,</h1>
+        <p>Please click the link below to reset your password.</p>
+        <a href="http://${req.headers.host}/reset-pswd?token=${emailToken}">reset your password</a>
+      `
+    }
+    //sending email
+    try{
+      transporter.sendMail(message, async(error, info)=>{
+        if(error){
+          console.log(error)
+        }
+        else{
+          console.log('verification email is sent to your gmail account')
+          res.send("Please check your email.");
+        }
+      })
+    }catch(error){
+      console.log(error);
+    }    
+   
+})
+
+//reset password page
+app.get('/reset-pswd', async(req,res)=>{
+  try {
+    emailToken = null;
+    res.redirect('/password.html');
+  }catch(error){
+    console.log(error);
+    res.redirect('/signUp.html');
   }
 })
 
