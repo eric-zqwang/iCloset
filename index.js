@@ -67,8 +67,8 @@ pool = new Pool({
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  // connectionString: 'postgres://postgres:root@localhost/try1'
-  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+   connectionString: 'postgres://postgres:root@localhost/try1'
+  //connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 const crypto = require('crypto');
@@ -317,11 +317,14 @@ app.post('/:id/outfits/:imgid', async (req, res) => {
   res.redirect(`/:${id}/outfits/:${imgid}`);
 });
 
+//delete clothes
 app.post('/:id/outfits/:imgid/delete', async (req, res) => {
   const id = req.params.id.substring(1);
   const imgid = req.params.imgid.substring(1);
   await pool.query(`delete from userobj1 where imgid = '${imgid}'`);
   await pool.query(`delete from usercomment where imgid = '${imgid}'`);
+  await pool.query(`delete from requests where recipientimgid = '${imgid}'`);
+  await pool.query(`delete from requests where requestorimgid = '${imgid}'`);
  res.redirect(`/:${id}/outfits`);
 });
 
@@ -548,24 +551,21 @@ app.get('/:uid/calendar', async(req,res) => {
 //get messages
 app.get('/:id/Messages', async (req, res) => {
   const id = req.params.id.substring(1);
-
   //RR = requests recevied by the uesr; YR = The user's requests
-
   var RRrequestimg = await pool.query(
-    `select txtimg,reqid,status from requests inner join userobj1 
+    `select uid,uname,imgid,txtimg,reqid,status from requests inner join userobj1 
     on userobj1.imgid = requests.requestorimgid and requests.recipientid = ${id} order by reqid`);
 
    var RRreceiverimg = await pool.query(
-    `select txtimg,reqid,status from requests inner join userobj1 
+    `select uid,uname,imgid,txtimg,reqid,status from requests inner join userobj1 
     on userobj1.imgid = requests.recipientimgid and requests.recipientid = ${id} order by reqid`);
   
-
   var YRrequestimg = await pool.query(
-    `select txtimg,reqid,status from requests inner join userobj1 
+    `select uid,uname,imgid,txtimg,reqid,status from requests inner join userobj1 
     on userobj1.imgid = requests.requestorimgid and requests.requestorid = ${id} order by reqid`);
 
    var YRreceiverimg = await pool.query(
-    `select txtimg,reqid,status from requests inner join userobj1 
+    `select uid,uname,imgid,txtimg,reqid,status from requests inner join userobj1 
     on userobj1.imgid = requests.recipientimgid and requests.requestorid = ${id} order by reqid`);
     const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
   const data = {currentuids:currentid.rows, RRreceiverimgs:RRreceiverimg.rows, RRrequestimgs:RRrequestimg.rows,
@@ -592,7 +592,60 @@ app.post('/:id/trade/:imgid', async (req, res) => {
   //recipent
   const recipentimgid = req.params.imgid.substring(1); 
   const recipentid = await pool.query(`select uid from userobj1 where imgid = ${recipentimgid}`);
-  await pool.query(`insert into requests (recipientid, recipientimgid,requestorid,requestorimgid, status) values ('${recipentid.rows[0].uid}','${recipentimgid}','${uid}','${choosenimgid}', 'processing')`);
+  await pool.query(`insert into requests (recipientid, recipientimgid,requestorid,requestorimgid, status) values ('${recipentid.rows[0].uid}','${recipentimgid}','${uid}','${choosenimgid}', 'Processing')`);
+  res.redirect(`/:${uid}/Messages`);
+});
+
+//post cancel trading
+app.post('/:id/cancel_trading_request/', async (req,res) =>{
+  const uid = req.params.id.substring(1);
+  const reqid = req.body.requestid;
+  await pool.query(`delete from requests where reqid = '${reqid}'`);
+  res.redirect(`/:${uid}/Messages`);
+});
+
+//post accept trading
+app.post('/:id/accept_trading_request/', async (req,res) =>{
+  const uid = req.params.id.substring(1);
+  const reqid = req.body.requestid;
+  const status = req.body.status;
+  const statusChecker = await pool.query(`select status from requests where reqid = ${reqid}`);
+  if( status != statusChecker.rows[0].status ){
+    res.redirect(`/:${uid}/Messages`);
+  }
+ 
+  const yourclothid = req.body.yourimgid;
+  const requesotrclothid = req.body.requestorimgid;
+  const yourid = req.body.yourid;
+  const requestorid = req.body.requestorid;
+  const yourname = req.body.yourname;
+  const requestorname = req.body.requestorname;
+  
+  // exchange the clothes
+  await pool.query(`update userobj1 set uid=${yourid}, uname='${yourname}', public='false' where imgid = ${requesotrclothid}`);
+  await pool.query(`update userobj1 set uid=${requestorid}, uname='${requestorname}', public='false' where imgid = ${yourclothid}`);  
+  // reject other trading orders if accept
+  await pool.query(`update requests set status='Rejected' where recipientimgid = ${yourclothid} and reqid != ${reqid}`);
+  await pool.query(`update requests set status='Rejected' where recipientimgid = ${requesotrclothid} and reqid != ${reqid}`);
+  // remove other trading requests post if accept
+  await pool.query(`delete from requests where requestorimgid = '${yourclothid}' and reqid != ${reqid}`);
+  await pool.query(`delete from requests where requestorimgid = '${requesotrclothid}' and reqid != ${reqid}`);
+  // status-->Complected
+  await pool.query(`update requests set status='Complected' where reqid = ${reqid}`);
+  res.redirect(`/:${uid}/Messages`);
+});
+
+//post reject trading
+app.post('/:id/reject_trading_request/', async (req,res) =>{
+  const uid = req.params.id.substring(1);
+  const reqid = req.body.requestid;
+  const status = req.body.status;
+  const statusChecker = await pool.query(`select status from requests where reqid = ${reqid}`);
+  if( status != statusChecker.rows[0].status ){
+    res.redirect(`/:${uid}/Messages`);
+  }
+  // reject trading orders
+  await pool.query(`update requests set status='Rejected' where reqid = ${reqid}`);
   res.redirect(`/:${uid}/Messages`);
 });
 

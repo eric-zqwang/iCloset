@@ -101,7 +101,7 @@
           <tr>
             <th>Request id</th>
             <th>Your Cloth</th>
-            <th>Requestor's Cloth</th>
+            <th>Request Cloth</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -110,19 +110,22 @@
                 <tr>
                   <td><%= YRreceiverimgs[j].reqid%>
                 </td>
-                <td><img src="data:image/gif;base64,<%= YRreceiverimgs[j].txtimg %>" style="padding: 15px;" 
+                <td><img src="data:image/gif;base64,<%= YRrequestimgs[j].txtimg %>" style="padding: 15px;" 
                   width="200" height="200" alt="">
                   </td>
-                  <td><img src="data:image/gif;base64,<%= YRrequestimgs[j].txtimg %>" style="padding: 15px;" 
+                  <td><img src="data:image/gif;base64,<%= YRreceiverimgs[j].txtimg %>" style="padding: 15px;" 
                     width="200" height="200" alt="">
                     </td>
-                    
+                   
                       <td><%= YRreceiverimgs[j].status%>
                     </td>
                     <td>
-                        <form action="/:id/cancel_trading_request" method="post">
+                      <% if(YRreceiverimgs[j].status == 'Processing'){%>
+                        <form action="/:<%= currentuids[0].uid%>/cancel_trading_request/" method="post">
+                        <input type="hidden" name="requestid" value="<%=YRreceiverimgs[j].reqid%>">
                         <button type="submit" formmethod="post">Remove Request</button>
                       </form>
+                      <%};%>                    
                     </td>
                 </tr>
                   <% j++; %>
@@ -153,13 +156,31 @@
                     <td><%= RRreceiverimgs[i].status%>
                     </td>
                     <td>
-                      <form action="/:id/reject_trading_request" method="get">
-                          <button type="submit" formmethod="post">Reject</button>
-                        </form>
-                        <br>
-                      <form action="/:id/accept_trading_request" method="get">
+                      <% if(RRreceiverimgs[i].status == 'Processing'){%>                                           
+                      <form action="/:<%= currentuids[0].uid%>/accept_trading_request" method="post">
+                        <input type="hidden" name="requestid" value="<%=RRreceiverimgs[i].reqid%>">
+                        <input type="hidden" name="yourimgid" value="<%=RRreceiverimgs[i].imgid%>">
+                        <input type="hidden" name="requestorimgid" value="<%=RRrequestimgs[i].imgid%>">
+                        <input type="hidden" name="yourid" value="<%=RRreceiverimgs[i].uid%>">
+                        <input type="hidden" name="requestorid" value="<%=RRrequestimgs[i].uid%>">
+                        <input type="hidden" name="yourname" value="<%=RRreceiverimgs[i].uname%>">
+                        <input type="hidden" name="requestorname" value="<%=RRrequestimgs[i].uname%>">
+                        <input type="hidden" name="status" value="<%=RRreceiverimgs[i].status%>">
                           <button type="submit" formmethod="post">Accept</button>
                         </form>
+                        <br>
+                        <form action="/:<%= currentuids[0].uid%>/reject_trading_request" method="post">
+                          <input type="hidden" name="requestid" value="<%=RRreceiverimgs[i].reqid%>">
+                          <input type="hidden" name="yourimgid" value="<%=RRreceiverimgs[i].imgid%>">
+                          <input type="hidden" name="requestorimgid" value="<%=RRrequestimgs[i].imgid%>">
+                          <input type="hidden" name="yourid" value="<%=RRreceiverimgs[i].uid%>">
+                          <input type="hidden" name="requestorid" value="<%=RRrequestimgs[i].uid%>">
+                          <input type="hidden" name="yourname" value="<%=RRreceiverimgs[i].uname%>">
+                          <input type="hidden" name="requestorname" value="<%=RRrequestimgs[i].uname%>">
+                          <input type="hidden" name="status" value="<%=RRreceiverimgs[i].status%>">
+                            <button type="submit" formmethod="post">Reject</button>
+                          </form>
+                        <%};%>
                     </td>
               </tr>
                   <% i++; %>
