@@ -13,6 +13,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
+
+
 // redirect user to login page if they dont have a session
 app.use(function (req, res, next) {
   function validateAccess(sessionUID, reqPath) {
@@ -65,10 +67,10 @@ pool = new Pool({
     // }
 
   // for local host
-  //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   //  connectionString: 'postgres://postgres:root@localhost/try1'
-  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 const crypto = require('crypto');
@@ -89,8 +91,10 @@ app.post('/signUp', async (req, res) => {
   var inputName = req.body.name;
   emailToken = crypto.randomBytes(64).toString('hex');
 
-  var result = pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`)
-  if (!result) {
+  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
+  const data = {results: result.rows };
+  
+  if (data.results.length > 0) {
     res.send("The register email already exist")
     console.log("error")
   }
@@ -121,7 +125,7 @@ app.post('/signUp', async (req, res) => {
       })
     }catch(error){
       console.log(error);
-    }    
+    }
   }    
 })
 
@@ -376,6 +380,8 @@ app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res
   };
   myRemoveBgFunction(localFile, outputFile);
 });
+
+
 
 app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
   function base64Encode(file) {
