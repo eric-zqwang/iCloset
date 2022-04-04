@@ -99,11 +99,11 @@
                             <input type="hidden" name="years" v-model="current_year" value="current_year"> 
                             <button  v-if="d!=''" type="submit" style="border: none;text-align: center;background-color: white; font-size: 20px;">{{d}}</button>
                         </form>                         -->
-                        <!-- <% results.forEach(function(r) { %>
+                        <% results.forEach(function(r) { %>
                         <div v-if="d =='<%= r.day%>' && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
                                 <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">                                
                         </div>
-                        <% }); %> -->
+                        <% }); %>
                     </form>
                     </div>         
                            
