@@ -103,6 +103,7 @@
         <li><a href="#bags"onclick="changeCategory('Bags')">Bags</a></li>
         <li><a href="#accessories"onclick="changeCategory('Accessories')">Accessories</a></li>
         <li><a href="#others"onclick="changeCategory('Others')">Others</a></li>
+        <li><a href="#styles"onclick="changeCategory('Styles')">Styles</a></li>
       </ul>
     </div>
     <div class="main">
@@ -114,7 +115,7 @@
           <% if(results.length>0){%>
               <% results.forEach(function(r) { %>
                 <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;" draggable="true"
-                  class="imageDraggable <%= r.category_type%>" width="200" height="200" alt=""> 
+                  class="imageDraggable <%= r.category_type%>" name="<%= r.imgid%>" width="200" height="200" alt=""> 
                 <% }); %>
             <% };%>
         </div>
@@ -166,14 +167,14 @@
   for (var i = 0; i < images.length; i++) {
     images[i].addEventListener('click', (e) => {
       const image = e.target;
+      const imageId = image.getAttribute('name');
       var darthVaderImg = new Konva.Image({
         image: image,
         x: Math.random() * stage.width() / 2,
         y: Math.random() * stage.width() / 2,
-        // width: 200,
-        // height: 137,
         draggable: true,
-        name: 'image',
+        name: "image",
+        id: imageId
       });
       // add cursor styling
       darthVaderImg.on('mouseover', function () {
@@ -184,29 +185,49 @@
       });
 
       const tr = new Konva.Transformer({
-        node: darthVaderImg
+        node: darthVaderImg,
+        id: imageId
       });
       layer.add(tr);
       const deleteButton = new Konva.Circle({
         radius: 10,
-        fill: 'red'
+        fill: 'red',
+        id: imageId
       });
       tr.add(deleteButton);
       function updatePos() {
         deleteButton.position(tr.findOne('.top-right').position());
       }
+
+      // on clicking the red top right delete button 
       deleteButton.on("mouseup", function (e) {
-        tr.remove();
-        darthVaderImg.remove();
+        // find the nodes of the transformer
+        const nodes = e.target.parent.nodes();
+
+        // delete image
+        nodes.forEach(element => {
+          element.remove();
+        });
+
+        // delete transformer
+        e.target.parent.remove();
+
+        // delete deletebutton
+        e.target.remove();
+
+        //redraw canvas
         layer.draw();
       });
       updatePos();
       darthVaderImg.on('transform', updatePos);
 
       stage.on('click tap', function (e) {
-        // if click on empty area - remove all selections
+        // if click on empty area - remove all selections of images
         if (e.target === stage) {
-          tr.nodes([]);
+          layer.find('Transformer').forEach(tr => {
+            const nodes = tr.nodes().slice(1);
+            tr.nodes(nodes);
+          });
           return;
         }
 
@@ -215,13 +236,22 @@
           return;
         }
 
-        const isSelected = tr.nodes().indexOf(e.target) >= 0;
+        // going through all transformers to find the correct transformer
+        layer.find('Transformer').forEach(tr => {
 
-        if (!isSelected) {
-          // if no key pressed and the node is not selected
-          // select just one
-          tr.nodes([e.target]);
-        }
+          if (tr.id() == e.target.id()) {
+            // add the image back to the correct transformer
+            const nodes = tr.nodes();
+            if (!nodes.includes(e.target)) {
+              nodes.unshift(e.target);
+              tr.nodes(nodes);
+            }
+          } else {
+            // deselect other images from their transformer
+            const nodes = tr.nodes().slice(1);
+            tr.nodes(nodes);
+          }
+        });
       });
 
       layer.add(darthVaderImg);
@@ -254,19 +284,15 @@
   function saveCollageToLocal() {
     var dataURL = stage.toDataURL({ pixelRatio: 3 });
     downloadURI(dataURL, 'stage.png');
-  }
 
-  function submitCollage() {
-    console.log("DEBUGG submitCollage1");
-
-    return false;
+    document.getElementById("saveCollageStatus").innerHTML = "Style saved to local.";
   }
 
   function saveCollage() {
-    console.log("DEBUGG saveCollage");
-
     var dataURL = stage.toDataURL({ pixelRatio: 3 });
     document.getElementById("collageimg").value = dataURL;
     document.getElementById("saveCollageForm").submit();
+
+    document.getElementById("saveCollageStatus").innerHTML = "Style saved.";
   }
 </script>

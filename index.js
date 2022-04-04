@@ -547,7 +547,6 @@ app.get('/:uid/calendar', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
     const currentuid = await pool.query(`select uid from usrs where uid = ${uid}`);
-    //Ming: NICOLE change userobj1 -> new outfit-sets table name; imgid -> new outfit-sets id; txtimg -> new outfit-sets img ;
     const result = await pool.query(`select calendars.*,txtimg from calendars inner join userobj1 on userobj1.imgid = calendars.imgsetid and calendars.uid = ${uid}`);
     const data = {currentuids:currentuid.rows, results:result.rows};
     res.render('pages/calendar', data);
@@ -664,7 +663,6 @@ app.post('/:id/calendaraddimg', async (req, res) => {
   const day = req.body.days;
   const year = req.body.years;
   const month = req.body.months;
-  //Ming: NICOLE, Change userobj1 -> new outfits-sets table name;
   const currentuserimg = await pool.query(`select * from userobj1 where uid ='${id}'`);
   const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
   const date={day:day,year:year,month:month};
@@ -679,7 +677,6 @@ app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {
   const month = req.params.month.substring(1);
   const choosenimgid=req.body.choosenid;
 
-  //Ming: NICOLE, Change imgid -> collageid;
   await pool.query(`insert into calendars (imgsetid, uid,year,month,day) values (${choosenimgid},${id},${year},${month},${day})`);
  
   res.redirect(`/:${id}/calendar`);
@@ -687,32 +684,20 @@ app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {
 
 app.post('/saveCollage', async(req,res)=>{
   try {
-    console.log("DEBUGG");
     const uid = curSession.user.uid;
-    const collageimg = req.body.collageimg;
+    const uname = curSession.user.name;
 
-    await pool.query(`insert into collages (uid, collageimg) values ('${uid}','${collageimg}')`);
+    if (req.body.collageimg != '') {
+      const collageimg = req.body.collageimg.replace('data:image/png;base64,', '');
 
-    var result = await pool.query(`select * from userobj1 where uid ='${uid}'`);
-    const currentid = await pool.query(`select * from usrs where uid = '${uid}'`);
-    const data = {currentuids:currentid.rows, results:result.rows};
-    res.render('pages/collages', data);
-  } catch(error){
-    console.log(error);
-  }
-})
-
-app.get('/mystyles', async(req,res)=>{
-  try {
-    console.log("DEBUGG myStyles");
-    const uid = curSession.user.uid;
+      await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname) values ('${collageimg}','${uid}','Styles',false,0,'${uname}')`);
+    }
     
-    const currentid = await pool.query(`select * from usrs where uid = '${uid}'`);
-    const result = await pool.query(`select * from collages where uid = '${uid}'`);
-    const data = {currentuids:currentid.rows, results: result.rows};
-    res.render('pages/mystyles', data);
+    res.redirect(`/:${uid}/collage`);
+
   } catch(error){
     console.log(error);
   }
 })
+
 module.exports = app;
