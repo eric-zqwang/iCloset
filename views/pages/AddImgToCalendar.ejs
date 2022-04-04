@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outfit Collages</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: rgb(170, 172, 198);
+    }
+    .main {
+      top: 145px;
+      left: 210px;
+      width: 90%;
+      height: 90%;
+      position: fixed;
+      overflow: scroll;
+      float: left;
+      content: "";
+  display: table;
+  clear: both;
+    }
+    .left {
+      width: 60%;
+    }
+    .right {
+      width: 40%;
+    }
+
+    .sidenav ul {
+      top: 120px;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      background-color: rgb(131, 134, 170);
+      position: fixed;
+      width: 160px;
+      height: 100%;
+      overflow: auto;
+    }
+    .sidenav li {
+      float: left;
+    }
+    .sidenav li a {
+      font-size: large;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      display: block;
+      color: whitesmoke;
+      padding: 15px 20px;
+      text-align: center;
+      text-decoration: none;
+      width: 120px;
+    }
+    .sidenav li a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+    .sidenav li a:hover:not(.active) {
+      color: rgba(240, 248, 255, 0.671);
+    }
+    .target {
+      width: 300px;
+      height: 400px;
+      border: 2px solid floralwhite;
+      background: #ffffff;
+      position: fixed;
+      top: 160px;
+      right: 50px;
+    }
+    .savebutton {
+      position: fixed;
+      top:680px;
+      right: 50px;
+    }
+    .outfitContent {
+      overflow: scroll;
+      width: 100%;
+      border-collapse: collapse;
+      height: 600px;
+    }
+    .center {
+     padding: 5px;
+     text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <%- include ("../partials/pageNav.ejs") %>
+    <div class="sidenav">
+      <ul>
+        <li><a href="#all" onclick="changeCategory('imageDraggable')">All</a></li>
+        <li><a href="#shirts" onclick="changeCategory('Shirts')">Shirts</a></li>
+        <li><a href="#coats" onclick="changeCategory('Coats')">Coats</a></li>
+        <li><a href="#suits"onclick="changeCategory('Suits')">Suits</a></li>
+        <li><a href="#sweaters"onclick="changeCategory('Sweaters')">Sweaters</a></li>
+        <li><a href="#pans"onclick="changeCategory('Pants')">Pants</a></li>
+        <li><a href="#jeans"onclick="changeCategory('Jeans')">Jeans</a></li>
+        <li><a href="#shoes"onclick="changeCategory('Shoes')">Shoes</a></li>
+        <li><a href="#bags"onclick="changeCategory('Bags')">Bags</a></li>
+        <li><a href="#accessories"onclick="changeCategory('Accessories')">Accessories</a></li>
+        <li><a href="#others"onclick="changeCategory('Others')">Others</a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="column left">
+        <h2>Hello, <%=currentuids[0].uname%>, please select the cloth you want to show on the date.</h2>
+        <div class="outfitContent" id="category-img">
+
+          <% if(currentuserimgs.length>0){%>
+              <% currentuserimgs.forEach(function(r) { %>
+                <img src="data:image/gif;base64,<%= r.txtimg %>" style="padding: 15px;"
+                  class="imageDraggable <%= r.category_type%>" width="200" height="200" id="<%=r.imgid%>" alt="" onclick="chooseimg(this)"> 
+                  <% }); %>
+            <% };%>
+            
+        </div>
+      </div>
+      <div class="target center">
+        <form action="/:<%= currentuids[0].uid%>/calendaradd/:<%= date.year%>/:<%= date.month%>/:<%= date.day%>" method="post" >
+            <p style="font-size: 18px;">
+                <%= date.year%> - <%= date.month%> - <%= date.day%>
+                </p>
+        <div id="choosenimg">
+        </div>
+        <input type="hidden" id="imgidField" name="choosenid" value="" required/>
+        <br><br>
+          <div id="request button">
+          </div>
+      </form>
+    
+      </div>
+    </div>
+</body>
+
+
+</html>
+
+<script>
+
+  const imagestore =  document.querySelectorAll(".imageDraggable");
+
+  function chooseimg(selectedimg){
+    var copyimg = selectedimg.cloneNode(true);
+    var choosenimgid=selectedimg.id;
+    document.getElementById("choosenimg").textContent="";
+    document.getElementById("choosenimg").append(copyimg);
+    document.getElementById("imgidField").value= choosenimgid;
+    var input = document.createElement("input");
+    input.setAttribute("type","submit");
+    input.setAttribute("value","Add to the Calendar");
+    document.getElementById("request button").textContent="";
+    document.getElementById("request button").appendChild(input);
+    // window.alert(choosenimgid);
+  }
+
+  function changeCategory(val) {
+  
+    var img = imagestore;
+    document.getElementById("category-img").textContent="";
+    for(i=0;i<img.length;i++){
+      if(img[i].classList.contains(val)){
+        document.getElementById("category-img").append(img[i]);
+      }
+    }
+  }
+</script>

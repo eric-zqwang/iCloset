@@ -541,12 +541,13 @@ app.post('/:currentuid/:imgID/:commentid/deleteComment', async(req,res) => {
   }
 })
 
-// jin ru calendar page
+// calendar page
 app.get('/:uid/calendar', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
     const currentuid = await pool.query(`select uid from usrs where uid = ${uid}`);
-    const result = await pool.query(`select * from userobj1 where uid = ${uid}`);
+    //Ming: NICOLE change userobj1 -> new outfit-sets table name; imgid -> new outfit-sets id; txtimg -> new outfit-sets img ;
+    const result = await pool.query(`select calendars.*,txtimg from calendars inner join userobj1 on userobj1.imgid = calendars.imgsetid and calendars.uid = ${uid}`);
     const data = {currentuids:currentuid.rows, results:result.rows};
     res.render('pages/calendar', data);
   }
@@ -662,9 +663,26 @@ app.post('/:id/calendaraddimg', async (req, res) => {
   const day = req.body.days;
   const year = req.body.years;
   const month = req.body.months;
-  console.log(year);
-  console.log(month);
-  console.log(day);
+  //Ming: NICOLE, Change userobj1 -> new outfits-sets table name;
+  const currentuserimg = await pool.query(`select * from userobj1 where uid ='${id}'`);
+  const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
+  const date={day:day,year:year,month:month};
+  const data = {currentuids:currentid.rows, date:date, currentuserimgs:currentuserimg.rows} ;
+  res.render('pages/AddImgToCalendar', data);
 });
+
+app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {
+  const id = req.params.id.substring(1);
+  const day = req.params.day.substring(1);
+  const year = req.params.year.substring(1);
+  const month = req.params.month.substring(1);
+  const choosenimgid=req.body.choosenid;
+
+  //Ming: NICOLE, Change imgid -> collageid;
+  await pool.query(`insert into calendars (imgsetid, uid,year,month,day) values (${choosenimgid},${id},${year},${month},${day})`);
+ 
+  res.redirect(`/:${id}/calendar`);
+});
+
 
 module.exports = app;

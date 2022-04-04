@@ -16,7 +16,7 @@
     .calendar {
         display: inline-block;
         width: 1000px;
-        height: 800px;
+        height: 900px;
         margin-top: 150px;
         margin-bottom: 150px;
         padding: 15px;
@@ -27,7 +27,7 @@
     .calendar .current {
         width: calc(100% - 20px);
         position: relative;
-        padding: 10px;
+        padding: 5px;
         border-bottom: 1px solid #000;
     }
     .calendar .current .btn {
@@ -55,18 +55,34 @@
         font-weight: 700;
     }
     
-    .calendar .header .week-day,
-    .calendar .dates .row .digit,
+    .calendar .header .week-day {
+        display: inline-block;
+        width: 130px;
+        height: 10px;
+        border: 1px solid rgba(200,200,200,0);
+        margin: 2px 5px;
+       
+    }
+    .calendar .dates .row .digit {
+        display: inline-block;
+        width: 130px;
+        height: 120px;
+        border: 1px solid rgba(200,200,200,0);
+        margin: 2px 5px;
+       
+    }
+    
     .calendar .dates .row .digit-placeholder {
         display: inline-block;
         width: 130px;
         height: 120px;
         border: 1px solid rgba(200,200,200,0);
         margin: 2px 5px;
+       
     }
-    .calendar .dates .row .digit.active,
+    
     .calendar .dates .row .digit.selected {
-        cursor: pointer;
+        
         color: #FFF;
     }
     .calendar .dates .row .digit.active {
@@ -87,23 +103,22 @@
             </div>
             <div class="header">
                 <div class="week-day" v-for="d in locale_week">{{ d }}</div>
-            </div>
-            
+            </div>            
             <div class="dates">
                 <div class="row" v-for="row in getAllDatesOfCurrentMonth()" >                    
-                    <div :class="digitKlass(d)" v-for="d in row">                        
+                    <div :class="digitKlass(d)" v-for="d in row" style="margin:5px;" >                        
                         {{ d ? '' : '&nbsp' }}
+                        &nbsp;
                         <form  action="/:<%= currentuids[0].uid%>/calendaraddimg" method="post"> 
                             <input type="hidden" name="days" v-model="d" value="d"> 
                             <input type="hidden" name="months" v-model="current_month" value="current_month"> 
                             <input type="hidden" name="years" v-model="current_year" value="current_year"> 
-                            <button  v-if="d!=''" type="submit" style="border: none;text-align: center;background-color: white; font-size: 20px;">{{d}}</button>
+                            <button  v-if="d!=''" type="submit" style=" cursor: pointer;border: none;text-align: center;background-color: white; font-size: 20px;">{{d}}</button>
                         </form>
                         <% if(results.length>0) { %>
                         <% results.forEach(function(r) { %>
-                           
-                         <div v-if="d == <%= r.day%> && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
-                                <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">                                
+                        <div v-if="d == <%= r.day%> && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
+                        <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">           
                         </div> 
                         <% }); %>
                         <% }; %> 
