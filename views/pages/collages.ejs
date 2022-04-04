@@ -120,8 +120,15 @@
         </div>
       </div>
       <div class="column right">
-        <div id="target" class="target"></div>
-        <div class="savebutton"><button type="submit">Save Style</button></div>
+        <form id="saveCollageForm" method="POST" action="/saveCollage">
+          <div id="target" class="target"></div>
+          <div class="savebutton">
+            <label id="saveCollageStatus"></label>
+            <button onclick="saveCollage()">Save Style</button>
+            <button onclick="saveCollageToLocal()">Save Style to Local</button>
+            <input type="hidden" name="collageimg" id="collageimg">
+          </div>
+      </form>
       </div>
     </div>
 </body>
@@ -163,8 +170,8 @@
         image: image,
         x: Math.random() * stage.width() / 2,
         y: Math.random() * stage.width() / 2,
-        width: 200,
-        height: 137,
+        // width: 200,
+        // height: 137,
         draggable: true,
         name: 'image',
       });
@@ -232,5 +239,34 @@
         document.getElementById("category-img").append(img[i]);
       }
     }
+  }
+
+  function downloadURI(uri, name) {
+    var link = document.createElement('a');
+    link.download = name;
+    link.href = uri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
+  }
+
+  function saveCollageToLocal() {
+    var dataURL = stage.toDataURL({ pixelRatio: 3 });
+    downloadURI(dataURL, 'stage.png');
+  }
+
+  function submitCollage() {
+    console.log("DEBUGG submitCollage1");
+
+    return false;
+  }
+
+  function saveCollage() {
+    console.log("DEBUGG saveCollage");
+
+    var dataURL = stage.toDataURL({ pixelRatio: 3 });
+    document.getElementById("collageimg").value = dataURL;
+    document.getElementById("saveCollageForm").submit();
   }
 </script>

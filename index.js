@@ -6,14 +6,15 @@ const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 5000
 
 var app = express()
-app.use(express.json());
+// app.use(express.json());
 app.use("/", cors());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-
+app.use(express.json({limit: '25mb'}));
+app.use(express.urlencoded({limit: '25mb', extended: true}));
 
 // redirect user to login page if they dont have a session
 app.use(function (req, res, next) {
@@ -61,15 +62,15 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-     ssl:{
-      rejectUnauthorized: false
-    }
+    // connectionString: process.env.DATABASE_URL,
+    //  ssl:{
+    //   rejectUnauthorized: false
+    // }
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  //  connectionString: 'postgres://postgres:root@localhost/try1'
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  // connectionString: 'postgres://postgres:root@localhost/try1'
   //connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -684,5 +685,34 @@ app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {
   res.redirect(`/:${id}/calendar`);
 });
 
+app.post('/saveCollage', async(req,res)=>{
+  try {
+    console.log("DEBUGG");
+    const uid = curSession.user.uid;
+    const collageimg = req.body.collageimg;
 
+    await pool.query(`insert into collages (uid, collageimg) values ('${uid}','${collageimg}')`);
+
+    var result = await pool.query(`select * from userobj1 where uid ='${uid}'`);
+    const currentid = await pool.query(`select * from usrs where uid = '${uid}'`);
+    const data = {currentuids:currentid.rows, results:result.rows};
+    res.render('pages/collages', data);
+  } catch(error){
+    console.log(error);
+  }
+})
+
+app.get('/mystyles', async(req,res)=>{
+  try {
+    console.log("DEBUGG myStyles");
+    const uid = curSession.user.uid;
+    
+    const currentid = await pool.query(`select * from usrs where uid = '${uid}'`);
+    const result = await pool.query(`select * from collages where uid = '${uid}'`);
+    const data = {currentuids:currentid.rows, results: result.rows};
+    res.render('pages/mystyles', data);
+  } catch(error){
+    console.log(error);
+  }
+})
 module.exports = app;
