@@ -101,9 +101,9 @@
                         </form>       -->
                         <% if(results.length>0) { %>
                         <% results.forEach(function(r) { %>
-                        <div v-if="d =='<%= r.day%>' && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
-                               12345 <!-- <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">                                 -->
-                        </div>
+                        <!-- <div v-if="d =='<%= r.day%>' && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
+                                <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">                                
+                        </div> -->
                         <% }); %>
                         <% }; %>
                     </form>
