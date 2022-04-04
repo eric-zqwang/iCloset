@@ -34,6 +34,8 @@ app.use(function (req, res, next) {
     next();
   } else if(req.path.endsWith("pswd") || req.path.endsWith("resetPswd")){
     next();
+  }else if(req.path.endsWith("verify-email")){
+    next();
   }
   else if (curSession == null) {
     // if user is not logged-in redirect back to login page
@@ -69,9 +71,9 @@ pool = new Pool({
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   // connectionString: 'postgres://postgres:root@localhost/try1'
-  //connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 const crypto = require('crypto');
@@ -90,8 +92,8 @@ app.post('/signUp', async (req, res) => {
   var inputEmail = req.body.email;
   var inputPswd = req.body.pswd;
   var inputName = req.body.name;
+  var confirm = false;
   emailToken = crypto.randomBytes(64).toString('hex');
-  emailChange = inputEmail;
 
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
   const data = {results: result.rows };
@@ -121,7 +123,7 @@ app.post('/signUp', async (req, res) => {
         }
         else{
           // console.log('verification email is sent to your gmail account')
-          await pool.query(`INSERT INTO usrs (uname, umail, upswd) VALUES ('${inputName}', '${inputEmail}', '${inputPswd}')`)
+          await pool.query(`INSERT INTO usrs (uname, umail, upswd, confirm, token) VALUES ('${inputName}', '${inputEmail}', '${inputPswd}', '${confirm}', '${emailToken}')`)
           res.send("Please confirm your email.");
         }
       })
@@ -133,8 +135,10 @@ app.post('/signUp', async (req, res) => {
 
 //Email verification route
 app.get('/verify-email', async(req,res)=>{
+  var confirm = true;
+  var token = emailToken;
   try {
-    emailToken = null;
+    await pool.query(`UPDATE usrs SET confirm = '${confirm}' WHERE token = '${token}';`)
     res.redirect('/userlogin.html');
   }catch(error){
     console.log(error);
@@ -156,6 +160,11 @@ app.post('/userlogin', async (req, res) => {
   //If umail is not unique
   if (data.results.length > 1) {
     console.log("DUPLICATE USERS!!!");
+  }
+
+  //if email does not confirmed, it cannot login
+  else if(data.results[0].confirm == false){
+    res.send("Please confirm your email!!!")
   }
 
   //If umail and password are correct, direct to homepage
@@ -212,16 +221,9 @@ app.post('/adminlogin', async (req, res) => {
 app.post('/resetPswd', async(req,res)=>{
   var emailNew = req.body.email;
   var pswdNew = req.body.pswd;
-
-  var result = pool.query(`SELECT * FROM usrs WHERE umail = '${emailNew}';`)
-  // if (result[0].upswd == pswdNew) {
-  //   res.send("You cannot set the same password!!!")
-  // }
- if(!result){
-    res.send("You are not the iCloset user!!!")
-  }
-  else if(!emailToken){
-    res.send("Please input correct email.")
+  
+  if(emailNew != emailForget){
+    res.send("Please input your own email!!!")
   }
   else {
     try {
@@ -235,11 +237,11 @@ app.post('/resetPswd', async(req,res)=>{
 })
 
 app.post('/pswd', async (req, res) => {
-  var inputEmail = req.body.email;
+  emailForget = req.body.email;
   emailToken = crypto.randomBytes(64).toString('hex');
     var message = {
       from: 'iclosetcmpt@gmail.com',
-      to: inputEmail,
+      to: emailForget,
       subject: 'iCloset - change your password',
       html:`
         <h1>Hello,</h1>
@@ -267,7 +269,6 @@ app.post('/pswd', async (req, res) => {
 //reset password page
 app.get('/reset-pswd', async(req,res)=>{
   try {
-      emailToken = null;
       res.redirect('/password.html');
     
   }catch(error){
