@@ -61,16 +61,16 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-    // connectionString: process.env.DATABASE_URL,
-    //  ssl:{
-    //   rejectUnauthorized: false
-    // }
+    connectionString: process.env.DATABASE_URL,
+     ssl:{
+      rejectUnauthorized: false
+    }
 
   // for local host
-    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   // connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   //  connectionString: 'postgres://postgres:root@localhost/try1'
-  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  //connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 const crypto = require('crypto');
@@ -546,7 +546,7 @@ app.get('/:uid/calendar', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
     const currentuid = await pool.query(`select uid from usrs where uid = ${uid}`);
-    const result = await pool.query(`select * from userobj1`);
+    const result = await pool.query(`select * from userobj1 where uid = ${uid}`);
     const data = {currentuids:currentuid.rows, results:result.rows};
     res.render('pages/calendar', data);
   }
@@ -656,5 +656,15 @@ app.post('/:id/reject_trading_request/', async (req,res) =>{
   res.redirect(`/:${uid}/Messages`);
 });
 
+//add or change calendar img
+app.post('/:id/calendaraddimg', async (req, res) => {
+  const id = req.params.id.substring(1);
+  const day = req.body.days;
+  const year = req.body.years;
+  const month = req.body.months;
+  console.log(year);
+  console.log(month);
+  console.log(day);
+});
 
 module.exports = app;

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Calendar</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+     <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script> 
     <style type="text/css">
     .body {
         display: inline-block;
@@ -16,8 +16,9 @@
     .calendar {
         display: inline-block;
         width: 1000px;
-        height: 1000px;
-        margin-top: 200px;
+        height: 800px;
+        margin-top: 150px;
+        margin-bottom: 150px;
         padding: 15px;
         border: 1px solid #CCC;
         border-radius: 10px;
@@ -59,7 +60,7 @@
     .calendar .dates .row .digit-placeholder {
         display: inline-block;
         width: 130px;
-        height: 130px;
+        height: 120px;
         border: 1px solid rgba(200,200,200,0);
         margin: 2px 5px;
     }
@@ -69,7 +70,7 @@
         color: #FFF;
     }
     .calendar .dates .row .digit.active {
-        background: #00E;
+        color: red;
     }
 
     </style>
@@ -87,21 +88,27 @@
             <div class="header">
                 <div class="week-day" v-for="d in locale_week">{{ d }}</div>
             </div>
-
+            
             <div class="dates">
-                <div class="row" v-for="row in getAllDatesOfCurrentMonth()" >
-                    <div v-on:click="dateSelect(d,$event)" :class="digitKlass(d)" v-for="d in row">
-                        {{ d ? d : '&nbsp' }}
+                <div class="row" v-for="row in getAllDatesOfCurrentMonth()" >                    
+                    <div :class="digitKlass(d)" v-for="d in row">                        
+                        {{ d ? '' : '&nbsp' }}
+                        <form  action="/:<%= currentuids[0].uid%>/calendaraddimg" method="post"> 
+                            <input type="hidden" name="days" v-model="d" value="d"> 
+                            <input type="hidden" name="months" v-model="current_month" value="current_month"> 
+                            <input type="hidden" name="years" v-model="current_year" value="current_year"> 
+                            <button  v-if="d!=''" type="submit" style="border: none;text-align: center;background-color: white; font-size: 20px;">{{d}}</button>
+                        </form>                        
                         <% results.forEach(function(r) { %>
-                            <div v-if="d =='<%= r.date%>' && d!=0 "> 
-                                <img style="display:block;" width="100%" height="100%" src="data:image/gif;base64,<%= r.txtimg%>">
-                                
-                            </div>
-                        <% }); %> 
-                    </div>
-                    
+                        <div v-if="d =='<%= r.day%>' && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
+                                <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">                                
+                        </div>
+                        <% }); %>
+                    </form>
+                    </div>         
+                           
                 </div>
-            </div>
+            </div>      
         </div>
     </div>
 
@@ -137,7 +144,7 @@
                 var days    = new Date(this.current_year, this.current_month, 0).getDate();
                 var dates = [], dates2 = [];
                 for(var i = 1; i <= days; ++i) {
-                    dates2.push(i < 10 ? ('0' + i) : ('' + i));
+                    dates2.push(i < 10 ? (i) : ('' + i));
                 }
                 for(var i = 0; i < weekday; ++i) {
                     dates2.unshift('');
@@ -179,49 +186,7 @@
                 }
                 return klass;
             },
-            dateSelect: function(d,ev) {
-                if(this.current_date_dom) {
-                    this.removeKlass(this.current_date_dom, 'selected');
-                }
-                if(d == '') return ;
-                d = parseInt(d);
-                var dom = ev.target;
-                this.current_date_dom = dom;
-                this.addKlass(dom, 'selected');
-                //
-                this.images = [];
-                for(var i = 0; i < 2; ++i) {
-                    var idx = parseInt(Math.random() * images.length);
-                    this.images.push(images[idx])
-                }
-            },
-            addKlass: function(dom, klass) {
-                if(!dom || !klass) return ;
-                var origin = dom.getAttribute('class');
-                var klasses= origin.split(/\s+/);
-                klass = klass.split(/\s+/);
-                for(var i = 0; i < klass.length; ++i) {
-                    if(klasses.indexOf(klass[i]) < 0) {
-                        klasses.push(klass[i]);
-                    }
-                }
-                dom.setAttribute('class', klasses.join(' '));
-            },
-            removeKlass: function(dom, klass) {
-                if(!dom || !klass) return ;
-                var origin = dom.getAttribute('class');
-                var klasses= origin.split(/\s+/);
-                var klass  = klass.split(/\s+/);
-                for(var i = 0; i < klass.length; ++i) {
-                    if(klasses.indexOf(klass[i]) >= 0) {
-                        klasses.splice(klasses.indexOf(klass[i]), 1);
-                    }
-                }
-                dom.setAttribute('class', klasses.join(' '));
-            },
-            getImgSrc: function(image) {
-                return image.src;
-            },
+                 
         },
     });
 
