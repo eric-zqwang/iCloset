@@ -92,21 +92,22 @@
             <div class="dates">
                 <div class="row" v-for="row in getAllDatesOfCurrentMonth()" >                    
                     <div :class="digitKlass(d)" v-for="d in row">                        
-                        {{ d ? d : '&nbsp' }}
-                        <!-- <form  action="/:<%= currentuids[0].uid%>/calendaraddimg" method="post"> 
+                        {{ d ? '' : '&nbsp' }}
+                        <form  action="/:<%= currentuids[0].uid%>/calendaraddimg" method="post"> 
                             <input type="hidden" name="days" v-model="d" value="d"> 
                             <input type="hidden" name="months" v-model="current_month" value="current_month"> 
                             <input type="hidden" name="years" v-model="current_year" value="current_year"> 
                             <button  v-if="d!=''" type="submit" style="border: none;text-align: center;background-color: white; font-size: 20px;">{{d}}</button>
-                        </form>       -->
+                        </form>
                         <% if(results.length>0) { %>
                         <% results.forEach(function(r) { %>
-                        <!-- <div v-if="d =='<%= r.day%>' && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
+                           
+                         <div v-if="d == <%= r.day%> && current_year == <%= r.year%> && current_month == <%= r.month%>"> 
                                 <img style="display:block; right:5px" width="100px" height="100px" src="data:image/gif;base64,<%= r.txtimg%>">                                
-                        </div> -->
+                        </div> 
                         <% }); %>
-                        <% }; %>
-                    </form>
+                        <% }; %> 
+                 
                     </div>         
                            
                 </div>
