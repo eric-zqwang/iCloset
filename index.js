@@ -91,6 +91,7 @@ app.post('/signUp', async (req, res) => {
   var inputPswd = req.body.pswd;
   var inputName = req.body.name;
   emailToken = crypto.randomBytes(64).toString('hex');
+  emailChange = inputEmail;
 
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${inputEmail}';`);
   const data = {results: result.rows };
@@ -219,6 +220,9 @@ app.post('/resetPswd', async(req,res)=>{
  if(!result){
     res.send("You are not the iCloset user!!!")
   }
+  else if(!emailToken){
+    res.send("Please input correct email.")
+  }
   else {
     try {
       await pool.query(`UPDATE usrs SET upswd = '${pswdNew}' WHERE umail = '${emailNew}';`);
@@ -263,8 +267,9 @@ app.post('/pswd', async (req, res) => {
 //reset password page
 app.get('/reset-pswd', async(req,res)=>{
   try {
-    emailToken = null;
-    res.redirect('/password.html');
+      emailToken = null;
+      res.redirect('/password.html');
+    
   }catch(error){
     console.log(error);
     res.redirect('/signUp.html');
