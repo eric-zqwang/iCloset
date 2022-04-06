@@ -168,94 +168,103 @@
     images[i].addEventListener('click', (e) => {
       const image = e.target;
       const imageId = image.getAttribute('name');
-      var darthVaderImg = new Konva.Image({
-        image: image,
-        x: Math.random() * stage.width() / 2,
-        y: Math.random() * stage.width() / 2,
-        draggable: true,
-        name: "image",
-        id: imageId
-      });
-      // add cursor styling
-      darthVaderImg.on('mouseover', function () {
-        document.body.style.cursor = 'pointer';
-      });
-      darthVaderImg.on('mouseout', function () {
-        document.body.style.cursor = 'default';
-      });
 
-      const tr = new Konva.Transformer({
-        node: darthVaderImg,
-        id: imageId
+      // whether this image has already been added to canvas
+      const exist = layer.find('Transformer').some(tr => {
+        return tr.id() == imageId;
       });
-      layer.add(tr);
-      const deleteButton = new Konva.Circle({
-        radius: 10,
-        fill: 'red',
-        id: imageId
-      });
-      tr.add(deleteButton);
-      function updatePos() {
-        deleteButton.position(tr.findOne('.top-right').position());
-      }
-
-      // on clicking the red top right delete button 
-      deleteButton.on("mouseup", function (e) {
-        // find the nodes of the transformer
-        const nodes = e.target.parent.nodes();
-
-        // delete image
-        nodes.forEach(element => {
-          element.remove();
+      // only add to canvas if not there
+      if (!exist) {
+        var darthVaderImg = new Konva.Image({
+          image: image,
+          x: Math.random() * stage.width() / 2,
+          y: Math.random() * stage.width() / 2,
+          draggable: true,
+          name: "image",
+          id: imageId
+        });
+        // add cursor styling
+        darthVaderImg.on('mouseover', function () {
+          document.body.style.cursor = 'pointer';
+        });
+        darthVaderImg.on('mouseout', function () {
+          document.body.style.cursor = 'default';
         });
 
-        // delete transformer
-        e.target.parent.remove();
+        const tr = new Konva.Transformer({
+          node: darthVaderImg,
+          id: imageId
+        });
+        layer.add(tr);
+        const deleteButton = new Konva.Circle({
+          radius: 10,
+          fill: 'red',
+          id: imageId
+        });
+        tr.add(deleteButton);
+        function updatePos() {
+          deleteButton.position(tr.findOne('.top-right').position());
+        }
 
-        // delete deletebutton
-        e.target.remove();
+        // on clicking the red top right delete button 
+        deleteButton.on("mouseup", function (e) {
+          // find the nodes of the transformer
+          const nodes = e.target.parent.nodes();
 
-        //redraw canvas
-        layer.draw();
-      });
-      updatePos();
-      darthVaderImg.on('transform', updatePos);
-
-      stage.on('click tap', function (e) {
-        // if click on empty area - remove all selections of images
-        if (e.target === stage) {
-          layer.find('Transformer').forEach(tr => {
-            const nodes = tr.nodes().slice(1);
-            tr.nodes(nodes);
+          // delete image
+          nodes.forEach(element => {
+            element.remove();
           });
-          return;
-        }
 
-        // do nothing if clicked NOT on our images
-        if (!e.target.hasName('image')) {
-          return;
-        }
+          // delete transformer
+          e.target.parent.remove();
 
-        // going through all transformers to find the correct transformer
-        layer.find('Transformer').forEach(tr => {
+          // delete deletebutton
+          e.target.remove();
 
-          if (tr.id() == e.target.id()) {
-            // add the image back to the correct transformer
-            const nodes = tr.nodes();
-            if (!nodes.includes(e.target)) {
-              nodes.unshift(e.target);
+          //redraw canvas
+          layer.draw();
+        });
+        updatePos();
+        darthVaderImg.on('transform', updatePos);
+
+        stage.on('click tap', function (e) {
+          // if click on empty area - remove all selections of images
+          if (e.target === stage) {
+            layer.find('Transformer').forEach(tr => {
+              const nodes = tr.nodes().slice(1);
+              tr.nodes(nodes);
+            });
+            return;
+          }
+
+          // do nothing if clicked NOT on our images
+          if (!e.target.hasName('image')) {
+            return;
+          }
+
+          // going through all transformers to find the correct transformer
+          layer.find('Transformer').forEach(tr => {
+
+            if (tr.id() == e.target.id()) {
+              // add the image back to the correct transformer
+              const nodes = tr.nodes();
+              if (!nodes.includes(e.target)) {
+                nodes.unshift(e.target);
+                tr.nodes(nodes);
+              }
+            } else {
+              // deselect other images from their transformer
+              const nodes = tr.nodes().slice(1);
               tr.nodes(nodes);
             }
-          } else {
-            // deselect other images from their transformer
-            const nodes = tr.nodes().slice(1);
-            tr.nodes(nodes);
-          }
+          });
         });
-      });
 
-      layer.add(darthVaderImg);
-      // layer.draw();
+        layer.add(darthVaderImg);
+        // layer.draw();
+      }
+      
     })
   };
 
