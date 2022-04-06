@@ -551,7 +551,7 @@ app.post('/:currentuid/:imgID/:commentid/deleteComment', async(req,res) => {
 app.get('/:uid/calendar', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
-    const currentuid = await pool.query(`select uid from usrs where uid = ${uid}`);
+    const currentuid = await pool.query(`select * from usrs where uid = ${uid}`);
     const result = await pool.query(`select calendars.*,txtimg from calendars inner join userobj1 on userobj1.imgid = calendars.imgsetid and calendars.uid = ${uid}`);
     const data = {currentuids:currentuid.rows, results:result.rows};
     res.render('pages/calendar', data);
