@@ -48,7 +48,7 @@ app.use(function (req, res, next) {
   }
 });
 
-app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 app.use(cookieParser());
 
 // add session 
@@ -158,7 +158,7 @@ app.post('/userlogin', async (req, res) => {
 
   //If umail is not unique
   if (data.results.length > 1) {
-    console.log("DUPLICATE USERS!!!");
+    res.send("DUPLICATE USERS!!!");
   }
 
   //if email does not confirmed, it cannot login
@@ -195,7 +195,7 @@ app.post('/adminlogin', async (req, res) => {
 
   //If umail is not unique
   if (result.rows.length > 1) {
-    console.log("DUPLICATE USERS!!!");
+    res.send("DUPLICATE USERS!!!");
   }
   //If umail and password are correct and is admin, direct to user-list
   else if (result.rows.length == 1 && inputPswd == result.rows[0].upswd && result.rows[0].admin == true) {
@@ -212,8 +212,8 @@ app.post('/adminlogin', async (req, res) => {
     res.render('pages/adminpage', data)
   }
   //If umail does not exist or password is incorrect, alert user
-  else if (data.results.length == 0 || inputPswd != data.results[0].upswd) {
-    console.log("incorrect login email or password");
+  else if (result.rows.length == 0 || inputPswd != result.rows[0].upswd) {
+    res.send("Incorrect email or password");
   }
 })
 
@@ -455,7 +455,7 @@ app.post('/edituser/:umail', async (req, res) => {
   res.render('pages/adminpage', data);
 })
 
-// jin ru like page
+// Go to market page
 app.get('/:uid/market', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
@@ -694,10 +694,8 @@ app.post('/saveCollage', async(req,res)=>{
 
     if (req.body.collageimg != '') {
       const collageimg = req.body.collageimg.replace('data:image/png;base64,', '');
-
       await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname) values ('${collageimg}','${uid}','Styles',false,0,'${uname}')`);
     }
-    
     res.redirect(`/:${uid}/collage`);
 
   } catch(error){
@@ -705,4 +703,8 @@ app.post('/saveCollage', async(req,res)=>{
   }
 })
 
+function stop() {
+  server.close();
+}
 module.exports = app;
+module.exports.stop = stop;
