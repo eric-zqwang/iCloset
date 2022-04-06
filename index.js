@@ -32,12 +32,11 @@ app.use(function (req, res, next) {
 
   if (req.path.endsWith("login") || req.path.endsWith("signUp")) {
     next();
-  } else if(req.path.endsWith("pswd") || req.path.endsWith("resetPswd")){
+  } else if (req.path.endsWith("pswd") || req.path.endsWith("resetPswd")) {
     next();
-  }else if(req.path.endsWith("verify-email")){
+  } else if (req.path.endsWith("verify-email")) {
     next();
-  }
-  else if (curSession == null) {
+  } else if (curSession == null) {
     // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
   } else if (validateAccess(curSession.user.uid, req.path)) {
