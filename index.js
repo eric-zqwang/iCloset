@@ -72,8 +72,8 @@ pool = new Pool({
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  // connectionString: 'postgres://postgres:root@localhost/try1'
-  connectionString: 'postgres://postgres:woaini10@localhost/users'  
+   connectionString: 'postgres://postgres:root@localhost/try1'
+ // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 const crypto = require('crypto');
