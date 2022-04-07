@@ -32,7 +32,7 @@ describe('sign up', function(){
         })
     });
 
-    it('should fail to sign up because umail already exist', function(done){
+    it('should fail to sign up because umail already exists', function(done){
         const uid = 1;
         const uname = "tester";
         const umail = 'test@test.com';

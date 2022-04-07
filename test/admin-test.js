@@ -31,7 +31,7 @@ describe('Admins', function(){
         });
   });
 
-  it('should sign in to the app', function(done){
+  it('should sign in to the app as an administrator', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
@@ -67,7 +67,7 @@ describe('Admins', function(){
     });
   });
 
-  it('should see error when there are duplicate user', function(done){
+  it('should see an error when there are duplicate users', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
@@ -100,7 +100,7 @@ describe('Admins', function(){
     });
   });
 
-  it('should see error when sign in with wrong password', function(done){
+  it('should see an error when signing in with a wrong password', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";

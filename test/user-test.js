@@ -54,7 +54,7 @@ describe('Users', function(){
     });
   });
 
-  it('should see error when sign in with wrong password', function(done){
+  it('should see an error when signing in with a wrong password', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
@@ -85,7 +85,7 @@ describe('Users', function(){
     });
   });
 
-  it('should see error when not confirm email address', function(done){
+  it('should see an error when not confirming an email address', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
@@ -116,7 +116,7 @@ describe('Users', function(){
     });
   });
 
-  it('should see error when there are duplicate user', function(done){
+  it('should see an error when there are duplicate user', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
@@ -154,7 +154,7 @@ describe('Users', function(){
     });
   });
 
-  it('should logout from app', function(done){
+  it('should log out from the app', function(done){
     chai.request(server).get("/:1/userlogout")
         .end(function(error, res){
           res.should.have.status(200);
