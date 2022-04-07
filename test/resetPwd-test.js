@@ -22,7 +22,7 @@ describe('reset password', function(){
     require('../index').stop();
   });
 
-  it('should show reset pswd page', function(done){
+  it('should show reset password page', function(done){
     chai.request(server)
         .get('/reset-pswd')
         .type('form')
