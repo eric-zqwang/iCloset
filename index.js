@@ -58,15 +58,15 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-    // connectionString: process.env.DATABASE_URL,
-    //  ssl:{
-    //   rejectUnauthorized: false
-    // }
+    connectionString: process.env.DATABASE_URL,
+     ssl:{
+      rejectUnauthorized: false
+    }
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-   connectionString: 'postgres://postgres:root@localhost/try1'
+  // connectionString: 'postgres://postgres:root@localhost/try1'
  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -369,7 +369,7 @@ app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res
     const outputFile = outpath;
     await removeBackgroundFromImageFile({
       path,
-      apiKey: "oG1pnYKp9UKwEycz9gRkCGV4",
+      apiKey: "TMdzPQ3aRxtb51543qugNj3F",
       size: "auto",
       type: "default",
       scale: "100%",
@@ -378,7 +378,7 @@ app.post('/:id/uploadImagewithRemoveBG', upload.single('upImg'), async (req, res
     var base64ImgData = base64Encode(outputFile);
     //update database
     var name = await pool.query(`select uname from usrs where uid ='${id}'`);
-    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname,date) values ('${base64ImgData}','${id}','${categoryType}',false,0,'${name.rows[0].uname}', 0)`);  
+    await pool.query(`insert into userobj1 (txtimg, uid,category_type,public,likenum,uname) values ('${base64ImgData}','${id}','${categoryType}',false,0,'${name.rows[0].uname}')`);  
     res.redirect(`/:${id}/outfits`)
   };
   myRemoveBgFunction(localFile, outputFile);
