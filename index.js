@@ -420,11 +420,11 @@ app.get('/userinfo', async (req, res) => {
 
 //Diplay details of the selected user
 app.get('/usrs/:umail', async (req, res) => {
-  var email = req.params.umail;
-  //search the database using id
-  const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
-  const data = { uid: curSession.user.uid, results: result.rows };
   if (curSession.user.isadmin == true) {
+    var email = req.params.umail;
+    //search the database using id
+    const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
+    const data = { uid: curSession.user.uid, results: result.rows };
     res.render('pages/userdetail', data);
   } else {
     res.send("You are not allowed to view this page");
@@ -433,13 +433,13 @@ app.get('/usrs/:umail', async (req, res) => {
 
 // Delete user by ID
 app.post('/usrs/:umail', async (req, res) => {
-  var email = req.params.umail;
-  //search the database using id
-  await pool.query(`DELETE FROM usrs WHERE umail= '${email}';`);
-  //display current database
-  const result = await pool.query("SELECT * FROM usrs");
-  const data = { uid: curSession.user.uid, results: result.rows };
   if (curSession.user.isadmin == true) {
+    var email = req.params.umail;
+    //search the database using id
+    await pool.query(`DELETE FROM usrs WHERE umail= '${email}';`);
+    //display current database
+    const result = await pool.query("SELECT * FROM usrs");
+    const data = { uid: curSession.user.uid, results: result.rows };
     res.render('pages/userdetail', data);
   } else {
     res.send("You are not allowed to view this page");
