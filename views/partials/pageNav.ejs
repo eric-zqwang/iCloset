@@ -54,7 +54,7 @@
             .temperature {
                 text-align: left;
                 line-height: 4px;
-                padding: 17px 20px;
+                padding: 10px 20px;
                 font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
                 font-size: x-small;
                 color: rgb(92, 82, 105);
@@ -107,17 +107,20 @@
                     temp_min = temp_min-273.15;
                     temp_max = temp_max-273.15;
                     
-                    if((temp_max + temp_min)/2 < 0){
-                        document.getElementById("reminder").innerHTML = "today is tooo cold, you should chuan hou dian"
+                    if((temp_max + temp_min)/2 < -3){
+                        document.getElementById("reminder").innerHTML = "winter-coat weather"
                     }
-                    else if((temp_max + temp_min)/2 < 10){
-                        document.getElementById("reminder").innerHTML="hai shi gai chuan yu rong fu";
+                    else if((temp_max + temp_min)/2 < 7){
+                        document.getElementById("reminder").innerHTML= "light-medium coat weather";
                     }
-                    else if((temp_max + temp_min)/2 < 20){
-                        document.getElementById("reminder").innerHTML= "chuan ge wei yi";
+                    else if((temp_max + temp_min)/2 < 18){
+                        document.getElementById("reminder").innerHTML= "fleece weather";
+                    }
+                    else if((temp_max + temp_min)/2 < 26){
+                        document.getElementById("reminder").innerHTML= "short-sleeves weather";
                     }
                     else{
-                        document.getElementById("reminder").innerHTML = "chuan duan xiu";
+                        document.getElementById("reminder").innerHTML = "shorts weather";
                     }
                  })
             }
@@ -145,8 +148,8 @@
                 <li class="temperature">
                     <p id="temp"></p>
                     <p id="tempRange"></p>
+                    <p id="reminder"></p>
                 </li>
-                <p id="reminder"></p>
             </li>
         </ul>
     </body>
