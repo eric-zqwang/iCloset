@@ -52,47 +52,14 @@ describe('Trading Feature and Message Center', function(){
         })
         .end(function(error, res){
           res.should.have.status(200);
-          res.text.should.contain(`<title>${uname}, Posting Orders</title>`);
-          res.text.should.contain(`<h2>Hello, ${uname}, please select the cloth you want to exchange.</h2>`);       
+          res.text.should.contain(`<title>${uname}, Posting Orders</title>`);   
+          res.text.should.contain(`${myimgid}`);
+          res.text.should.contain(`${choosenimgid}`); 
+          res.text.should.contain(`${uid}`); 
           done();
         });
   });
-  it('The trading page should contain all my imgs and the target img, and posting button', function(done){
-    const uid = 1;
-    const myimgid=20;
-    const choosenimgid=10;
-    const uname = "testUser";
-    postgreeStubQuery.onCall(0).resolves({
-        rows: [{
-          txtimg:choosenimgid,
-          imgid:choosenimgid,
-        }],
-    });
-    postgreeStubQuery.onCall(1).resolves({
-      rows: [{
-          txtimg:myimgid,
-          imgid:myimgid,
-        }],
-    });
-    postgreeStubQuery.onCall(2).resolves({
-        rows: [{
-            uid:uid,
-            uname:uname,
-          }],
-      });
-    chai.request(server)
-        .get(`/:${uid}/:${choosenimgid}/trade`)
-        .type('form')
-        .send({
-        })
-        .end(function(error, res){
-          res.should.have.status(200);
-          res.text.should.contain(`<img src="data:image/gif;base64,${myimgid}"`);
-          res.text.should.contain(`<img src="data:image/gif;base64,${choosenimgid}"`); 
-          res.text.should.contain(`<form action="/:${uid}/trade/:${choosenimgid}" method="post" >`); 
-          done();
-        });
-  });
+
 
   it('Request should post to the message page.', function(done){
     const uid = 1;
