@@ -21,6 +21,39 @@ describe('interaction', function(){
     after(function () {
         require('../index').stop();
     });
+    it('should show correct market page to user', function(done){
+        const uid = 1;
+        const imgid = 10;
+        const uname = "tester";
+        postgreeStubQuery.onCall(0).resolves({
+            rows:[{
+                uid:uid,
+                imgid:imgid,
+                uname:uname
+            }]
+        });
+        postgreeStubQuery.onCall(1).resolves({
+            rows:[{
+                uname:uname
+            }],
+        });
+        postgreeStubQuery.onCall(2).resolves({
+            rows:[{}],
+        });
+
+        chai.request(server)
+            .get(`/:${uid}/market`)
+            .type('form')
+            .end(function(error, res){
+             res.should.have.status(200)
+            //console.log(res.text);
+            res.text.should.contain(`<title>${uname} market</title>`)
+            res.text.should.contain(`${uname}`);
+            res.text.should.contain(`${imgid}`);
+            res.text.should.contain(`${uid}`);
+            done();
+        });
+    });
 
     it('should click like to a image', function(done){
         const uid = 1;
@@ -136,11 +169,13 @@ describe('interaction', function(){
         });
         postgreeStubQuery.onCall(2).resolves({
             rows:[{
-                uname:uname,
+                uid:`${uid}`,
+                uname:`${uname}`
             }],
         });
         postgreeStubQuery.onCall(3).resolves({
             rows:[{
+                commentid: `${commentid}`,
                 imgid:`${imgid}`,
                 uid:`${uid}`,
             }],
@@ -149,7 +184,9 @@ describe('interaction', function(){
         .post(`/:${uid}/:${imgid}/:${commentid}/deleteComment`)
         .type('form')
         .end(function(error, res){
+
             res.should.have.status(200);
+            // console.log(res.text);
             res.text.should.contain(`<title>${uname} market</title>`);
             res.text.should.contain(`${imgid}`);
             res.text.should.contain(`${uid}`);

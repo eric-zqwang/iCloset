@@ -93,8 +93,7 @@ app.post('/signUp', async (req, res) => {
   const data = {results: result.rows };
   
   if (data.results.length > 0) {
-    res.send("The register email already exist")
-    console.log("error")
+    res.send("The register email already exist");
   }
   else {
     var message = {
@@ -537,7 +536,6 @@ app.post('/:currentuid/:imgID/:commentid/deleteComment', async(req,res) => {
   try{
     let uid = req.params.currentuid.substring(1);
     let commentID = req.params.commentid.substring(1);
-    console.log(commentID);
 
     await pool.query(`delete from usercomment where commentid = ${commentID}`);
     res.redirect(`/:${uid}/market`);
