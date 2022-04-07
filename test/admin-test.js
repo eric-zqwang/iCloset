@@ -67,6 +67,39 @@ describe('Admins', function(){
     });
   });
 
+  it('should see error when there are duplicate user', function(done){
+    const uid = 1;
+    const uname = "testUser";
+    const password = "testPwd";
+    postgreeStubQuery.onFirstCall().resolves({
+        rows: [{
+          confirm: true,
+          upswd: password,
+          uname: uname,
+          uid: uid,
+          admin: true
+        }, {
+          confirm: true,
+          upswd: password,
+          uname: uname,
+          uid: uid,
+          admin: true
+        }]
+    });
+
+    chai.request(server)
+        .post("/adminlogin")
+        .type('form')
+        .send({
+          'email': uname,
+          'pswd': password
+        })
+        .end(function(error, res){
+          res.text.should.contain('DUPLICATE USERS!!!');
+          done();
+    });
+  });
+
   it('should see error when sign in with wrong password', function(done){
     const uid = 1;
     const uname = "testUser";
