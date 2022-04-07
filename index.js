@@ -199,7 +199,7 @@ app.post('/adminlogin', async (req, res) => {
       name: result.rows[0].uname, 
       password: result.rows[0].upswd,
       uid: uid,
-      isadmin: result.rows[0].isadmin
+      admin: result.rows[0].admin
     };
     req.session.user = user;
     curSession = req.session;
@@ -404,7 +404,7 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
 app.get('/', (req, res) => res.render('pages/index'));
 app.get('/userinfo', async (req, res) => {
   //invoke a query that selects all row from the users table
-  if (curSession.user.isadmin == true) {
+  if (curSession.user.admin == true) {
     try {
       const result = await pool.query('SELECT * FROM usrs');
       const data = { uid: curSession.user.uid, results: result.rows };
@@ -420,7 +420,7 @@ app.get('/userinfo', async (req, res) => {
 
 //Diplay details of the selected user
 app.get('/usrs/:umail', async (req, res) => {
-  if (curSession.user.isadmin == true) {
+  if (curSession.user.admin == true) {
     var email = req.params.umail;
     //search the database using id
     const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
@@ -433,7 +433,7 @@ app.get('/usrs/:umail', async (req, res) => {
 
 // Delete user by ID
 app.post('/usrs/:umail', async (req, res) => {
-  if (curSession.user.isadmin == true) {
+  if (curSession.user.admin == true) {
     var email = req.params.umail;
     //search the database using id
     await pool.query(`DELETE FROM usrs WHERE umail= '${email}';`);
@@ -449,15 +449,15 @@ app.post('/usrs/:umail', async (req, res) => {
 
 // Edit details of existing users
 app.post('/edituser/:umail', async (req, res) => {
-  if (curSession.user.isadmin == true) {
+  if (curSession.user.admin == true) {
     var email = req.params.umail;
     //define variables that allow for changing
     var name = req.body.name;
     //var gender = req.body.gender;
     var password = req.body.password;
-    var isadmin = req.body.isadmin;
+    var admin = req.body.admin;
     //search the database using umail
-    await pool.query(`UPDATE usrs SET uname = '${name}', upswd = '${password}', admin = ${isadmin} WHERE umail = '${email}';`)
+    await pool.query(`UPDATE usrs SET uname = '${name}', upswd = '${password}', admin = ${admin} WHERE umail = '${email}';`)
     //display current database
     const result = await pool.query(`SELECT * FROM usrs;`);
     const data = { uid: curSession.user.uid, results: result.rows };

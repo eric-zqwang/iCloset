@@ -197,7 +197,7 @@ describe('Admins', function(){
           'umail': uname
         })
         .end(function(error, res){
-          res.text.should.contain('<h2>User Information</h2>');
+          res.text.should.contain('<h2>User Detail</h2>');
           done();
     });
   });
@@ -226,7 +226,7 @@ describe('Admins', function(){
           'isadmin': true
         })
         .end(function(error, res){
-          res.text.should.contain('<h2>User Information</h2>');
+          res.text.should.contain('<h2>User Detail</h2>');
           done();
     });
   });
