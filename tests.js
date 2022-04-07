@@ -1,0 +1,6 @@
+require('./test/admin-test.js')
+require('./test/calendar-test.js')
+require('./test/collage-test.js')
+require('./test/interactionPage-test.js')
+require('./test/Trade.js')
+require('./test/user-test.js')
