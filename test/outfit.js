@@ -148,6 +148,5 @@ describe('OUTFITS', function(){
           done();
         });
   });
-
 });
 

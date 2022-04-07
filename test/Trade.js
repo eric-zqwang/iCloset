@@ -61,7 +61,6 @@ describe('Trading Feature and Message Center', function(){
         });
   });
 
-
   it('Request should post to the message page.', function(done){
     const uid = 1;
     const uid2 = 2;
@@ -119,7 +118,7 @@ describe('Trading Feature and Message Center', function(){
         });
   });
 
-  it('should cancel/remove trading request', function(done){
+  it('should cancel/remove the trading request', function(done){
     const uid = 1;
     const uname = "testUser";
     postgreeStubQuery.onCall(0).resolves({});
@@ -159,7 +158,7 @@ describe('Trading Feature and Message Center', function(){
           done();
         });
   });
-  it('should accept trading request', function(done){
+  it('should accept the trading request', function(done){
     const uid = 1;
     const uid2 = 2;
     const myimgid=20;
@@ -227,7 +226,7 @@ describe('Trading Feature and Message Center', function(){
   });
 
 
-  it('should reject trading request', function(done){
+  it('should reject the trading request', function(done){
     const uid = 1;
     const uid2 = 2;
     const myimgid=20;
