@@ -60,36 +60,36 @@ describe('sign up', function(){
         })
     });
 
-    // it('should verify user email', function(done){
-    //     postgreeStubQuery.onCall(0).resolves({});
-    //     chai.request(server)
-    //         .get('/verify-email')
-    //     .end(function(error, res){
-    //         res.should.have.status(200);
-    //         res.text.should.contain('<title>User Login Form</title>');
-    //         done();
-    //     })
-    // });
-
-    it('should success sign up for user', function(done){
-        const uid = 1;
-        const uname = "tester";
-        const umail = 'test@test.com';
+    it('should verify user email', function(done){
         postgreeStubQuery.onCall(0).resolves({});
-        postgreeStubQuery.onCall(1).resolves({
-            rows:[{
-                uid: uid,
-                uname: uname,
-                umail:umail
-            }]
-        });
-
         chai.request(server)
-            .post(`/signUp`)
-        .then(function(error, res){
+            .get('/verify-email')
+        .end(function(error, res){
             res.should.have.status(200);
-            res.text.should.contain("Please confirm your email");
+            res.text.should.contain('<title>User Login Form</title>');
+            done();
         })
-        .end(done());
     });
+
+    // it('should success sign up for user', function(done){
+    //     const uid = 1;
+    //     const uname = "tester";
+    //     const umail = 'test@test.com';
+    //     postgreeStubQuery.onCall(0).resolves({});
+    //     postgreeStubQuery.onCall(1).resolves({
+    //         rows:[{
+    //             uid: uid,
+    //             uname: uname,
+    //             umail:umail
+    //         }]
+    //     });
+
+    //     chai.request(server)
+    //         .post(`/signUp`)
+    //     .then(function(error, res){
+    //         res.should.have.status(200);
+    //         res.text.should.contain("Please confirm your email");
+    //     })
+    //     .end(done());
+    // });
 });
