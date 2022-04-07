@@ -27,9 +27,6 @@ app.use(function (req, res, next) {
     }
     return true;
   }
-
-  console.log("DEBUGG ROOT "+ req.path );
-
   if (req.path.endsWith("login") || req.path.endsWith("signUp")) {
     next();
   } else if (req.path.endsWith("pswd") || req.path.endsWith("resetPswd")) {
@@ -40,8 +37,6 @@ app.use(function (req, res, next) {
     // if user is not logged-in redirect back to login page
     res.redirect('/userlogin.html');
   } else if (validateAccess(curSession.user.uid, req.path)) {
-    console.log("DEBUGG ROOT user id " + curSession.user.uid );
-
     next();
   } else {
     res.send("Access denied on viewing resources")
@@ -70,8 +65,8 @@ pool = new Pool({
 
   // for local host
   //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-   connectionString: 'postgres://postgres:root@localhost/try1'
+  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+  // connectionString: 'postgres://postgres:root@localhost/try1'
  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -203,8 +198,9 @@ app.post('/adminlogin', async (req, res) => {
     var user = { 
       name: result.rows[0].uname, 
       password: result.rows[0].upswd,
-      uid: uid
-     };
+      uid: uid,
+      isadmin: result.rows[0].isadmin
+    };
     req.session.user = user;
     curSession = req.session;
     result = await pool.query(`SELECT * FROM usrs;`);
@@ -408,13 +404,17 @@ app.post('/:id/uploadImage', upload.single('upImg'), async (req, res) => {
 app.get('/', (req, res) => res.render('pages/index'));
 app.get('/userinfo', async (req, res) => {
   //invoke a query that selects all row from the users table
-  try {
-    const result = await pool.query('SELECT * FROM usrs');
-    const data = { uid: curSession.user.uid, results: result.rows };
-    res.render('pages/adminpage', data);
-  }
-  catch (error) {
-    res.end(error);
+  if (curSession.user.isadmin == true) {
+    try {
+      const result = await pool.query('SELECT * FROM usrs');
+      const data = { uid: curSession.user.uid, results: result.rows };
+      res.render('pages/adminpage', data);
+    }
+    catch (error) {
+      res.end(error);
+    }
+  } else {
+    res.send("You are not allowed to view this page");
   }
 })
 
@@ -424,7 +424,11 @@ app.get('/usrs/:umail', async (req, res) => {
   //search the database using id
   const result = await pool.query(`SELECT * FROM usrs WHERE umail = '${email}';`);
   const data = { uid: curSession.user.uid, results: result.rows };
-  res.render('pages/userdetail', data);
+  if (curSession.user.isadmin == true) {
+    res.render('pages/userdetail', data);
+  } else {
+    res.send("You are not allowed to view this page");
+  }
 })
 
 // Delete user by ID
@@ -435,24 +439,32 @@ app.post('/usrs/:umail', async (req, res) => {
   //display current database
   const result = await pool.query("SELECT * FROM usrs");
   const data = { uid: curSession.user.uid, results: result.rows };
-  res.render('pages/adminpage', data);
+  if (curSession.user.isadmin == true) {
+    res.render('pages/userdetail', data);
+  } else {
+    res.send("You are not allowed to view this page");
+  }
 })
 
 
 // Edit details of existing users
 app.post('/edituser/:umail', async (req, res) => {
-  var email = req.params.umail;
-  //define variables that allow for changing
-  var name = req.body.name;
-  //var gender = req.body.gender;
-  var password = req.body.password;
-  var isadmin = req.body.isadmin;
-  //search the database using umail
-  await pool.query(`UPDATE usrs SET uname = '${name}', upswd = '${password}', admin = ${isadmin} WHERE umail = '${email}';`)
-  //display current database
-  const result = await pool.query(`SELECT * FROM usrs;`);
-  const data = { uid: curSession.user.uid, results: result.rows };
-  res.render('pages/adminpage', data);
+  if (curSession.user.isadmin == true) {
+    var email = req.params.umail;
+    //define variables that allow for changing
+    var name = req.body.name;
+    //var gender = req.body.gender;
+    var password = req.body.password;
+    var isadmin = req.body.isadmin;
+    //search the database using umail
+    await pool.query(`UPDATE usrs SET uname = '${name}', upswd = '${password}', admin = ${isadmin} WHERE umail = '${email}';`)
+    //display current database
+    const result = await pool.query(`SELECT * FROM usrs;`);
+    const data = { uid: curSession.user.uid, results: result.rows };
+    res.render('pages/userdetail', data);
+  } else {
+    res.send("You are not allowed to view this page");
+  }
 })
 
 // Go to market page
