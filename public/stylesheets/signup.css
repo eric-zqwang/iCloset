@@ -4,19 +4,17 @@ body{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
-  background-image: url("backgroundImg.jpeg");
-	background-color: rgb(170, 172, 198);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  margin: auto;
   position: relative;
+  background-color: rgb(170, 172, 198);
+  background: url("backgroundImg.jpeg") no-repeat center center fixed; 
+  background-size: cover;
 }
 
 html {
   display: table;
   margin: auto;
-  height: 80%;
+  height: 100%;
 }
 /* 
 .box {
@@ -94,4 +92,5 @@ label{
 
 div.container {
   width: 330px;
+  padding-top: 75%;
 }
