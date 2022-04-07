@@ -118,7 +118,6 @@ describe('Calendar', function(){
           res.text.should.contain(`<title>${uname} Add/Change Calendar</title>`);
           res.text.should.contain(`${year} - ${month} - ${day}`);
           res.text.should.contain(`Hello, ${uname}`);
-          console.log(res.text)
           res.text.should.contain(`<form action="/:${uid}/calendaradd/:${year}/:${month}/:${day}" method="post" >`);         
           done();
     });
@@ -148,9 +147,9 @@ describe('Calendar', function(){
         .post(`/:${uid}/calendaraddimg`)
         .type('form')
         .send({
-          'days':`${day}`,
-          'months':`${month}`,
-          'years':`${year}`,
+           'days':`${day}`,
+           'months':`${month}`,
+           'years':`${year}`,
         })
         .end(function(error, res){         
           res.text.should.contain('w4e5ywas4y'); 
@@ -186,14 +185,12 @@ describe('Calendar', function(){
         .post(`/:${uid}/calendaradd/:${year}/:${month}/:${day}`)
         .type('form')
         .send({
-          'days':`${day}`,
-          'months':`${month}`,
-          'years':`${year}`,
+          // 'days':`${day}`,
+          // 'months':`${month}`,
+          // 'years':`${year}`,
         })
         .end(function(error, res){
-
           res.should.have.status(200);
-          console.log(res.text);
           res.text.should.contain(`<title>${uname}'s Calendar</title>`);
           res.text.should.contain(`d == ${day} && current_year == ${year} && current_month == ${month}`);
           res.text.should.contain('w4e5ywas4y');  
