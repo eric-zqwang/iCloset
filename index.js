@@ -64,9 +64,9 @@ pool = new Pool({
     // }
 
   // for local host
-   // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-   connectionString: 'postgres://postgres:root@localhost/try1'
+  // connectionString: 'postgres://postgres:root@localhost/try1'
  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -160,6 +160,8 @@ app.post('/userlogin', async (req, res) => {
     res.send("Please confirm your email!!!")
   }
 
+  
+
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
     var user = { 
@@ -170,7 +172,7 @@ app.post('/userlogin', async (req, res) => {
     req.session.user = user;
     curSession = req.session;
 
-    res.render('pages/homepage', data);
+    res.redirect(`/:${data.results[0].uid}/calendar`);
   }
 
   //If umail does not exist or password is incorrect, alert user
