@@ -15,6 +15,8 @@
       top: 145px;
       left: 210px;
       position: fixed;
+      overflow: scroll;
+      height: 100%;
     }
     .sidenav ul {
       top: 120px;
@@ -48,13 +50,16 @@
     .sidenav li a:hover:not(.active) {
       color: rgba(240, 248, 255, 0.671);
     }
-    .outfitContent {
-      margin-left: 160px;
-      padding: 1px 16px;
+    #outfits-img {
       overflow: scroll;
-      width: 50%;
       border-collapse: collapse;
-      height: 700px;
+      padding-bottom: 150px;
+    }
+    h2 {
+      font-size: 3vmin;
+      line-height: 1.1;
+      color: aliceblue;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
   </style>
 </head>
@@ -81,9 +86,14 @@
     <div class="main">
       <div>
         <h2>Hello, <%=currentuids[0].uname%>, click on the image to view details.</h2>
-        <p>Click &darr; &darr; &darr; to add clothes!!!</p>
-        <a href="./uploadimg"><img src="/uploads/add-photo-icon.jpg" alt="upload image"
-            style="width:200px;height:200px;"></a></p>
+        <p style="
+          color: rgb(92, 82, 105); 
+          font-size: 20px;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+          Click &darr; &darr; &darr; to add clothes!!!
+        </p>
+        <a href="./uploadimg"><img src="/uploads/upload.png" alt="upload image"
+            style="height:50px;"></a></p>
       </div>
       <div class="" id="outfits-img">
         <% if(results.length>0){%>
