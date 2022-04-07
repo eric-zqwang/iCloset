@@ -81,4 +81,15 @@ describe('sign up', function(){
         })
         .end(done());
     });
+
+    it('should verify user email', function(done){
+        postgreeStubQuery.onCall(0).resolves({});
+        chai.request(server)
+            .get('/verify-email')
+        .end(function(error, res){
+            res.should.have.status(200);
+            res.text.should.contain('<title>User Login Form</title>');
+            done();
+        })
+    });
 });
