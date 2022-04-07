@@ -130,15 +130,15 @@
           <% if ( typeof Ifimg != 'undefined') {%>
           <img src="data:image/gif;base64,<%= Ifimg[0].txtimg %>" style="padding: 15px;"
                   class="imageDraggable <%= Ifimg[0].category_type%>" width="200" height="200" id="<%=Ifimg[0].imgid%>" alt="" onclick="chooseimg(this)">
+                  <br><br>
+                  <button type="submit" formaction="/:<%= currentuids[0].uid%>/calendaradd/:<%= date.year%>/:<%= date.month%>/:<%= date.day%>/remove">Remove Image</button>
                   <%}%>
         </div>
         <input type="hidden" id="imgidField" name="choosenid" value="" required/>
         <br><br>
           <div id="request button">
-          </div>
-          <button type="submit" formaction="/:<%= currentuids[0].uid%>/calendaradd/:<%= date.year%>/:<%= date.month%>/:<%= date.day%>/remove">Remove Image</button>
-      </form>
-    
+          </div>          
+      </form>    
       </div>
     </div>
 </body>
