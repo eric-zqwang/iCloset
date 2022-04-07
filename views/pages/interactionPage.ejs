@@ -8,69 +8,79 @@
             body {
                 margin: 0;
                 background-color: rgb(170, 172, 198);
+                position: relative;
+                padding-top: 120px;
              }
-             div{
-                position:relative;
+             div #header {
+                 position: fixed;
+                 height: 120px;
+             }
+             .items{
+                position: fixed;
+                overflow: scroll;
+                height: 90%;
+                width: 100%;
+                margin-bottom: 30px;
+             }
+             .display{
                 margin-left: 50px;
                 margin-right: 50px;
              }
              li{
-                 list-style-type: none;
+                list-style-type: none;
              }
              
         </style>
+
     </head>
     <body>
-        <%- include ("../partials/pageNav.ejs") %>
-        <br><br><br><br><br><br><br>
-
-       
-        <% results.forEach(function(r) { %>
-        <div>
-            
-            <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/clickLike" method="post">
-            <h1>
-                <%= r.uname %>:
-            </h1>
-            <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
-            <p>
-                Like Number: <%= r.likenum %>
-                <input type="submit" value="clickLike">
-            </p>
-
-
-            </form>
-
-
-            <% usercomments.forEach(function(r1) { %>
-            <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/:<%= r1.commentid %>/deleteComment" method="post">
-    
-                    <% if (r.imgid == r1.imgid) { %>
-                      <p>  <%= r1.uname %>
-                        :
-                        <%= r1.imagecomment %>
-                        <% if(currentuids[0].uid == r1.uid) { %>
-            
-                                <input type="submit" value="delete comment">
-                        
-                        <% } %>
-                        <br>
-                      </p>
-                    <% } %>
-                </form>
-            <% }); %>
-
-            
-            <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/comment" method="post" >
-                <p>Comments: <input type="text" name="comments"  required>
-                <input type="submit" value="submit comment"></p>
-            </form>
-            <% if(r.uid != currentuids[0].uid) {%>
-            <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/trade" method="get" >
-                <input type="submit" value="Trade with <%= r.uname %>"></p>
-            </form>
-            <%}%>
+        <div id="header">
+            <%- include ("../partials/pageNav.ejs") %>
         </div>
+        <div class="items">
+            <% results.forEach(function(r) { %>
+            <div class="display">
+                <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/clickLike" method="post">
+                    <h1>
+                        <%= r.uname %>:
+                    </h1>
+                    <img src="data:image/gif;base64,<%= r.txtimg%>" width="200" height="200" alt="">
+                    <p>
+                        Like Number: <%= r.likenum %>
+                        <input type="submit" value="clickLike">
+                    </p>
+                </form>
+                <% usercomments.forEach(function(r1) { %>
+                <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/:<%= r1.commentid %>/deleteComment" method="post">
+        
+                        <% if (r.imgid == r1.imgid) { %>
+                        <p>  <%= r1.uname %>
+                            :
+                            <%= r1.imagecomment %>
+                            <% if(currentuids[0].uid == r1.uid) { %>
+                
+                                    <input type="submit" value="delete comment">
+                            
+                            <% } %>
+                            <br>
+                        </p>
+                        <% } %>
+                </form>
+                <% }); %>
+
+                
+                <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/comment" method="post" >
+                    <p>Comments: <input type="text" name="comments"  required>
+                    <input type="submit" value="submit comment"></p>
+                </form>
+                <% if(r.uid != currentuids[0].uid) {%>
+                <form action="/:<%= currentuids[0].uid%>/:<%= r.imgid%>/trade" method="get" >
+                    <input type="submit" value="Trade with <%= r.uname %>"></p>
+                </form>
+                <%}%>
+            </div>
         <% }); %>
+         </div>
+
     </body>
 </html>
