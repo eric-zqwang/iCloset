@@ -118,6 +118,7 @@ describe('Calendar', function(){
           res.text.should.contain(`<title>${uname} Add/Change Calendar</title>`);
           res.text.should.contain(`${year} - ${month} - ${day}`);
           res.text.should.contain(`Hello, ${uname}`);
+          // console.log(res.text)
           res.text.should.contain(`<form action="/:${uid}/calendaradd/:${year}/:${month}/:${day}" method="post" >`);         
           done();
     });

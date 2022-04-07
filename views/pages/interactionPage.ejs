@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <title><%=currentuids[0].uname%> market</title>
         <div id="fb-root"></div>
         <style>
             body {
@@ -48,7 +49,6 @@
                       <p>  <%= r1.uname %>
                         :
                         <%= r1.imagecomment %>
-
                         <% if(currentuids[0].uid == r1.uid) { %>
             
                                 <input type="submit" value="delete comment">

@@ -64,8 +64,8 @@ pool = new Pool({
     // }
 
   // for local host
-  //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+    connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
   // connectionString: 'postgres://postgres:root@localhost/try1'
  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
@@ -501,10 +501,6 @@ app.post('/:currentuid/:imgID/clickLike', async(req,res) => {
       await pool.query(`insert into userlike (imgid, uid, iflike) values (${inputimgid}, ${currentUID}, true )`);
 
       await pool.query(`update userobj1 set likenum = likenum + 1 where imgid = ${inputimgid}`);
-    
-      const result =  await pool.query(`select * from userobj1 where public = true order by imgid`)
-  
-      const comments = await pool.query(`select * from usercomment`);
     }
     res.redirect(`/:${currentUID}/market`);
     
@@ -518,7 +514,6 @@ app.post('/:currentuid/:imgID/clickLike', async(req,res) => {
 app.post('/:currentuid/:imgID/comment', async(req,res) => {
   try{
     let uid = req.params.currentuid.substring(1);
-    const currentuid = await pool.query(`select uid from usrs where uid = '${uid}'`)
 
     var uname = await pool.query(`select uname from usrs where uid=${uid}`)    
 
@@ -529,9 +524,6 @@ app.post('/:currentuid/:imgID/comment', async(req,res) => {
     await pool.query(`insert into usercomment (uname, imgid, uid, imagecomment)
     VALUES ('${uname['rows'][0]['uname']}', ${inputimgid}, ${currentUID}, '${comment}')`)
 
-    const result =  await pool.query(`select * from userobj1 where public = true`);
-    const comments = await pool.query(`select * from usercomment order by imgid`);
-    
     res.redirect(`/:${uid}/market`);
   }
   catch(error){
@@ -548,10 +540,6 @@ app.post('/:currentuid/:imgID/:commentid/deleteComment', async(req,res) => {
     console.log(commentID);
 
     await pool.query(`delete from usercomment where commentid = ${commentID}`);
-
-    const result = await pool.query(`select * from userobj1 where public = true order by imgid`)
-    const currentuid = await pool.query(`select uid from usrs where uid = '${uid}'`)
-    const comments = await pool.query(`select * from usercomment order by imgid`);
     res.redirect(`/:${uid}/market`);
   }
   catch(error){
