@@ -255,7 +255,7 @@ app.post('/pswd', async (req, res) => {
         }
       })
     }catch(error){
-      console.log(error);
+      res.end(error);
     }    
    
 })
