@@ -49,7 +49,7 @@ describe('Calendar', function(){
         });
   });
 
-  it('should show the image of the date if there are existed', function(done){
+  it('should show the image of the date if there are existing', function(done){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
@@ -84,7 +84,7 @@ describe('Calendar', function(){
     });
   });
 
-  it('should go to the page where users can choose the outfits for the choosen date', function(done){
+  it('should go to the page where users can choose the outfits for the chosen date', function(done){
     const uname = "testUser";
     const uid = 1;
     postgreeStubQuery.onCall(0).resolves({
@@ -157,7 +157,7 @@ describe('Calendar', function(){
           done();
     });
   });
-  it('should update the calendar with the choosen image (POST)', function(done){
+  it('should update the calendar with the chosen image (POST)', function(done){
     const uname = "testUser";
     const uid = 1;
     const day=11; 
