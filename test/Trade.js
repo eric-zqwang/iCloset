@@ -110,7 +110,7 @@ describe('Trading Feature and Message Center', function(){
         })
         .end(function(error, res){
             res.should.have.status(200);
-          res.text.should.contain(`<title>${uname}'s Messages</title>`);
+          res.text.should.contain(`<title>${uname} Messages</title>`);
          res.text.should.contain(`${reqid}`);    
          res.text.should.contain(`${myimgid}`);
          res.text.should.contain(`${choosenimgid}`);  
@@ -154,7 +154,7 @@ describe('Trading Feature and Message Center', function(){
         })
         .end(function(error, res){
             res.should.have.status(200);
-          res.text.should.contain(`<title>${uname}'s Messages</title>`);
+          res.text.should.contain(`<title>${uname} Messages</title>`);
           
           done();
         });
@@ -217,7 +217,7 @@ describe('Trading Feature and Message Center', function(){
         })
         .end(function(error, res){
             res.should.have.status(200);
-            res.text.should.contain(`<title>${uname}'s Messages</title>`);
+            res.text.should.contain(`<title>${uname} Messages</title>`);
             res.text.should.contain(`${reqid}`);    
             res.text.should.contain(`${myimgid}`);
             res.text.should.contain(`${choosenimgid}`);
@@ -279,7 +279,7 @@ describe('Trading Feature and Message Center', function(){
         })
         .end(function(error, res){
             res.should.have.status(200);
-          res.text.should.contain(`<title>${uname}'s Messages</title>`);
+          res.text.should.contain(`<title>${uname} Messages</title>`);
           res.text.should.contain(`${reqid}`);    
           res.text.should.contain(`${myimgid}`);
           res.text.should.contain(`${choosenimgid}`);
@@ -318,7 +318,7 @@ describe('Trading Feature and Message Center', function(){
         })
         .end(function(error, res){
             res.should.have.status(200);
-          res.text.should.contain(`<title>${uname}'s Messages</title>`);
+          res.text.should.contain(`<title>${uname} Messages</title>`);
           done();
         });
   });
