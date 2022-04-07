@@ -21,7 +21,7 @@ describe('interaction', function(){
     after(function () {
         require('../index').stop();
     });
-    it('should show correct market page to user', function(done){
+    it('should show the correct market page to the user', function(done){
         const uid = 1;
         const imgid = 10;
         const uname = "tester";
@@ -55,7 +55,7 @@ describe('interaction', function(){
         });
     });
 
-    it('should click like to a image', function(done){
+    it('should click like an image', function(done){
         const uid = 1;
         const imgid = 10;
         const uname = "tester";

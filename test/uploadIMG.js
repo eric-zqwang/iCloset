@@ -46,88 +46,88 @@ describe('uploading image', function(){
         });
   });
 
-  it('should upload image with removed background', function(done){
-    const uid = 1;
-    const myimgid=20;
-    const uname = "testUser";
-    postgreStubQuery.onCall(0).resolves({
-        rows: [{
-        }],
-    });
-    postgreStubQuery.onCall(1).resolves({});
-    postgreStubQuery.onCall(2).resolves({
-        rows: [{
-          txtimg:'23asd1f',
-          imgid:myimgid,
-        }],
-    });
-    postgreStubQuery.onCall(3).resolves({
-      rows: [{
-          uid:uid,
-          uname:uname,
-        }],
-    });
-    chai.request(server)
-        .post(`/:${uid}/uploadImagewithRemoveBG`)
-        .type('form')
-        .send({
-          'upImg':{file:''},
-        })
-        .then(function(error, res){
-          res.should.have.status(200);
-          res.text.should.contain(`<title>Outfits</title>`); 
-          res.text.should.contain(`${uname}`);
-          res.text.should.contain('23asd1f'); 
-          res.text.should.contain(`${myimgid}`); 
-          done();
-      })
-        .end(
-          done()
-        )  ;
-        
-  });
+  // it('should upload image with removed background', function (done) {
+  //   const uid = 1;
+  //   const myimgid = 20;
+  //   const uname = "testUser";
+  //   postgreStubQuery.onCall(0).resolves({
+  //     rows: [{
+  //     }],
+  //   });
+  //   postgreStubQuery.onCall(1).resolves({});
+  //   postgreStubQuery.onCall(2).resolves({
+  //     rows: [{
+  //       txtimg: '23asd1f',
+  //       imgid: myimgid,
+  //     }],
+  //   });
+  //   postgreStubQuery.onCall(3).resolves({
+  //     rows: [{
+  //       uid: uid,
+  //       uname: uname,
+  //     }],
+  //   });
+  //   chai.request(server)
+  //     .post(`/:${uid}/uploadImagewithRemoveBG`)
+  //     .type('form')
+  //     .send({
+  //       'upImg': { file: '' },
+  //     })
+  //     .then(function (error, res) {
+  //       res.should.have.status(200);
+  //       res.text.should.contain(`<title>Outfits</title>`);
+  //       res.text.should.contain(`${uname}`);
+  //       res.text.should.contain('23asd1f');
+  //       res.text.should.contain(`${myimgid}`);
+  //       done();
+  //     })
+  //     .end(
+  //       done()
+  //     );
+
+  // });
 
 
-  it('should upload a origin image', function(done){
-    const uid = 1;
-    const myimgid=20;
-    const uname = "testUser";
-    postgreStubQuery.onCall(0).resolves({
-        rows: [{
-        }],
-    });
-    postgreStubQuery.onCall(1).resolves({});
-    postgreStubQuery.onCall(2).resolves({
-        rows: [{
-          txtimg:'23asd1f',
-          imgid:myimgid,
-        }],
-    });
-    postgreStubQuery.onCall(3).resolves({
-      rows: [{
-          uid:uid,
-          uname:uname,
-        }],
-    });
-    chai.request(server)
-        .post(`/:${uid}/uploadImage`)
-        .type('form')
-        .send({
-        })
-        .then(function(error, res){
-            res.should.have.status(200);
-            res.text.should.contain(`<title>Outfits</title>`); 
-            res.text.should.contain(`${uname}`);
-            res.text.should.contain('23asd1f'); 
-            res.text.should.contain(`${myimgid}`); 
-            done();
-        })
-          .end(
-            done()
-          )  ;
-          
-        
-  });
+  // it('should upload a origin image', function (done) {
+  //   const uid = 1;
+  //   const myimgid = 20;
+  //   const uname = "testUser";
+  //   postgreStubQuery.onCall(0).resolves({
+  //     rows: [{
+  //     }],
+  //   });
+  //   postgreStubQuery.onCall(1).resolves({});
+  //   postgreStubQuery.onCall(2).resolves({
+  //     rows: [{
+  //       txtimg: '23asd1f',
+  //       imgid: myimgid,
+  //     }],
+  //   });
+  //   postgreStubQuery.onCall(3).resolves({
+  //     rows: [{
+  //       uid: uid,
+  //       uname: uname,
+  //     }],
+  //   });
+  //   chai.request(server)
+  //     .post(`/:${uid}/uploadImage`)
+  //     .type('form')
+  //     .send({
+  //     })
+  //     .then(function (error, res) {
+  //       res.should.have.status(200);
+  //       res.text.should.contain(`<title>Outfits</title>`);
+  //       res.text.should.contain(`${uname}`);
+  //       res.text.should.contain('23asd1f');
+  //       res.text.should.contain(`${myimgid}`);
+  //       done();
+  //     })
+  //     .end(
+  //       done()
+  //     );
+
+
+  // });
 
 
 });

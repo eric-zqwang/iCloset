@@ -149,38 +149,5 @@ describe('OUTFITS', function(){
         });
   });
 
-  it("should ge the outfit's detail page", function(done){
-    const uid = 1;
-    const myimgid=20;
-    const uname = "testUser";
-    postgreeStubQuery.onCall(0).resolves({}); //delete the obj
-    postgreeStubQuery.onCall(1).resolves({}); //delete the obj's comments
-    postgreeStubQuery.onCall(2).resolves({}); //delete the obj's trading 
-    postgreeStubQuery.onCall(3).resolves({}); //delete the obj's trading 
-    postgreeStubQuery.onCall(4).resolves({}); //delete the obj's like
-    postgreeStubQuery.onCall(5).resolves({
-        rows: [{
-      
-        }],
-    });
-    postgreeStubQuery.onCall(6).resolves({
-      rows: [{
-        uid:uid,
-        uname:uname,
-        }],
-    });
-    chai.request(server)
-        .post(`/:${uid}/outfits/:${myimgid}/delete`)
-        .type('form')
-        .send({
-        })
-        .end(function(error, res){
-            res.text.should.contain(`<title>Outfits</title>`); 
-          res.text.should.contain(`${uname}`);
-          done();
-        });
-  });
-
-
 });
 

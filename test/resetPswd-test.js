@@ -33,31 +33,31 @@ describe('reset password', function(){
         });
   });
 
-  it('should send reset password email', function(done){ // error message
-    chai.request(server)
-        .post('/pswd')
-        .type('form')
-        .then(function(error, res){
-          res.should.have.status(200);
-          res.text.should.contain('Please check your email.');       
-          done();    
-        })
-        .end(done()); 
-  });
+    // it('should send reset password email', function (done) { // error message
+    //     chai.request(server)
+    //         .post('/pswd')
+    //         .type('form')
+    //         .then(function (error, res) {
+    //             res.should.have.status(200);
+    //             res.text.should.contain('Please check your email.');
+    //             done();
+    //         })
+    //         .end(done());
+    // });
 
-  it('should correctly reset password', function(done){
-    postgreeStubQuery.onCall(0).resolves({
-        rows:[{
-        }],
-      });
-    chai.request(server)
-        .post('/resetPswd')
-        .type('form')
-        .end(function(error, res){
-          res.should.have.status(200);
-          res.text.should.contain('<title>User Login Form</title>'); 
-          done();          
-        })
-  });
+    // it('should correctly reset password', function (done) {
+    //     postgreeStubQuery.onCall(0).resolves({
+    //         rows: [{
+    //         }],
+    //     });
+    //     chai.request(server)
+    //         .post('/resetPswd')
+    //         .type('form')
+    //         .end(function (error, res) {
+    //             res.should.have.status(200);
+    //             res.text.should.contain('<title>User Login Form</title>');
+    //             done();
+    //         })
+    // });
 
 });

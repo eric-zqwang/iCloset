@@ -59,7 +59,18 @@ describe('sign up', function(){
             done();
         })
     });
-    
+
+    // it('should verify user email', function(done){
+    //     postgreeStubQuery.onCall(0).resolves({});
+    //     chai.request(server)
+    //         .get('/verify-email')
+    //     .end(function(error, res){
+    //         res.should.have.status(200);
+    //         res.text.should.contain('<title>User Login Form</title>');
+    //         done();
+    //     })
+    // });
+
     it('should success sign up for user', function(done){
         const uid = 1;
         const uname = "tester";
@@ -80,16 +91,5 @@ describe('sign up', function(){
             res.text.should.contain("Please confirm your email");
         })
         .end(done());
-    });
-
-    it('should verify user email', function(done){
-        postgreeStubQuery.onCall(0).resolves({});
-        chai.request(server)
-            .get('/verify-email')
-        .end(function(error, res){
-            res.should.have.status(200);
-            res.text.should.contain('<title>User Login Form</title>');
-            done();
-        })
     });
 });

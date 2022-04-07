@@ -26,7 +26,7 @@ describe('Users', function(){
     const uid = 1;
     const uname = "testUser";
     const password = "testPwd";
-    postgreeStubQuery.onFirstCall().resolves({
+    postgreeStubQuery.onCall(0).resolves({
         rows: [{
           confirm: true,
           upswd: password,
@@ -34,10 +34,22 @@ describe('Users', function(){
           uid: uid
         }],
     });
-    postgreeStubQuery.onSecondCall().resolves({
-        rows: [{
-          uid: uid
-        }],
+    postgreeStubQuery.onCall(1).resolves({
+      rows: [{
+        uid: uid
+      }],
+    });
+    postgreeStubQuery.onCall(2).resolves({
+      rows: [{
+        uname: uname,
+        uid: uid
+      }],
+    });
+    postgreeStubQuery.onCall(3).resolves({
+      rows: [{
+        uname: uname,
+        uid: uid
+      }],
     });
 
     chai.request(server)
@@ -49,7 +61,7 @@ describe('Users', function(){
         })
         .end(function(error, res){
           res.should.have.status(200);
-          res.text.should.contain('<title>Home page</title>');
+          res.text.should.contain(`<title>${uname}'s Calendar</title>`);
           done();
     });
   });
