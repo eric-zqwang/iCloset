@@ -7,7 +7,7 @@ const pgPool = require('pg-pool');
 
 chai.use(chaiHttp); 
 
-describe('OUTFITS', function(){
+describe('uploading image', function(){
   // tests associated with Admin
   var postgreStubQuery;
   beforeEach(function () {
@@ -48,19 +48,20 @@ describe('OUTFITS', function(){
 
   it('should upload image with removed background', function(done){
     const uid = 1;
-
+    const myimgid=20;
+    const uname = "testUser";
     postgreStubQuery.onCall(0).resolves({
         rows: [{
         }],
     });
     postgreStubQuery.onCall(1).resolves({});
-    postgreeStubQuery.onCall(2).resolves({
+    postgreStubQuery.onCall(2).resolves({
         rows: [{
           txtimg:'23asd1f',
           imgid:myimgid,
         }],
     });
-    postgreeStubQuery.onCall(3).resolves({
+    postgreStubQuery.onCall(3).resolves({
       rows: [{
           uid:uid,
           uname:uname,
@@ -70,34 +71,39 @@ describe('OUTFITS', function(){
         .post(`/:${uid}/uploadImagewithRemoveBG`)
         .type('form')
         .send({
+          'upImg':{file:''},
         })
-        .end(function(error, res){
-            res.should.have.status(200);
-            res.text.should.contain(`<title>Outfits</title>`); 
-            res.text.should.contain(`${uname}`);
-            res.text.should.contain('23asd1f'); 
-            res.text.should.contain(`${myimgid}`); 
-            
+        .then(function(error, res){
+          res.should.have.status(200);
+          res.text.should.contain(`<title>Outfits</title>`); 
+          res.text.should.contain(`${uname}`);
+          res.text.should.contain('23asd1f'); 
+          res.text.should.contain(`${myimgid}`); 
           done();
-        });
+      })
+        .end(
+          done()
+        )  ;
+        
   });
 
 
   it('should upload a origin image', function(done){
     const uid = 1;
-
+    const myimgid=20;
+    const uname = "testUser";
     postgreStubQuery.onCall(0).resolves({
         rows: [{
         }],
     });
     postgreStubQuery.onCall(1).resolves({});
-    postgreeStubQuery.onCall(2).resolves({
+    postgreStubQuery.onCall(2).resolves({
         rows: [{
           txtimg:'23asd1f',
           imgid:myimgid,
         }],
     });
-    postgreeStubQuery.onCall(3).resolves({
+    postgreStubQuery.onCall(3).resolves({
       rows: [{
           uid:uid,
           uname:uname,
@@ -108,15 +114,19 @@ describe('OUTFITS', function(){
         .type('form')
         .send({
         })
-        .end(function(error, res){
+        .then(function(error, res){
             res.should.have.status(200);
             res.text.should.contain(`<title>Outfits</title>`); 
             res.text.should.contain(`${uname}`);
             res.text.should.contain('23asd1f'); 
             res.text.should.contain(`${myimgid}`); 
-            
-          done();
-        });
+            done();
+        })
+          .end(
+            done()
+          )  ;
+          
+        
   });
 
 

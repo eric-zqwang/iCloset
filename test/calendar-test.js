@@ -164,13 +164,14 @@ describe('Calendar', function(){
     const month=4;
     const year=2022;
     postgreeStubQuery.onCall(0).resolves({});
-    postgreeStubQuery.onCall(1).resolves({
+    postgreeStubQuery.onCall(1).resolves({});
+    postgreeStubQuery.onCall(2).resolves({
       rows: [{
         uid: uid,
         uname:uname,
       }],
   });
-  postgreeStubQuery.onCall(2).resolves({
+  postgreeStubQuery.onCall(3).resolves({
     rows: [{
       imgid:"10",
       imgsetid:"10",
@@ -199,4 +200,40 @@ describe('Calendar', function(){
       });
   
   });
+
+  it('should remove the outfit from the calendar', function(done){
+    const uname = "testUser";
+    const uid = 1;
+    const day=11; 
+    const month=4;
+    const year=2022;
+    postgreeStubQuery.onCall(0).resolves({});
+    postgreeStubQuery.onCall(1).resolves({
+      rows: [{
+        uid: uid,
+        uname:uname,
+      }],
+  });
+  postgreeStubQuery.onCall(2).resolves({
+    rows: [{
+
+      }],
+  });
+ 
+  chai.request(server)
+        .post(`/:${uid}/calendaradd/:${year}/:${month}/:${day}/remove`)
+        .type('form')
+        .send({
+          // 'days':`${day}`,
+          // 'months':`${month}`,
+          // 'years':`${year}`,
+        })
+        .end(function(error, res){
+          res.should.have.status(200);
+          res.text.should.contain(`<title>${uname}'s Calendar</title>`);
+          done();
+      });
+  
+  });
+
 });

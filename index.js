@@ -64,9 +64,9 @@ pool = new Pool({
     // }
 
   // for local host
-  //  connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
-  connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  // connectionString: 'postgres://postgres:root@localhost/try1'
+   // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
+   connectionString: 'postgres://postgres:root@localhost/try1'
  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -666,11 +666,23 @@ app.post('/:id/calendaraddimg', async (req, res) => {
   const day = req.body.days;
   const year = req.body.years;
   const month = req.body.months;
+  const date={day:day,year:year,month:month};
   const currentuserimg = await pool.query(`select * from userobj1 where uid ='${id}'`);
   const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
-  const date={day:day,year:year,month:month};
-  const data = {currentuids:currentid.rows, date:date, currentuserimgs:currentuserimg.rows} ;
-  res.render('pages/AddImgToCalendar', data);
+  const imageonthedate = await pool.query(`select imgsetid from calendars  where uid = '${id}' and year = ${year} and month = ${month} and day = ${day} `);
+
+   try{
+     const imageonthedateResults = await pool.query(`select * from userobj1  where imgid = ${imageonthedate.rows[0].imgsetid}`);
+     const data = {currentuids:currentid.rows, date:date, currentuserimgs:currentuserimg.rows, Ifimg:imageonthedateResults.rows} ;
+     res.render('pages/AddImgToCalendar', data);
+    }
+   catch(e){
+    const data = {currentuids:currentid.rows, date:date, currentuserimgs:currentuserimg.rows};
+    res.render('pages/AddImgToCalendar', data);
+   }
+   
+  
+  
 });
 
 app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {
@@ -679,9 +691,17 @@ app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {
   const year = req.params.year.substring(1);
   const month = req.params.month.substring(1);
   const choosenimgid=req.body.choosenid;
-
+  await pool.query(`delete from calendars where uid = ${id} and year = ${year} and month = ${month} and day = ${day}`);
   await pool.query(`insert into calendars (imgsetid, uid,year,month,day) values (${choosenimgid},${id},${year},${month},${day})`);
- 
+  res.redirect(`/:${id}/calendar`);
+});
+
+app.post('/:id/calendaradd/:year/:month/:day/remove', async (req, res) => {
+  const id = req.params.id.substring(1);
+  const day = req.params.day.substring(1);
+  const year = req.params.year.substring(1);
+  const month = req.params.month.substring(1);
+  await pool.query(`delete from calendars where uid = ${id} and year = ${year} and month = ${month} and day = ${day}`);
   res.redirect(`/:${id}/calendar`);
 });
 
