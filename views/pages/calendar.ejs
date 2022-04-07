@@ -6,6 +6,28 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
      <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script> 
     <style type="text/css">
+    body {
+      margin: 0;
+      background-color: rgb(170, 172, 198);
+    }
+    .main {
+      top: 145px;
+      left: 210px;
+      width: 90%;
+      height: 90%;
+      position: fixed;
+      overflow: scroll;
+      float: left;
+      content: "";
+  display: table;
+  clear: both;
+    }
+    .left {
+      width: 60%;
+    }
+    .right {
+      width: 40%;
+    }
     .body {
         display: inline-block;
         min-width: calc(100% - 130px - 5px);
@@ -23,6 +45,10 @@
         border: 1px solid #CCC;
         border-radius: 10px;
         vertical-align: top;
+    }
+
+    .calendar {
+        background-color: white;
     }
     .calendar .current {
         width: calc(100% - 20px);
@@ -55,11 +81,11 @@
         font-weight: 700;
     }
     
-    .calendar .header .week-day {
+    #calendar .header .week-day {
         display: inline-block;
         width: 130px;
         height: 10px;
-        border: 1px solid rgba(200,200,200,0);
+        border: 2px solid rgba(200,200,200,0);
         margin: 2px 5px;
        
     }
