@@ -58,16 +58,16 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-    // connectionString: process.env.DATABASE_URL,
-    //  ssl:{
-    //   rejectUnauthorized: false
-    // }
+    connectionString: process.env.DATABASE_URL,
+     ssl:{
+      rejectUnauthorized: false
+    }
 
   // for local host
-   // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
+  // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-   connectionString: 'postgres://postgres:root@localhost/try1'
- // connectionString: 'postgres://postgres:woaini10@localhost/users'  
+  // connectionString: 'postgres://postgres:root@localhost/try1'
+  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
 const crypto = require('crypto');
@@ -159,8 +159,6 @@ app.post('/userlogin', async (req, res) => {
   else if(data.results[0].confirm == false){
     res.send("Please confirm your email!!!")
   }
-
-  
 
   //If umail and password are correct, direct to homepage
   else if (data.results.length == 1 && inputPswd == data.results[0].upswd) {
@@ -441,7 +439,7 @@ app.post('/usrs/:umail', async (req, res) => {
     //display current database
     const result = await pool.query("SELECT * FROM usrs");
     const data = { uid: curSession.user.uid, results: result.rows };
-    res.render('pages/userdetail', data);
+    res.render('pages/adminpage', data);
   } else {
     res.send("You are not allowed to view this page");
   }
