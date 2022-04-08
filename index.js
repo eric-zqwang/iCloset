@@ -58,15 +58,15 @@ app.use(session({
 const { Pool } = require("pg");
 var pool;
 pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-     ssl:{
-      rejectUnauthorized: false
-    }
+    // connectionString: process.env.DATABASE_URL,
+    //  ssl:{
+    //   rejectUnauthorized: false
+    // }
 
   // for local host
    // connectionString: 'postgres://postgres:123wzqshuai@localhost/users' 
   //connectionString: 'postgres://nicoleli:12345@localhost/icloset'  
-  // connectionString: 'postgres://postgres:root@localhost/try1'
+   connectionString: 'postgres://postgres:root@localhost/try1'
  // connectionString: 'postgres://postgres:woaini10@localhost/users'  
 })
 
@@ -552,7 +552,7 @@ app.get('/:uid/calendar', async(req,res) => {
   try{
     let uid = req.params.uid.substring(1);
     const currentuid = await pool.query(`select * from usrs where uid = ${uid}`);
-    const result = await pool.query(`select calendars.*,txtimg from calendars inner join userobj1 on userobj1.imgid = calendars.imgsetid and calendars.uid = ${uid}`);
+    const result = await pool.query(`select calendars.*,txtimg from calendars inner join userobj1 on userobj1.imgid = calendars.imgsetid and calendars.uid = ${uid} and userobj1.public != 'true'`);
     const data = {currentuids:currentuid.rows, results:result.rows};
     res.render('pages/calendar', data);
   }
@@ -669,12 +669,12 @@ app.post('/:id/calendaraddimg', async (req, res) => {
   const year = req.body.years;
   const month = req.body.months;
   const date={day:day,year:year,month:month};
-  const currentuserimg = await pool.query(`select * from userobj1 where uid ='${id}'`);
+  const currentuserimg = await pool.query(`select * from userobj1 where uid ='${id}' and public != 'true'`);
   const currentid = await pool.query(`select * from usrs where uid = '${id}'`);
   const imageonthedate = await pool.query(`select imgsetid from calendars  where uid = '${id}' and year = ${year} and month = ${month} and day = ${day} `);
 
    try{
-     const imageonthedateResults = await pool.query(`select * from userobj1  where imgid = ${imageonthedate.rows[0].imgsetid}`);
+     const imageonthedateResults = await pool.query(`select * from userobj1  where imgid = ${imageonthedate.rows[0].imgsetid} and public != 'true'`);
      const data = {currentuids:currentid.rows, date:date, currentuserimgs:currentuserimg.rows, Ifimg:imageonthedateResults.rows} ;
      res.render('pages/AddImgToCalendar', data);
     }
@@ -683,8 +683,6 @@ app.post('/:id/calendaraddimg', async (req, res) => {
     res.render('pages/AddImgToCalendar', data);
    }
    
-  
-  
 });
 
 app.post('/:id/calendaradd/:year/:month/:day', async (req, res) => {

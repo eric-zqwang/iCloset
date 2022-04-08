@@ -128,7 +128,7 @@
                 <%= date.year%> - <%= date.month%> - <%= date.day%>
                 </p>
         <div id="choosenimg">
-          <% if ( typeof Ifimg != 'undefined') {%>
+          <% if ( typeof Ifimg != 'undefined' && Ifimg.length > 0) {%>
           <img src="data:image/gif;base64,<%= Ifimg[0].txtimg %>" style="padding: 15px;"
                   class="imageDraggable <%= Ifimg[0].category_type%>" width="200" height="200" id="<%=Ifimg[0].imgid%>" alt="" onclick="chooseimg(this)">
                   <br><br>
