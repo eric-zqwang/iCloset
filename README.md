@@ -1,3 +1,5 @@
+**WEBLINK:** https://cmpticloset.herokuapp.com/
+
 iCloset February 19th, 2022
 
 Overview Nowadays, people own a decent amount of clothes but still have nothing to wear most of the time. It happens so because people find it hard to choose among a variety of options or they just forget clothes that are buried in the back of their closets. Our target customers are those who are tired of standing in front of their wardrobes choosing what to wear in their busy mornings. By introducing iCloset, all these problems can be well addressed.
@@ -13,3 +15,4 @@ Weakness It takes a certain amount of time to organize your closet for the first
 Opportunities None of the competition sites has yet introduced a social interaction system. We can develop a more user-friendly clothing management system incorporating social interaction with other users.
 
 Threats Existing web apps can easily develop user interaction features to their existing system which may outrange our web application.
+
